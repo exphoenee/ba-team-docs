@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BA Team - AI Tool for Business Analysts</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>">
+    <!-- Google Fonts: Inter & Outfit -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Marked.js for Markdown parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Mermaid.js for diagrams -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <!-- Prism.js for code highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" id="prism-theme">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <meta name="author" content="Viktor Bozzay">
+    <link rel="stylesheet" href="styles/style.css">
+    <script src="scripts/app.js"></script>
+</head>
+<body>
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <i class="fas fa-robot"></i>
+                <span>BA Team</span>
+            </div>
+            <button class="mobile-close" id="mobileClose"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="sidebar-scroll">
+        <ul class="nav-links">
+            <li><a href="#home" class="active"><i class="fas fa-home"></i> Kezdőlap</a></li>
+            <li><a href="#agents"><i class="fas fa-users-gear"></i> Ügynökök</a></li>
+            <li class="has-submenu">
+                <a href="javascript:void(0)" id="skillsToggle"><i class="fas fa-bolt"></i> Parancsok <i class="fas fa-chevron-down toggle-icon"></i></a>
+                <ul class="submenu" id="skillsSubmenu">
+                    <li><a href="#skill-ba">/ba</a></li>
+                    <li><a href="#skill-ba-workflow">/ba-workflow</a></li>
+                    <li><a href="#skill-business-analyst">/business-analyst</a></li>
+                    <li><a href="#skill-convert">/convert</a></li>
+                    <li><a href="#skill-memory-handler">/memory-handler</a></li>
+                    <li><a href="#skill-mermaid-diagrams">/mermaid-diagrams</a></li>
+                    <li><a href="#skill-session-loader">/session-loader</a></li>
+                    <li><a href="#skill-spec-builder">/spec-builder</a></li>
+                </ul>
+            </li>
+            <li><a href="#handbook"><i class="fas fa-book"></i> Kézikönyv</a></li>
+            <li><a href="#improvements"><i class="fas fa-lightbulb"></i> Fejlesztési javaslatok</a></li>
+        </ul>
+        <div class="pdf-link-container">
+          <a href="assets/presentation/AI_BA_Command_Center.pdf" target="_blank" class="pdf-link">
+            <i class="fas fa-file-pdf"></i>
+            <span>Prezentáció</span>
+            <i class="fas fa-external-link-alt external-icon"></i>
+          </a>
+          <a href="assets/BA%20Team%20%E2%80%93%20Felhaszn%C3%A1l%C3%B3i%20K%C3%A9zik%C3%B6nyv.pdf" target="_blank" class="pdf-link">
+            <i class="fas fa-file-pdf"></i>
+            <span>Felhasználói Kézikönyv</span>
+            <i class="fas fa-external-link-alt external-icon"></i>
+          </a>
+        </div>
+        <ul class="audio-list">
+          <li>
+            <button class="audio-button" data-audio="ismerteto1Audio">
+              <i class="fas fa-play"></i>
+              <span>Ismertető</span>
+            </button>
+            <audio id="ismerteto1Audio" preload="none">
+              <source src="assets/audio/ismerteto1.mp3" type="audio/mpeg">
+              <source src="assets/audio/ismerteto1.m4a" type="audio/mp4">
+            </audio>
+          </li>
+          <li>
+            <button class="audio-button" data-audio="kritika1Audio">
+              <i class="fas fa-play"></i>
+              <span>Kritika</span>
+            </button>
+            <audio id="kritika1Audio" preload="none">
+              <source src="assets/audio/kritika1.mp3" type="audio/mpeg">
+              <source src="assets/audio/kritika1.m4a" type="audio/mp4">
+            </audio>
+          </li>
+          <li>
+            <button class="audio-button" data-audio="beszelgetes1Audio">
+              <i class="fas fa-play"></i>
+              <span>Beszélgetés 1</span>
+            </button>
+            <audio id="beszelgetes1Audio" preload="none">
+              <source src="assets/audio/beszelgetes1.mp3" type="audio/mpeg">
+              <source src="assets/audio/beszelgetes1.m4a" type="audio/mp4">
+            </audio>
+          </li>
+          <li>
+            <button class="audio-button" data-audio="beszelgetes2Audio">
+              <i class="fas fa-play"></i>
+              <span>Beszélgetés 2</span>
+            </button>
+            <audio id="beszelgetes2Audio" preload="none">
+              <source src="assets/audio/beszelgetes2.mp3" type="audio/mpeg">
+              <source src="assets/audio/beszelgetes2.m4a" type="audio/mp4">
+            </audio>
+          </li>
+        </ul>
+        </div>
+        <div class="sidebar-footer">
+            <button id="themeToggle" class="theme-btn">
+                <i class="fas fa-moon"></i>
+                <span>Sötét mód</span>
+            </button>
+        </div>
+    </nav>
+
+    <main class="content-wrapper">
+        <header class="top-bar">
+            <button class="mobile-menu" id="mobileMenu"><i class="fas fa-bars"></i></button>
+            <div class="breadcrumb" id="breadcrumb">Home</div>
+            <div class="top-actions">
+                <a href="https://github.com/exphoenee/ba-team" target="_blank" class="github-link">
+                    <i class="fab fa-github"></i> GitHub
+                </a>
+            </div>
+        </header>
+        <div id="loader" class="loader-container">
+            <div class="spinner"></div>
+        </div>
+        <article class="markdown-body" id="content">
+            <!-- Content will be injected here -->
+        </article>
+        <footer class="main-footer">
+            <p>&copy; 2026 Viktor Bozzay. Minden jog fenntartva. -  version v%%VERSION%%</p>
+        </footer>
+    </main>
+
+</body>
+</html>
