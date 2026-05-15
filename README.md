@@ -1,8 +1,6 @@
 # BA Team – Legyél Te a főnök egy 5 fős AI csapat felett!
 
-[English version](README.en.md)
-[Kézikönyv](Handbook.md)
-
+[English version](README.en.md) | [Kézikönyv](HANDBOOK.md)
 
 > **Ne csak használd az AI-t – irányítsd!** 🚀
 >
@@ -20,250 +18,13 @@
 
 Ez a repository Claude AI-hoz készített skilleket és ügynököket tartalmaz, amelyek célja a **Business Analyst kollégák munkájának támogatása** az IT projektek teljes requirements engineering folyamatán át.
 
----
-
-## Kiemelt Képességek
-
-A rendszer számos olyan beépített intelligens funkcióval rendelkezik, amelyek megkülönböztetik egy egyszerű chat-botól:
-
-### 🧠 Intelligens Memória Kezelés
-A projekt során megtanult minden fontos információ (döntések, érintettek, kockázatok, szakkifejezések) a munkamenetek között is megmarad. A `memory-agent` gondoskodik róla, hogy ne kelljen kétszer elmondanod ugyanazt, és az AI mindig képben legyen a projekt aktuális kontextusával.
-
-### ⚡ Inkrementális Specifikáció Készítés
-Nem kell minden apró változtatásnál a nulláról újraépíteni a dokumentációt. A rendszer felismeri, ha csak egy új fájlt adtál hozzá vagy egy meglévőt módosítottál, és csak a változásokat dolgozza fel. Ez drasztikusan csökkenti a várakozási időt és a tokenhasználatot nagy projektek esetén.
-
-### 🔄 Automatikus Fájl Konverzió
-Másold be bátran a Word jegyzőkönyveidet, Excel táblázataidat vagy Outlook e-mailjeidet (`.msg`, `.eml`). A rendszer automatikusan észleli őket, és a háttérben Markdown formátumba alakítja, hogy azonnal feldolgozhatóvá váljanak. Csak a megváltozott fájlokat konvertálja újra, így mindig naprakész marad.
-
-### 🇭🇺 Teljes Magyar Nyelvű Támogatás
-A rendszer natívan támogatja a magyar nyelvű üzleti kommunikációt. Nemcsak a bemeneti anyagokat értelmezi, hanem a teljes BA dokumentációt (BRD, User Story-k, stb.) és az összes státuszjelentést is szigorúan magyar nyelven készíti el.
-
-### 📊 Vizuális Folyamatmodellezés (Mermaid)
-A szöveges leírások mellett a rendszer automatikusan generál Mermaid folyamatábrákat minden üzleti folyamathoz és logikai elágazáshoz. Ezek a diagramok azonnal megtekinthetők és szerkeszthetők a VS Code felületén.
-
-### 🔗 Forrás-szintű Követhetőség (Traceability)
-Minden generált követelmény és specifikációs pont visszavezethető az eredeti forrásanyagra. Az automatikus követhetőségi mátrix segít abban, hogy mindig tudd: melyik ügyfélkérésből melyik fejlesztési feladat született.
+A részletes használati útmutató, parancsleírások, workflow-magyarázat és GYIK a **[Kézikönyvben](HANDBOOK.md)** található.
 
 ---
-
-## Napi használat
-
-### Új projekt indítása
-
-1. Másold be az ügyféllel folytatott megbeszélések anyagait:
-    - meetingjegyzetek,
-    - emailek,
-    - egyeztetések,
-    - Word/Excel/Outlook fájlok
-    - félkész vagy kész dokumentumok
-   a `workflow/01_project_info/` mappába
-2. Ha a válaszaid is Office fájlban vannak, azokat a `workflow/02_answers/` mappába másold
-3. A Claude panelen írd be: `/ba`
-4. A Claude automatikusan konvertálja (ha a python és függőségek telepítve vannak, lásd a [7. lépés](#7-lépés--python-telepítése-opcionális--csak-ha-officoutlook-fájlokat-is-szeretnél-feldolgozni)) a nem-markdown fájlokat, majd elvégzi a következő lépést
-
-### Folyamatos munka
-
-Minden munkaülés elején írd be: `/session-loader`
-
-Ez megmutatja, hol tart a projekt és mi a következő teendő — nem kell emlékezned, hol hagytad abba.
-
-### A teljes workflow
-
-```mermaid
-%%{init: {'flowchart': { 'nodeSpacing': 50, 'rankSpacing': 100 } }}%%
-flowchart TD
-    A["📁 01_project_info/\nNyers anyagok\n(.docx, .xlsx, .msg, stb.)"] --> B["🤖 /ba futtatása\nSpecifikáció készítése\n+ Q-XXX kérdések"]
-    B --> C["📝 02_answers/\nVálaszok összegyűjtése\n(answers.md vagy Office)"]
-    C --> D["🤖 /ba futtatása újra\nBA dokumentumok\ngenerálása"]
-    D --> E["📁 03_ba_docs/\nBRD, User Stories,\nFolyamatábrák"]
-```
-
-> A `/ba` minden futtatáskor automatikusan konvertálja az Office/Outlook fájlokat.
-> A `/convert` önállóan is futtatható, ha csak a konverziót szeretnéd ellenőrizni.
-
----
-
-A `/ba` egyetlen parancs, amely elindít egy **ba-orchestrator** ügynököt. Ez az ügynök automatikusan felméri a projekt aktuális állapotát, majd a megfelelő specialist ügynököt hívja meg a munka elvégzéséhez.
-
-### Főbb teljesítménybeli optimalizálások:
-
--   **Inkrementális Specifikáció**: Csak az új vagy módosult fájlok tartalmát dolgozza fel a specifikáció frissítésekor.
--   **Smart File Conversion**: SHA-256 ujjlenyomat és fájl-statisztikák (méret, dátum) alapján kihagyja a már konvertált fájlokat.
--   **Batch Memory Protocol**: A memóriaműveleteket csoportosítva végzi, minimalizálva az AI ügynökök indítási idejét.
--   **Targeted Memory Query**: Csak a munkához szükséges memóriafájlokat tölti be, jelentősen csökkentve a tokenhasználatot.
-
-```mermaid
-stateDiagram-v2
-    [*] --> EMPTY : /ba indítva
-    EMPTY --> NO_INPUT : 01_project_info üres
-    EMPTY --> CONVERT : .docx/.xlsx/.msg/.eml fájlok
-    CONVERT --> SPEC_BUILD : konverzió kész
-    EMPTY --> SPEC_BUILD : csak .md/.pdf fájlok
-    SPEC_BUILD --> WAITING : SPEC_OUTPUT.md elkészül\n→ nyitott kérdések vannak
-    WAITING --> MISSING : 02_answers/ részlegesen kitöltve
-    WAITING --> CHECK_EXISTS : minden Q-XXX megválaszolva
-    MISSING --> CHECK_EXISTS : hiányzó válaszok pótlása
-    CHECK_EXISTS --> DOC_GEN : 03_ba_docs/ üres
-    CHECK_EXISTS --> ASK_USER : 03_ba_docs/ már tartalmaz fájlokat
-    ASK_USER --> DOC_GEN : újragenerálás jóváhagyva
-    ASK_USER --> [*] : leáll
-    DOC_GEN --> DONE : 03_ba_docs/ létrejön
-    NO_INPUT --> [*] : leáll
-    DONE --> [*] : leáll
-```
-
-
----
-
-## Elérhető parancsok
-
-| Parancs | Mire való | Részletes leírás |
-|---|---|---|
-| `/ba` | Automatikus következő lépés végrehajtása | [→ Leírás](.claude/skills/ba/README.md) |
-| `/spec-builder` | Csak a spec készítése (haladó használat) | [→ Leírás](.claude/skills/spec-builder/README.md) |
-| `/business-analyst` | Csak a BA dokumentumok generálása (haladó használat) | [→ Leírás](.claude/skills/business-analyst/README.md) |
-| `/session-loader` | Munkamenet betöltése – megmutatja hol tart a projekt | [→ Leírás](.claude/skills/session-loader/README.md) |
-| `/convert` | Office/Outlook fájlok konvertálása Markdown-ra | [→ Leírás](.claude/skills/convert/README.md) |
-| `/mermaid-diagrams` | Önálló diagram készítése | [→ Leírás](.claude/skills/mermaid-diagrams/README.md) |
-| `/memory-handler` | Projekt memória kezelése | [→ Leírás](.claude/skills/memory-handler/README.md) |
-
----
-
-## Háttérben futó ügynökök
-
-A parancsok végrehajtását specializált ügynökök végzik. Ezeket nem a felhasználó hívja közvetlenül — automatikusan aktiválódnak a megfelelő pillanatban.
-
-| Ügynök | Feladata | Részletes leírás |
-|---|---|---|
-| `ba-orchestrator` | Állapot felismerés és koordináció | [→ Leírás](.claude/agents/README.md#ba-orchestrator) |
-| `spec-builder-agent` | Specifikáció előállítása | [→ Leírás](.claude/agents/README.md#spec-builder-agent) |
-| `ba-document-agent` | BA dokumentumok generálása | [→ Leírás](.claude/agents/README.md#ba-document-agent) |
-| `file-converter-agent` | Office/Outlook fájlok konvertálása Markdown-ra | [→ Leírás](.claude/agents/README.md#file-converter-agent) |
-| `memory-agent` | Projekt memória kezelése | [→ Leírás](.claude/agents/README.md#memory-agent) |
-
-> Részletes technikai leírás az összes ügynökről: [.claude/agents/README.md](.claude/agents/README.md)
-
----
-
-## Automatikus értesítések
-
-A rendszer minden Claude válasz után automatikusan ellenőrzi a workflow állapotát és emlékeztet, ha teendő van:
-
-| Állapot | Értesítés |
-|---|---|
-| Feldolgozatlan bemeneti fájlok | `📋 N bemeneti fájl feldolgozásra vár. Futtasd: /ba` |
-| Spec kész, válaszok hiányoznak | `❓ Spec elkészült. Válaszokat várok a 02_answers/ mappában.` |
-| Válaszok megvannak, dokumentum nincs | `✅ Válaszok megtalálhatók. BA dokumentumok generálásához futtasd: /ba` |
-
----
-
-## Generált BA dokumentumok
-
-A `/ba` parancs (vagy a `/business-analyst` skill) az alábbi professzionális dokumentum-csomagot állítja elő a `workflow/03_ba_docs/` mappába:
-
-| Fájl | Megnevezés | Tartalom |
-|---|---|---|
-| `BRD.md` | Business Requirements Document | Üzleti követelmények, célkitűzések és magas szintű igények. |
-| `User_Stories.md` | User Story lista | Felhasználói történetek részletes Gherkin formátumú elfogadási kritériumokkal. |
-| `Process_Flows.md` | Üzleti folyamatok | Szöveges leírások és **kötelező vizuális Mermaid folyamatábrák**. |
-| `Traceability_Matrix.md` | Követhetőségi mátrix | A forrásanyagok és a követelmények közötti kapcsolatot leíró táblázat. |
-| `RAID_Log.md` | RAID Log | Kockázatok (Risks), Feltételezések (Assumptions), Problémák (Issues) és Függőségek (Dependencies). |
-| `Glossary.md` | Szójegyzék | A projekt során azonosított domain-specifikus szakkifejezések gyűjteménye. |
-
----
-
-## Mappa struktúra
-
-```
-projekt-neve/
-├── workflow/
-│   ├── 01_project_info/     ← IDE másold be az ügyfél anyagait
-│   ├── 02_answers/          ← IDE kerülnek a kérdésekre adott válaszok
-│   └── 03_ba_docs/          ← IDE kerülnek a kész BA dokumentumok
-├── .claude/
-│   ├── agents/              ← Specializált ügynökök (nem kell szerkeszteni)
-│   │   ├── README.md        ← Ügynökök leírása
-│   │   ├── ba-orchestrator.md
-│   │   ├── spec-builder-agent.md
-│   │   ├── ba-document-agent.md
-│   │   └── memory-agent.md
-│   ├── skills/              ← Parancsok (slash commands)
-│   │   ├── convert/         ← /convert – Office fájl konverter
-│   ├── memory/              ← Projekt memória (automatikusan kezelt)
-│   ├── rules/               ← Viselkedési szabályok
-│   └── scripts/             ← Session loader szkriptek
-├── CLAUDE.md                ← Belső instrukciók (nem kell szerkeszteni)
-├── AGENTS.md                ← Technikai referencia (nem kell szerkeszteni)
-└── README.md                ← Ez a fájl
-```
-
----
-
-## Architektúra áttekintése
-
-```mermaid
-graph TD
-    User([Felhasználó]) -->|/ba| BA_SKILL[ba SKILL]
-    BA_SKILL --> ORCH[ba-orchestrator]
-
-    ORCH -->|scope=all| FC[file-converter-agent]
-    ORCH --> MEM_Q[memory-agent QUERY]
-    ORCH --> SB[spec-builder-agent]
-    ORCH --> DOC[ba-document-agent]
-
-    SB --> MEM_SL[memory-agent SPEC_LOG]
-    DOC --> MEM_ST[memory-agent STORE/BATCH]
-    FC --> MEM_CL[memory-agent CONVERSION_LOG]
-
-    MEM_Q & MEM_SL & MEM_ST & MEM_CL --> MEMFILES[(.claude/memory/*)]
-
-    SB --> SPEC[SPEC_OUTPUT.md]
-    DOC --> DOCS[workflow/03_ba_docs/]
-
-    STOP_HOOK[Stop Hook\nsettings.json] -->|minden válasz után| NOTIFY[Értesítés a felhasználónak]
-
-    style MEMFILES fill:#f0f4ff
-    style DOCS fill:#e8f8e8
-    style SPEC fill:#fff8e8
-```
-
----
-
-## Válaszok formátuma (`workflow/02_answers/answers.md`)
-
-Hozz létre egy `answers.md` fájlt a `workflow/02_answers/` mappában, és töltsd ki a Claude által generált kérdésekre a válaszokat:
-
-```
-Q-001: A rendszer minden sikertelen belépési kísérletet naplóz; 5 próba után zárolja a fiókot.
-Q-002: Az adatmegőrzési időszak GDPR alapján 7 év.
-Q-003: A fizetéseket a Stripe API kezeli, a számlázást a meglévő ERP-be kell integrálni.
-```
-
----
-
-## Gyakori kérdések
-
-**Hol találom a kész BA dokumentumokat?**
-A `workflow/03_ba_docs/` mappában, VS Code-ban a bal oldali fájlböngészőben.
-
-**Hogyan olvasom el szépen a dokumentumokat?**
-Kattints duplán a `.md` fájlra, majd nyomj `Ctrl+Shift+V` (Windows) / `Cmd+Shift+V` (Mac) billentyűt az előnézet megnyitásához.
-
-**Mi az a Q-XXX?**
-A Claude által generált, sorszámozott kérdések az ügyféltől hiányzó információkról. Minden kérdést meg kell válaszolni mielőtt a BA dokumentumok elkészülnek.
-
-**Elromlott valami, mit tegyek?**
-Írd be: `/session-loader` — megmutatja az aktuális állapotot és a következő lépést.
-
-**Újra lehet futtatni a `/ba`-t ha változott valami?**
-Igen, bármikor futtatható. A rendszer mindig az aktuális állapotból indul ki.
-
 
 ## Telepítési útmutató
 
 > Ez az útmutató nem igényel programozói ismereteket.
-
----
 
 ### A) Automatikus telepítés – egy paranccsal
 
@@ -434,23 +195,7 @@ pip show markitdown openpyxl extract-msg
 
 ---
 
-#### Hogyan működik a fájl konverzió?
-
-Miután bemásoltad a fájlokat a `workflow/01_project_info/` vagy `workflow/02_answers/` mappába:
-
-1. A Claude panelen írd be: `/convert`
-2. A rendszer automatikusan:
-   - **Betölti a konverziós naplót** — a már feldolgozott, változatlan fájlokat (méret és dátum alapján) azonnal kihagyja.
-   - **SHA-256 ujjlenyomatot ellenőriz** — ha a fájl tartalma megegyezik a korábbival, nem végzi el újra a konverziót.
-   - **Csak az új vagy megváltozott fájlokat konvertálja** Markdown formátumba.
-   - **Batch módban frissíti a naplót** — egyetlen lépésben menti az összes változást, minimalizálva a várakozási időt.
-3. Ezután futtasd a `/ba` parancsot — az AI már a konvertált tartalmakat dolgozza fel.
-
-> A `/ba` parancs is automatikusan elindítja a konverziót, ha Office fájlokat talál, és ugyanezeket az optimalizálásokat használja.
-
----
-
-### 8. lépés – Első indítás ellenőrzése
+#### 8. lépés – Első indítás ellenőrzése
 
 1. VS Code-ban nyisd meg a Claude panelt *(bal oldali sáv, Claude ikon)*
 2. Az alsó beviteli mezőbe írd be: `/session-loader`
@@ -471,5 +216,3 @@ Miután bemásoltad a fájlokat a `workflow/01_project_info/` vagy `workflow/02_
 5. Ha ezt látod, az alap telepítés sikeres.
 
 > **Python ellenőrzése:** Ha telepítetted a Pythont (7. lépés), a Claude panelen írd be: `/convert` — ha a rendszer jelzi, hogy nincs konvertálandó fájl, a Python és a könyvtárak is működnek.
-
----

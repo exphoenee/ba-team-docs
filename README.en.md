@@ -1,9 +1,9 @@
 # BA Team – Be the Boss of a 5-member AI Team!
 
-[Magyar változat](README.md)
+[Magyar változat](README.md) | [Handbook](HANDBOOK.md) *(Hungarian)*
 
 > **Don't just use AI – lead it!** 🚀
-> 
+>
 > With this workflow, you don't just get a simple chatbot, but a complete, specialized Business Analyst team with you as the lead. While you focus on strategic decisions and client relationships, your AI colleagues do the heavy lifting:
 >
 > 1. 📋 **Orchestrator**: Your project manager who keeps track of everything and knows where you are.
@@ -18,212 +18,13 @@
 
 This repository contains Claude AI skills and agents designed to **support Business Analyst colleagues** throughout the entire requirements engineering process of IT projects.
 
----
-
-## Key Capabilities
-
-The system features several built-in intelligent functions that distinguish it from a simple chatbot:
-
-### 🧠 Intelligent Memory Management
-All important information learned during the project (decisions, stakeholders, risks, terminology) persists between sessions. The `memory-agent` ensures you don't have to repeat yourself, and the AI is always aware of the current project context.
-
-### ⚡ Incremental Specification Building
-You don't need to rebuild the entire documentation from scratch for every minor change. The system detects when you've added a new file or modified an existing one and processes only the changes. This drastically reduces wait times and token usage for large projects.
-
-### 🔄 Automatic File Conversion
-Feel free to copy your Word minutes, Excel spreadsheets, or Outlook emails (`.msg`, `.eml`). The system automatically detects them and converts them to Markdown in the background for immediate processing. It only reconverts changed files, keeping everything up to date.
-
-### 🇭🇺 Full Hungarian Language Support
-The system natively supports Hungarian business communication. It not only understands Hungarian input materials but also produces the entire BA documentation (BRD, User Stories, etc.) and all status reports strictly in Hungarian.
-
-### 📊 Visual Process Modeling (Mermaid)
-Alongside text descriptions, the system automatically generates Mermaid process flows for every business process and logic branch. These diagrams can be viewed and edited directly within VS Code.
-
-### 🔗 Source-level Traceability
-Every generated requirement and specification point can be traced back to the original source material. The automatic traceability matrix helps you always know which client request led to which development task.
-
----
-
-## Daily Usage
-
-### Starting a New Project
-
-1. Copy client meeting materials (minutes, emails, notes, Word/Excel/Outlook files, etc.) into the `workflow/01_project_info/` folder.
-2. If your answers are also in Office files, copy them to the `workflow/02_answers/` folder.
-3. In the Claude panel, type: `/ba`
-4. Claude will automatically convert non-markdown files (if Python and dependencies are installed) and perform the next step.
-
-### Ongoing Work
-
-At the start of every session, type: `/session-loader`
-
-This shows where the project stands and what the next step is — no need to remember where you left off.
-
-### The Full Workflow
-
-```mermaid
-%%{init: {'flowchart': { 'nodeSpacing': 50, 'rankSpacing': 100 } }}%%
-flowchart TD
-    A["📁 01_project_info/\nRaw materials\n(.docx, .xlsx, .msg, etc.)"] --> B["🤖 Run /ba\nSpecification building\n+ Q-XXX questions"]
-    B --> C["📝 02_answers/\nGathering answers\n(answers.md or Office)"]
-    C --> D["🤖 Run /ba again\nBA document\ngeneration"]
-    D --> E["📁 03_ba_docs/\nBRD, User Stories,\nProcess Flows"]
-```
-
-> `/ba` automatically converts Office/Outlook files on every run.
-> `/convert` can be run independently to check conversion only.
-
----
-
-`/ba` is a single command that starts a **ba-orchestrator** agent. This agent automatically assesses the current project state and then calls the appropriate specialist agent to perform the work.
-
-### Key Performance Optimizations:
-
--   **Incremental Specification**: Only processes the content of new or modified files when updating the spec.
--   **Smart File Conversion**: Skips already converted files based on SHA-256 fingerprints and file stats (size, date).
--   **Batch Memory Protocol**: Performs memory operations in groups, minimizing AI agent spawn times.
--   **Targeted Memory Query**: Loads only the memory files needed for the task, significantly reducing token usage.
-
-```mermaid
-%%{init: {'flowchart': { 'nodeSpacing': 100, 'rankSpacing': 150 } }}%%
-flowchart TD
-    Start(["Run /ba"]) --> ORC["ba-orchestrator\nagent"]
-    ORC --> MEM["memory-agent\nMEMORY LOAD"]
-    MEM --> C1{"Are there\ninput files?"}
-    C1 -->|No| E1["⚠️ Reports: no\nmaterials to process"]
-    C1 -->|Yes| C2{"Is there already\na SPEC_OUTPUT.md?"}
-    C2 -->|No| A1["spec-builder-agent\n→ SPEC_OUTPUT.md\n+ Q-XXX question list"]
-    A1 --> E2["⏳ Reports: waiting\nfor answers in 02_answers/"]
-    C2 -->|Yes| C3{"Are all Q-XXX\nanswered?"}
-    C3 -->|No| E3["⛔ Stops and lists\nmissing answers"]
-    C3 -->|Yes| C4{"BA documents\nalready exist?"}
-    C4 -->|Yes| E4["⚠️ Asks user:\nRegenerate or stop?"]
-    C4 -->|No| A2["ba-document-agent\n→ BA documents\n+ Mermaid diagrams"]
-    A2 --> Done["📁 workflow/03_ba_docs/\nBRD, User Stories,\nProcess Flows, etc."]
-```
-
----
-
-## Available Commands
-
-| Command | Purpose | Detailed Description |
-|---|---|---|
-| `/ba` | Perform automatic next step | [→ Description](.claude/skills/ba/README.md) |
-| `/spec-builder` | Only build spec (advanced use) | [→ Description](.claude/skills/spec-builder/README.md) |
-| `/business-analyst` | Only generate BA docs (advanced use) | [→ Description](.claude/skills/business-analyst/README.md) |
-| `/session-loader` | Load session – shows project status | [→ Description](.claude/skills/session-loader/README.md) |
-| `/convert` | Convert Office/Outlook files to Markdown | [→ Description](.claude/skills/convert/README.md) |
-| `/mermaid-diagrams` | Create standalone diagram | [→ Description](.claude/skills/mermaid-diagrams/README.md) |
-| `/memory-handler` | Manage project memory | [→ Description](.claude/skills/memory-handler/README.md) |
-
----
-
-## Background Agents
-
-Commands are executed by specialized agents. They are not called directly by the user — they activate automatically at the right moment.
-
-| Agent | Task | Detailed Description |
-|---|---|---|
-| `ba-orchestrator` | State detection and coordination | [→ Description](.claude/agents/README.md#ba-orchestrator) |
-| `spec-builder-agent` | Specification generation | [→ Description](.claude/agents/README.md#spec-builder-agent) |
-| `ba-document-agent` | BA document generation | [→ Description](.claude/agents/README.md#ba-document-agent) |
-| `file-converter-agent` | Office/Outlook to Markdown conversion | [→ Description](.claude/agents/README.md#file-converter-agent) |
-| `memory-agent` | Project memory management | [→ Description](.claude/agents/README.md#memory-agent) |
-
-> Detailed technical description of all agents: [.claude/agents/README.md](.claude/agents/README.md)
-
----
-
-## Automatic Notifications
-
-The system automatically checks the workflow state after every Claude response and reminds you if action is required:
-
-| State | Notification |
-|---|---|
-| Unprocessed input files | `📋 N input files waiting for processing. Run: /ba` |
-| Spec ready, answers missing | `❓ Spec completed. Waiting for answers in 02_answers/ folder.` |
-| Answers ready, documents missing | `✅ Answers found. To generate BA documents, run: /ba` |
-
----
-
-## Generated BA Documents
-
-The `/ba` command (or the `/business-analyst` skill) produces the following professional document package in the `workflow/03_ba_docs/` folder:
-
-| File | Name | Content |
-|---|---|---|
-| `BRD.md` | Business Requirements Document | Business requirements, objectives, and high-level needs. |
-| `User_Stories.md` | User Story List | User stories with detailed Gherkin format acceptance criteria. |
-| `Process_Flows.md` | Business Processes | Text descriptions and **mandatory visual Mermaid flowcharts**. |
-| `Traceability_Matrix.md` | Traceability Matrix | A table describing the relationship between source materials and requirements. |
-| `RAID_Log.md` | RAID Log | Risks, Assumptions, Issues, and Dependencies. |
-| `Glossary.md` | Glossary | A collection of domain-specific technical terms identified during the project. |
-
----
-
-## Folder Structure
-
-```
-project-name/
-├── workflow/
-│   ├── 01_project_info/     ← Copy client materials HERE
-│   ├── 02_answers/          ← Answers to questions (Q-XXX format) go HERE
-│   └── 03_ba_docs/          ← Finished BA documents go HERE
-├── .claude/
-│   ├── agents/              ← Specialized agents (do not edit)
-│   │   ├── README.md        ← Agent descriptions
-│   │   ├── ba-orchestrator.md
-│   │   ├── spec-builder-agent.md
-│   │   ├── ba-document-agent.md
-│   │   └── memory-agent.md
-│   ├── skills/              ← Commands (slash commands)
-│   │   ├── convert/         ← /convert – Office file converter
-│   ├── memory/              ← Project memory (automatically managed)
-│   ├── rules/               ← Behavior rules
-│   └── scripts/             ← Session loader scripts
-├── CLAUDE.md                ← Internal instructions (do not edit)
-├── AGENTS.md                ← Technical reference (do not edit)
-└── README.md                ← This file
-```
-
----
-
-## Answer Format (`workflow/02_answers/answers.md`)
-
-Create an `answers.md` file in the `workflow/02_answers/` folder and fill in the answers to the questions generated by Claude:
-
-```
-Q-001: The system logs every failed login attempt; account lockout after 5 tries.
-Q-002: The data retention period is 7 years based on GDPR.
-Q-003: Payments are handled by Stripe API, billing must be integrated into the existing ERP.
-```
-
----
-
-## FAQ
-
-**Where can I find the finished BA documents?**
-In the `workflow/03_ba_docs/` folder, in the VS Code file explorer.
-
-**How can I read the documents nicely?**
-Double-click the `.md` file, then press `Ctrl+Shift+V` (Windows) / `Cmd+Shift+V` (Mac) to open the formatted preview.
-
-**What is Q-XXX?**
-Numbered questions generated by Claude about information missing from the client. Every question must be answered before BA documents can be generated.
-
-**Something broke, what should I do?**
-Type: `/session-loader` — it shows the current state and the next step.
-
-**Can I run `/ba` again if something changed?**
-Yes, it can be run at any time. The system always starts from the current state.
+For the full usage guide, command reference, workflow explanation, and FAQ, see the **[Handbook](HANDBOOK.md)** *(available in Hungarian only)*.
 
 ---
 
 ## Installation Guide
 
 > This guide does not require programming knowledge.
-
----
 
 ### A) Automatic Installation – One Command
 
@@ -391,22 +192,6 @@ pip install "markitdown[docx]" openpyxl extract-msg
 ```
 pip show markitdown openpyxl extract-msg
 ```
-
----
-
-#### How File Conversion Works
-
-After copying files into the `workflow/01_project_info/` or `workflow/02_answers/` folder:
-
-1. In the Claude panel, type: `/convert`
-2. The system automatically:
-   - **Loads the conversion log** — immediately skips already processed, unchanged files (based on size and date).
-   - **Verifies SHA-256 fingerprints** — if the file content matches the previous one, it doesn't reconvert.
-   - **Converts only new or modified files** to Markdown format.
-   - **Updates the log in batch mode** — saves all changes in a single step, minimizing wait time.
-3. Then run the `/ba` command — the AI will process the converted contents.
-
-> The `/ba` command also automatically starts conversion if it finds Office files, using the same optimizations.
 
 ---
 
