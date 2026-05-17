@@ -360,7 +360,7 @@ projekt-neve/
 ```mermaid
 flowchart TD
     Step1["1. Anyagok bemásolása\nworkflow/01_project_info/"]
-    Step2["2. /ba futtatása\nspec-builder → SPEC_OUTPUT.md + Q-XXX"]
+    Step2["2. /ba futtatása\nspec-builder → _system/SPEC_OUTPUT.md + Q-XXX"]
     Step3["3. Válaszok beírása\nworkflow/02_answers/answers.md"]
     Step4["4. /ba futtatása újra\nba-document-agent → 03_ba_docs/"]
 
@@ -392,7 +392,7 @@ A Claude panelen írd be:
 A rendszer:
 - Automatikusan konvertálja az Office fájlokat
 - Beolvassa a projekt memóriáját
-- Létrehozza a `SPEC_OUTPUT.md` specifikációt
+- Létrehozza a `workflow/01_project_info/_system/SPEC_OUTPUT.md` specifikációt
 - Listázza a megválaszolatlan kérdéseket (Q-XXX)
 
 ---
@@ -518,7 +518,7 @@ Megmutatja:
 
   WORKFLOW ÁLLAPOT
   [01] Bemeneti anyagok:  3 fájl
-  [01] SPEC_OUTPUT.md:    ✅ Elkészült
+  [01] _system/SPEC_OUTPUT.md:    ✅ Elkészült
        Megválaszolatlan kérdések: 2 db
          ❓ Q-003
          ❓ Q-007
@@ -868,13 +868,13 @@ A fő koordinátor. Felméri a workflow állapotát és irányítja a többi üg
 1. Beolvassa a SPEC_LOG-ot (változásdetektálás)
 2. Eldönti: inkrementális frissítés vagy teljes újragenerálás
 3. Generálja a specifikációt (FR-XXX, NFR-XXX, US-XXX, Q-XXX)
-4. Menti a `SPEC_OUTPUT.md` fájlt
+4. Menti a `workflow/01_project_info/_system/SPEC_OUTPUT.md` fájlt
 5. Frissíti a memóriát
 
 ### ba-document-agent
 
 **Lépései:**
-1. Beolvassa a SPEC_OUTPUT.md-t, a válaszfájlokat és a memóriát
+1. Beolvassa a `workflow/01_project_info/_system/SPEC_OUTPUT.md` fájlt, a válaszfájlokat és a memóriát
 2. Generálja az összes kötelező dokumentumot Mermaid diagramokkal
 3. Menti a `workflow/03_ba_docs/` mappába
 4. Frissíti a memóriát

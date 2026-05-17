@@ -67,7 +67,7 @@ flowchart LR
 2. Kiszámolja az összes bemeneti fájl SHA-256 ujjlenyomatát (`sha_map`)
 3. Eldönti a stratégiát: **Inkrementális** (csak az újakat olvassa) vagy **Teljes** újragenerálás
 4. Generálja vagy frissíti a specifikációt (FR-XXX, NFR-XXX, US-XXX, Q-XXX) — minden elemhez `[Forrás: filename · sha8]` forrásjelzéssel
-5. Menti: `workflow/01_project_info/SPEC_OUTPUT.md`
+5. Menti: `workflow/01_project_info/_system/SPEC_OUTPUT.md`
 6. Frissíti a memóriát batch művelettel (`SPEC_LOG` UPSERT + többi STORE)
 7. Visszajelent a `ba-orchestrator`-nak
 
@@ -86,7 +86,7 @@ flowchart LR
 **Szerepe:** A BA dokumentum-generáló specialist. A kész specifikációból, a megválaszolt kérdésekből és a memória kontextusából előállítja a teljes, átadható BA dokumentációs csomagot. Minden folyamathoz kötelező Mermaid diagramot készít.
 
 **Lépései:**
-1. Beolvassa a SPEC_OUTPUT.md-t, a válasz fájlokat és a memóriát (binárisokat kihagyva)
+1. Beolvassa a `workflow/01_project_info/_system/SPEC_OUTPUT.md` fájlt, a válasz fájlokat és a memóriát (binárisokat kihagyva)
 2. Generálja az összes kötelező dokumentumot Mermaid diagramokkal
 3. Megőrzi a `[Forrás: filename · sha8]` forrásjelzéseket — a Traceability Matrix kap egy `Forrás fájl` oszlopot
 4. Menti: `workflow/03_ba_docs/`
@@ -151,6 +151,6 @@ flowchart LR
 |---|---|---|---|---|
 | `ba-orchestrator` | AI agent | workflow mappák állapota | – | `memory-agent`, `spec-builder-agent`, `ba-document-agent` |
 | `convert_all` | Python csomag | workflow nyers fájlok | `*_converted.md`, `CONVERSION_LOG.md` | – |
-| `spec-builder-agent` | AI agent | `01_project_info/` nyers fájlok | `SPEC_OUTPUT.md` | `memory-agent` |
-| `ba-document-agent` | AI agent | `SPEC_OUTPUT.md`, `02_answers/` | `03_ba_docs/` | `memory-agent` |
+| `spec-builder-agent` | AI agent | `01_project_info/` nyers fájlok | `_system/SPEC_OUTPUT.md` | `memory-agent` |
+| `ba-document-agent` | AI agent | `_system/SPEC_OUTPUT.md`, `02_answers/` | `03_ba_docs/` | `memory-agent` |
 | `memory-agent` | AI agent | `.claude/memory/` | `.claude/memory/` | – |

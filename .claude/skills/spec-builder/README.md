@@ -13,7 +13,7 @@ A skill felszínre hozza az ellentmondásokat, feltételezéseket és hiányoss�
 ## Inkrementális Specifikáció Frissítés
 
 A `/spec-builder` intelligensen kezeli a projekt változásait:
-- **Csak az újdonságokat olvassa be**: Ha új fájlt adsz a projekthez, vagy módosítasz egy meglévőt, a rendszer felismeri ezt, és csak a változásokat "fésüli bele" a meglévő `SPEC_OUTPUT.md`-be.
+- **Csak az újdonságokat olvassa be**: Ha új fájlt adsz a projekthez, vagy módosítasz egy meglévőt, a rendszer felismeri ezt, és csak a változásokat "fésüli bele" a meglévő `_system/SPEC_OUTPUT.md`-be.
 - **Megőrzi a folytonosságot**: Az inkrementális frissítés során a korábban kiosztott követelmény-ID-k (`FR-XXX`) és kérdés-ID-k (`Q-XXX`) nem változnak meg, az újak pedig folytatólagos sorszámot kapnak.
 - **Token-takarékos**: Nem kell minden alkalommal a teljes bemeneti anyagot újra feldolgozni, ami jelentősen csökkenti a futási időt és a költségeket.
 
@@ -51,7 +51,7 @@ Több dokumentum esetén azokat **egyetlen összefüggő modellbe** olvasztja ö
 
 ## Mit állít elő?
 
-Az eredményt a `workflow/01_project_info/SPEC_OUTPUT.md` fájlba menti. Ez az egyetlen fájl, amely az összes alábbi részt tartalmazza:
+Az eredményt a `workflow/01_project_info/_system/SPEC_OUTPUT.md` fájlba menti. Ez az egyetlen fájl, amely az összes alábbi részt tartalmazza:
 
 ### 1. Strukturált specifikáció
 Normalizált, implementációra kész követelmények egyedi azonosítókkal:

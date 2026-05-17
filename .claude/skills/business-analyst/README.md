@@ -15,7 +15,7 @@ A skill senior enterprise BA tudással rendelkezik: érti az Agile, Scrum és SA
 ## Hogyan használd?
 
 Győződj meg arról, hogy:
-- `workflow/01_project_info/SPEC_OUTPUT.md` létezik (a `/spec-builder` elkészítette)
+- `workflow/01_project_info/_system/SPEC_OUTPUT.md` létezik (a `/spec-builder` elkészítette)
 - `workflow/02_answers/` tartalmaz válasz fájlokat (minden Q-XXX kérdés megválaszolva)
 
 Majd a Claude panelen írd be:

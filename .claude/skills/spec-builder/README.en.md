@@ -13,7 +13,7 @@ The skill brings to the surface contradictions, assumptions, and gaps that would
 ## Incremental Specification Update
 
 `/spec-builder` intelligently handles project changes:
-- **Reads only what's new**: If you add a new file to the project or modify an existing one, the system recognizes this and only "merges" the changes into the existing `SPEC_OUTPUT.md`.
+- **Reads only what's new**: If you add a new file to the project or modify an existing one, the system recognizes this and only "merges" the changes into the existing `_system/SPEC_OUTPUT.md`.
 - **Preserves continuity**: During an incremental update, previously assigned requirement IDs (`FR-XXX`) and question IDs (`Q-XXX`) do not change, and new ones are given sequential numbers.
 - **Token-saving**: The entire input material doesn't need to be reprocessed every time, which significantly reduces runtime and costs.
 
@@ -51,7 +51,7 @@ In the case of multiple documents, it merges them into **a single cohesive model
 
 ## What does it produce?
 
-The result is saved in the `workflow/01_project_info/SPEC_OUTPUT.md` file. This single file contains all the following parts:
+The result is saved in the `workflow/01_project_info/_system/SPEC_OUTPUT.md` file. This single file contains all the following parts:
 
 ### 1. Structured Specification
 Normalized, implementation-ready requirements with unique identifiers:

@@ -20,7 +20,7 @@ The single entry point is `/ba` — the system automatically decides what action
 | State | Action |
 |---|---|
 | No input files | Reports that there is nothing to process |
-| Input exists, no spec | Runs spec-builder, saves `SPEC_OUTPUT.md` |
+| Input exists, no spec | Runs spec-builder, saves `_system/SPEC_OUTPUT.md` |
 | Spec exists, 02_answers/ empty | Lists unanswered questions, stops |
 | Spec exists, partial answers | Reports exactly which Q-XXX questions are missing, stops |
 | All questions answered | Automatically generates BA documents |
@@ -33,7 +33,7 @@ This includes every message shown to the user in the CLI, terminal, or VS Code c
 
 | File type | Language |
 |---|---|
-| `SPEC_OUTPUT.md` | 🇭🇺 Hungarian |
+| `workflow/01_project_info/_system/SPEC_OUTPUT.md` | 🇭🇺 Hungarian |
 | All files in `workflow/03_ba_docs/` | 🇭🇺 Hungarian |
 | All files in `.claude/memory/` | 🇬🇧 English (strictly — no Hungarian content) |
 | `README.md` files | 🇭🇺 Hungarian |
@@ -47,10 +47,10 @@ This includes every message shown to the user in the CLI, terminal, or VS Code c
 
 - The `/ba` skill never asks the user what to do — it decides based on workflow state
 - Do not modify input files in `workflow/01_project_info/` or `workflow/02_answers/`
-- `SPEC_OUTPUT.md` is a system-generated file — do not edit it manually
+- `workflow/01_project_info/_system/SPEC_OUTPUT.md` is a system-generated file — do not edit it manually
 - Every generated document must have unique IDs, traceability, and Mermaid diagrams where applicable
 - BA documents may only be generated when all Q-XXX questions are answered
-- Every element in SPEC_OUTPUT.md with a unique ID must carry a `[Forrás: filename · sha8]` source annotation (first 8 chars of the original file's SHA-256). See `.claude/rules/traceability.md`.
+- Every element in `workflow/01_project_info/_system/SPEC_OUTPUT.md` with a unique ID must carry a `[Forrás: filename · sha8]` source annotation (first 8 chars of the original file's SHA-256). See `.claude/rules/traceability.md`.
 
 ## Memory Access Rule
 
@@ -68,7 +68,7 @@ and notifies the user if action is required (e.g. answers are missing).
 
 | Folder | Contents |
 |---|---|
-| `workflow/01_project_info/` | Raw input materials + `SPEC_OUTPUT.md` |
+| `workflow/01_project_info/` | Raw input materials + `_system/` generated spec outputs |
 | `workflow/02_answers/` | Answers from stakeholders (Q-XXX format) |
 | `workflow/03_ba_docs/` | Generated BA documents |
 | `.claude/memory/` | Persistent project memory (decisions, Q-XXX archive, etc.) |

@@ -67,7 +67,7 @@ flowchart LR
 2. Computes SHA-256 fingerprints for all input files (`sha_map`)
 3. Decides strategy: **Incremental** (reads only new/changed files) or **Full** rebuild
 4. Generates or updates the specification (FR-XXX, NFR-XXX, US-XXX, Q-XXX) — every element receives a `[Forrás: filename · sha8]` source annotation
-5. Saves: `workflow/01_project_info/SPEC_OUTPUT.md`
+5. Saves: `workflow/01_project_info/_system/SPEC_OUTPUT.md`
 6. Updates memory via batch operation (`SPEC_LOG` UPSERT + other STOREs)
 7. Reports back to `ba-orchestrator`
 
@@ -86,7 +86,7 @@ flowchart LR
 **Role:** BA document generation specialist. Produces the complete, deliverable BA documentation package from the finished specification, answered questions, and memory context. Creates mandatory Mermaid diagrams for every process.
 
 **Steps:**
-1. Reads SPEC_OUTPUT.md, answer files, and memory (excluding binaries)
+1. Reads `workflow/01_project_info/_system/SPEC_OUTPUT.md`, answer files, and memory (excluding binaries)
 2. Generates all mandatory documents with Mermaid diagrams
 3. Preserves `[Forrás: filename · sha8]` source annotations — Traceability Matrix gains a `Forrás fájl` column
 4. Saves: `workflow/03_ba_docs/`
@@ -151,6 +151,6 @@ flowchart LR
 |---|---|---|---|---|
 | `ba-orchestrator` | AI agent | workflow folder states | – | `memory-agent`, `spec-builder-agent`, `ba-document-agent` |
 | `convert_all` | Python package | raw workflow files | `*_converted.md`, `CONVERSION_LOG.md` | – |
-| `spec-builder-agent` | AI agent | `01_project_info/` raw files | `SPEC_OUTPUT.md` | `memory-agent` |
-| `ba-document-agent` | AI agent | `SPEC_OUTPUT.md`, `02_answers/` | `03_ba_docs/` | `memory-agent` |
+| `spec-builder-agent` | AI agent | `01_project_info/` raw files | `_system/SPEC_OUTPUT.md` | `memory-agent` |
+| `ba-document-agent` | AI agent | `_system/SPEC_OUTPUT.md`, `02_answers/` | `03_ba_docs/` | `memory-agent` |
 | `memory-agent` | AI agent | `.claude/memory/` | `.claude/memory/` | – |

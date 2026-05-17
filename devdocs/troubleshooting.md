@@ -16,7 +16,7 @@
               Tegyél be projektanyagot, majd /ba
    └─ NEM ↓
 
-3. Van-e SPEC_OUTPUT.md a mappában?
+3. Van-e `workflow/01_project_info/_system/SPEC_OUTPUT.md` a mappában?
    └─ NEM → A spec-builder-agent fog futni.
              Ha nem fut: ellenőrizd a 4. pontot.
    └─ IGEN ↓
@@ -73,7 +73,7 @@
 ## 4. SPEC_OUTPUT.md generálódott, de hiányos
 
 ```
-1. Van-e SPEC_DIFF.md a workflow/01_project_info/ mappában?
+1. Van-e `SPEC_DIFF.md` a `workflow/01_project_info/_system/` mappában?
    └─ IGEN → Ellenőrizd: hány elemet talált újnak, módosítottnak, töröltnek.
    └─ NEM → A spec-builder régebbi verzió volt. Futtasd: /ba
 
@@ -169,4 +169,4 @@
 | WARN státusz PDF-nél | Scanned PDF — OCR nélkül nem olvasható |
 | Q-XXX még unanswered | Ellenőrizd: szerepel-e `Q-XXX:` prefix a válaszban? |
 | Stop hook nem jelez | `cp .claude/settings.json.example .claude/settings.json` |
-| Üres BA dokumentum | Ellenőrizd a SPEC_OUTPUT.md tartalmát; hiányzik-e valamely forrás? |
+| Üres BA dokumentum | Ellenőrizd a `workflow/01_project_info/_system/SPEC_OUTPUT.md` tartalmát; hiányzik-e valamely forrás? |

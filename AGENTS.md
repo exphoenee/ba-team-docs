@@ -59,7 +59,7 @@ Never writes spec content or BA documents itself.
 | State detected | Action |
 |---|---|
 | No input files | Reports: nothing to process |
-| No SPEC_OUTPUT.md | Dispatches `spec-builder-agent` |
+| No `_system/SPEC_OUTPUT.md` | Dispatches `spec-builder-agent` |
 | Open Q-XXX, no answers | Reports: waiting for answers |
 | Unanswered Q-XXX | Reports: lists missing answers, stops |
 | All Q-XXX answered | Dispatches `ba-document-agent` |
@@ -75,7 +75,7 @@ Supports **incremental building** via `SPEC_LOG.md` fingerprints to save tokens.
 Every generated element (FR-XXX, NFR-XXX, US-XXX, Q-XXX, A-XXX, contradictions) receives a
 **source annotation** `[Forrás: filename · sha8]` referencing the original input file's SHA-256.
 
-**Output:** `workflow/01_project_info/SPEC_OUTPUT.md`
+**Output:** `workflow/01_project_info/_system/SPEC_OUTPUT.md`
 
 **Memory stored:** PROJECT_CONTEXT · STAKEHOLDERS · RISKS · SPEC_LOG
 
@@ -162,7 +162,7 @@ Each skill is a thin dispatcher — it delegates all work to an agent or a Pytho
 ```mermaid
 flowchart LR
     A["01_project_info/\nRaw materials"] -->|"/ba"| B{ba-orchestrator\nstate?}
-    B -->|"📋 No spec"| C["spec-builder-agent\n-> SPEC_OUTPUT.md\n+ SPEC_DIFF.md\n+ memory STORE"]
+    B -->|"📋 No spec"| C["spec-builder-agent\n-> _system/SPEC_OUTPUT.md\n+ _system/SPEC_DIFF.md\n+ memory STORE"]
     C --> D["Annotation\nvalidation"]
     D --> E["Wait for\nanswers in 02_answers/"]
     E -->|"/ba"| B

@@ -15,7 +15,7 @@ The skill possesses senior enterprise BA knowledge: it understands Agile, Scrum,
 ## How to use it?
 
 Make sure that:
-- `workflow/01_project_info/SPEC_OUTPUT.md` exists (prepared by `/spec-builder`)
+- `workflow/01_project_info/_system/SPEC_OUTPUT.md` exists (prepared by `/spec-builder`)
 - `workflow/02_answers/` contains answer files (all Q-XXX questions answered)
 
 Then, in the Claude panel, type:
