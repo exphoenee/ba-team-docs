@@ -55,8 +55,6 @@ document.addEventListener('DOMContentLoaded', () => {
         'agents': './.claude/agents/README.md',
         'skill-ba': './.claude/skills/ba/README.md',
         'skill-ba-en': './.claude/skills/ba/README.en.md',
-        'skill-ba-workflow': './.claude/skills/ba-workflow/README.md',
-        'skill-ba-workflow-en': './.claude/skills/ba-workflow/README.en.md',
         'skill-business-analyst': './.claude/skills/business-analyst/README.md',
         'skill-business-analyst-en': './.claude/skills/business-analyst/README.en.md',
         'skill-convert': './.claude/skills/convert/README.md',
@@ -70,7 +68,8 @@ document.addEventListener('DOMContentLoaded', () => {
         'skill-spec-builder': './.claude/skills/spec-builder/README.md',
         'skill-spec-builder-en': './.claude/skills/spec-builder/README.en.md',
         'handbook': './Handbook.md',
-        'improvements': './improvements.md'
+        'improvements': './devdocs/improvements.md',
+        'troubleshooting': './devdocs/troubleshooting.md'
     };
 
     const skillsToggle = document.getElementById('skillsToggle');
