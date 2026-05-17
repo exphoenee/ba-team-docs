@@ -67,6 +67,19 @@ Minden elem jelölve van:
 - `[EXPLICIT]` – szó szerint szerepelt a bemeneti anyagban
 - `[INFERRED]` – erősen következik belőle, de nincs kimondva
 
+**Minden elemhez forrásjelzés kerül** — melyik fájlból, annak melyik verziójából született:
+
+```
+| FR-001 | A rendszer naplóz minden belépési kísérletet | `meeting.docx · e3b0c442` |
+```
+
+```
+Q-003 [DATA] Milyen formátumban tárolódnak az ügyféladatok?
+`[Forrás: requirements.xlsx · fa3b1c9a]`
+```
+
+A `e3b0c442` az eredeti fájl SHA-256 ujjlenyomatának első 8 karaktere. Ezzel visszakereshető, hogy pontosan melyik dokumentum-verzióból származik az adott elem. A teljes SHA-256 a `SPEC_LOG`-ban van eltárolva.
+
 ### 2. Ellentmondások és konfliktusok
 Ha az anyagokban egymásnak ellentmondó állítások szerepelnek, a skill ezt jelzi és megmutatja a konfliktust — nem oldja fel csendben.
 
@@ -81,7 +94,7 @@ Minden hiányzó, tisztázatlan vagy megválaszolatlan pont Q-XXX azonosítót k
 | `INTEGRATION` | Külső rendszer kapcsolat tisztázatlan |
 | `PRIORITY` | Fontossági sorrend nincs meghatározva |
 
-A kérdések végén kötelező összefoglaló tábla jelenik meg — ezt a `/ba-workflow` ügynök gépileg olvassa:
+A kérdések végén kötelező összefoglaló tábla jelenik meg — ezt a `/ba` orchestrator gépileg olvassa:
 
 ```
 | ID    | Kategória      | Státusz    |
@@ -112,5 +125,5 @@ Megmutatja, hogy az ügyfél melyik kijelentéséből melyik követelmény szül
 | Skill | Kapcsolat |
 |---|---|
 | `/ba` | Automatikusan hívja, ha nincs még spec |
-| `/ba-workflow` | A spec alapján ellenőrzi a válaszokat |
+| `/ba` | A spec alapján ellenőrzi a válaszokat és generálja a BA dokumentumokat |
 | `/business-analyst` | A specifikáció alapján generálja a BA dokumentumokat |

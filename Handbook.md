@@ -66,7 +66,7 @@ A BA Team a nyers projektanyagokból – e-mailek, meetingjegyzetek, Word dokume
 
 ## 2. Az AI csapat bemutatása
 
-A BA Team öt specializált AI ügynökből áll. Ezeket nem közvetlenül te hívod – automatikusan aktiválódnak a megfelelő pillanatban.
+A BA Team négy specializált AI ügynökből és egy Python konverziós csomagból áll. Az ügynököket nem közvetlenül te hívod – automatikusan aktiválódnak a megfelelő pillanatban.
 
 ```mermaid
 flowchart TD
@@ -74,26 +74,25 @@ flowchart TD
     Orchestrator["1. ba-orchestrator\nkoordinátor"]
     SpecBuilder["2. spec-builder-agent\nspecifikáció-készítő"]
     BADoc["3. ba-document-agent\ndokumentum-generáló"]
-    FileConverter["4. file-converter-agent\nfájlkonverter"]
-    MemoryAgent["5. memory-agent\n.claude/memory/ mappa"]
+    ConvertPkg["convert_all\nPython csomag\n(0 AI token)"]
+    MemoryAgent["4. memory-agent\n.claude/memory/ mappa"]
 
     User --> Orchestrator
     Orchestrator --> SpecBuilder
     Orchestrator --> BADoc
-    Orchestrator --> FileConverter
+    Orchestrator --> ConvertPkg
     SpecBuilder --> MemoryAgent
     BADoc --> MemoryAgent
-    FileConverter --> MemoryAgent
     Orchestrator --> MemoryAgent
 ```
 
-| # | Ügynök neve | Szerepe |
-|---|---|---|
-| 1 | **ba-orchestrator** | Koordinátor: felméri az állapotot, eldönti mi a következő lépés |
-| 2 | **spec-builder-agent** | Specifikáció-készítő: nyers anyagokból strukturált spec-et farag |
-| 3 | **ba-document-agent** | Dokumentum-generáló: BRD, User Story-k, folyamatábrák |
-| 4 | **file-converter-agent** | Fájlkonverter: Office/Outlook fájlok → Markdown |
-| 5 | **memory-agent** | Memóriakezelő: döntések, stakeholderek, szakkifejezések tárolása |
+| # | Komponens | Típus | Szerepe |
+|---|---|---|---|
+| 1 | **ba-orchestrator** | AI ügynök | Koordinátor: felméri az állapotot, eldönti mi a következő lépés |
+| 2 | **spec-builder-agent** | AI ügynök | Specifikáció-készítő: nyers anyagokból strukturált spec-et farag |
+| 3 | **ba-document-agent** | AI ügynök | Dokumentum-generáló: BRD, User Story-k, folyamatábrák |
+| – | **convert_all** | Python csomag | Fájlkonverzió: Office/Outlook fájlok → Markdown (0 AI token) |
+| 4 | **memory-agent** | AI ügynök | Memóriakezelő: döntések, stakeholderek, szakkifejezések tárolása |
 
 ---
 
@@ -234,7 +233,8 @@ A BA dokumentumok Markdown formátumban készülnek és Mermaid folyamatábráka
 | Excel (.xlsx) | Python + openpyxl |
 | Outlook (.msg) | Python + extract-msg |
 | E-mail (.eml) | Python stdlib (külön csomag nem kell) |
-| PDF | Nem kell – Claude natívan olvassa |
+| PDF (.pdf) | Python + markitdown[pdf] |
+| PowerPoint (.pptx) | Python + markitdown + python-pptx |
 
 **Python telepítése:**
 
@@ -249,12 +249,12 @@ brew install python
 
 **Python könyvtárak telepítése:**
 ```
-pip install "markitdown[docx]" openpyxl extract-msg
+pip install "markitdown[docx,pdf]" openpyxl extract-msg python-pptx
 ```
 
 **Ellenőrzés:**
 ```
-pip show markitdown openpyxl extract-msg
+pip show markitdown openpyxl extract-msg python-pptx
 ```
 
 ---
@@ -333,7 +333,7 @@ projekt-neve/
 | `RESOLVED_QUESTIONS.md` | Megválaszolt kérdések archívuma |
 | `DOMAIN_GLOSSARY.md` | Projektspecifikus szakkifejezések |
 | `RISKS.md` | Kockázatok és feltételezések |
-| `conversion_log.md` | Konvertált fájlok nyilvántartása |
+| `CONVERSION_LOG.md` | Konvertált fájlok nyilvántartása |
 
 ---
 
@@ -406,6 +406,19 @@ A `spec-builder-agent` a nyers anyagokból strukturált specifikációt készít
 - **User Story-k (US-XXX)**: Felhasználói igények agile formátumban
 - **Feltételezések (A-XXX)**: Amire a spec épít, de nincs kimondva
 - **Nyitott kérdések (Q-XXX)**: Amit még az ügyféltől kell megtudni
+
+**Forrás-traceability**
+
+Minden generált elem tartalmaz egy forrásjelzést, amely megmutatja, melyik bemeneti fájlból és annak melyik verziójából született:
+
+```
+| FR-001 | A rendszer naplóz minden belépési kísérletet | `meeting.docx · e3b0c442` |
+
+Q-003 [DATA] Milyen formátumban tárolódnak az ügyféladatok?
+`[Forrás: requirements.xlsx · fa3b1c9a]`
+```
+
+Az `e3b0c442` az eredeti fájl SHA-256 ujjlenyomatának első 8 karaktere. Ha a forrás fájl megváltozik és újra futtatod a spec-buildert, a megváltozott elemek új SHA-t kapnak — így látható, mikor frissültek. A teljes SHA-256 a `SPEC_LOG`-ban van eltárolva.
 
 **Inkrementális frissítés**
 
@@ -653,7 +666,7 @@ A memória fájlok kizárólag bővülhetnek – az AI soha nem töröl belőlü
 
 ### Mikor szükséges?
 
-Ha Office vagy Outlook fájlokat másoltál a workflow mappákba:
+Ha Office, Outlook vagy egyéb fájlokat másoltál a workflow mappákba:
 
 | Fájltípus | Szükséges konverzió? |
 |---|---|
@@ -661,7 +674,9 @@ Ha Office vagy Outlook fájlokat másoltál a workflow mappákba:
 | `.xlsx` / `.xls` | Igen |
 | `.msg` (Outlook) | Igen |
 | `.eml` (e-mail) | Igen |
-| `.pdf` | Nem – Claude natívan olvassa |
+| `.pdf` | Igen |
+| `.pptx` / `.ppt` (PowerPoint) | Igen |
+| `.png` / `.jpg` / `.jpeg` / `.bmp` / `.webp` (képek) | Igen – AI alapú feldolgozás |
 | `.md` / `.txt` | Nem – már feldolgozható |
 
 ### Hogyan működik?
@@ -670,14 +685,48 @@ Ha Office vagy Outlook fájlokat másoltál a workflow mappákba:
 /convert
 ```
 
-A rendszer:
-1. Beolvassa a konverziós naplót (mely fájlok változtak)
-2. SHA-256 ujjlenyomattal ellenőrzi a változásokat
+A rendszer egy **Python csomagot** futtat — nem AI agentet — így **egyetlen LLM tokent sem használ el**:
+
+1. Gyorsellenőrzés méret + módosítási dátum alapján (azonnali kihagyás ha nem változott)
+2. SHA-256 ujjlenyomat ellenőrzés (pontos összehasonlítás csak szükség esetén)
 3. **Csak az új vagy megváltozott fájlokat** konvertálja
 4. Létrehozza a `[fájlnév]_converted.md` fájlt
-5. Frissíti a konverziós naplót
+5. Frissíti a konverziós naplót (`.claude/memory/CONVERSION_LOG.md`)
 
 **Fontos:** Az eredeti fájlokat soha nem módosítja.
+
+### Képfeldolgozás (PNG, JPG, JPEG, BMP, WEBP)
+
+A képfájlok feldolgozása **AI-alapú** — a rendszer értelmezi a kép vizuális tartalmát, és Markdown leírást készít belőle. A konverzió két módban tud futni:
+
+| Feltétel | Módszer |
+|---|---|
+| `ANTHROPIC_API_KEY` be van állítva | Python ImageConverter a Claude API-n keresztül (automatikusan naplózott) |
+| Nincs API kulcs | `/convert` skill agent-módban, a Claude Read eszközével dolgozza fel |
+
+A generált leírás tartalmaz:
+- A kép vizuális tartalmának összefoglalása (mi látható, mi a célja)
+- Felismert szöveg, ha van a képen
+- Diagram / struktúra elemzése, ha releváns (pl. folyamatábra, képernyőkép)
+- BA-szempontból releváns megfigyelések
+
+> **API kulcs nélkül is működik** — a `/convert` parancs az agent-módot automatikusan aktiválja, ha nincs beállítva API kulcs.
+
+### Tartalom-veszteség figyelmeztetések (WARN státusz)
+
+A konverziós rendszer automatikusan figyelmeztet, ha az output gyanúsan kicsi:
+
+| Feltétel | Lehetséges ok |
+|---|---|
+| Output < 200 bájt | Üres fájl, beolvasott (scanned) PDF, sérült forrás |
+| Output < input 5%-a | PDF szöveges tartalom nélkül, jelszóval védett fájl, kép-alapú tartalom |
+
+Ha `WARN` státuszt látsz a konverziós riportban:
+1. Nyisd meg a `_converted.md` fájlt és ellenőrizd a tartalmát
+2. Ha valóban üres vagy csonka: a forrás fájl valószínűleg **szkennelt képet** tartalmaz, nem géppel olvasható szöveget
+3. PDF esetén: másolj szövegeket kézzel a markdown fájlba, vagy kérd az ügyfelet szöveges PDF-ben
+
+> **Megjegyzés:** Scanned PDF-ek (beszkennelt iratok) szövege nem kinyerhető automatikusan — OCR (optikai karakterfelismerés) szükséges, amelyet a rendszer jelenleg nem végez.
 
 ### Automatikus konverzió
 
@@ -773,6 +822,28 @@ A rendszer minden Claude válasz után automatikusan ellenőrzi a workflow álla
 | Spec kész, válaszok hiányoznak | `❓ Spec elkészült. Válaszokat várok a 02_answers/ mappában.` |
 | Válaszok megvannak, dokumentum nincs | `✅ Válaszok megtalálhatók. BA dokumentumok generálásához futtasd: /ba` |
 
+### Az automatikus értesítés aktiválása (Stop hook)
+
+Az értesítések egy **Stop hook** segítségével működnek, amelyet a `.claude/settings.json` fájlban kell konfigurálni.
+
+**Ellenőrzés:** Ha a `.claude/settings.json` fájl nem létezik vagy üres, az értesítések nem működnek.
+
+**Aktiválás:**
+
+1. Nyisd meg a projektet VS Code-ban
+2. Másold a hook konfigurációját:
+   ```
+   cp .claude/settings.json.example .claude/settings.json
+   ```
+   *Vagy Windows PowerShell-ben:*
+   ```powershell
+   Copy-Item .claude\settings.json.example .claude\settings.json
+   ```
+3. Ha a `.claude/settings.json` már létezik, ellenőrizd, hogy tartalmaz-e `"hooks"` szekciót.
+4. Ha nem, nyisd meg a `.claude/settings.json.example` fájlt, és másold bele a `"hooks"` részt.
+
+> **Megjegyzés:** A `.claude/settings.json` fájl projektenként egyedi és nincs a sablon repository-ban — minden BA kolléga maga konfigurálja.
+
 ---
 
 ## 14. Háttérben futó ügynökök
@@ -808,12 +879,20 @@ A fő koordinátor. Felméri a workflow állapotát és irányítja a többi üg
 3. Menti a `workflow/03_ba_docs/` mappába
 4. Frissíti a memóriát
 
-### file-converter-agent
+### convert_all Python csomag
+
+A fájlkonverziót **nem AI agent**, hanem a `.claude/scripts/convert_all` Python csomag végzi. Ez azt jelenti, hogy a konverzió **0 LLM tokent** használ el.
 
 **Teljesítmény-optimalizálások:**
-- Ultra-gyors előszűrés: méret és módosítási dátum alapján
-- SHA-256 ujjlenyomat ellenőrzés: csak ténylegesen megváltozott fájlok
-- Batch mód: az összes változást egyetlen lépésben menti
+- Ultra-gyors előszűrés: méret és módosítási dátum alapján (SHA-256 számítás nélkül)
+- SHA-256 ujjlenyomat ellenőrzés: pontos összehasonlítás csak ha a stat eltér
+- Output SHA-256 ellenőrzés: a konvertált `_converted.md` fájl fingerprintjét is naplózza — ha valaki kézzel szerkesztette, `MODIFIED` státusszal jelzi (nem írja felül)
+- Törölt output automatikus újragenerálása: ha a forrás nem változott, de a `_converted.md` törölték, automatikusan újra konvertálja
+- Moduláris felépítés: minden formátumhoz külön konverter osztály
+
+**Kimenet státuszok:** `SUCCESS` (konvertálva), `SKIP` (változatlan), `MODIFIED` (output kézzel szerkesztve), `FAIL` (hiányzó függőség)
+
+**Futtatás:** `python .claude/scripts/run_convert.py --scope all`
 
 ### memory-agent
 
@@ -871,8 +950,8 @@ Mert valamelyik Q-XXX kérdés még megválaszolatlan. Ez szándékos – az aud
 **Lehet törölni a memóriából?**
 Nem automatikusan – a memória fájlok csak bővülnek. Manuálisan szerkesztheted a `.claude/memory/` mappában lévő Markdown fájlokat.
 
-**Mi a különbség a `/ba` és a `/ba-workflow` között?**
-A `/ba` az újabb, fejlettebb verzió: memóriakezeléssel, subagent alapú futtatással és teljes állapotfelismeréssel. A `/ba-workflow` a régebbi verzió, visszafelé kompatibilitás miatt maradt meg – új projektekhez mindig a `/ba` parancsot használd.
+**Van más parancs a BA workflow futtatásához, nem csak a `/ba`?**
+A `/ba` az egyetlen belépési pont a teljes munkafolyamathoz. Speciális esetekben használhatók a direktebb parancsok: `/spec-builder` (csak spec-generálás), `/business-analyst` (csak dokumentum-generálás), `/convert` (csak fájlkonverzió).
 
 **Több projekthez is használhatom?**
 Igen – minden projekthez hozz létre egy külön repository másolatot a sablonból. A memória fájlok projektenként külön tárolódnak.

@@ -67,6 +67,19 @@ Every item is marked:
 - `[EXPLICIT]` – appeared literally in the input material
 - `[INFERRED]` – strongly follows from it, but is not explicitly stated
 
+**Every element receives a source annotation** — showing which file and which version it came from:
+
+```
+| FR-001 | The system logs every login attempt | `meeting.docx · e3b0c442` |
+```
+
+```
+Q-003 [DATA] What format should customer data be stored in?
+`[Forrás: requirements.xlsx · fa3b1c9a]`
+```
+
+`e3b0c442` is the first 8 characters of the original file's SHA-256 fingerprint. This makes it traceable exactly which document version each element originated from. The full SHA-256 is stored in `SPEC_LOG`.
+
 ### 2. Contradictions and Conflicts
 If there are contradictory statements in the materials, the skill indicates this and shows the conflict — it does not resolve it quietly.
 
@@ -81,7 +94,7 @@ Every missing, unclear, or unanswered point receives a Q-XXX identifier and is c
 | `INTEGRATION` | External system connection is unclear |
 | `PRIORITY` | Order of importance is not determined |
 
-At the end of the questions, a mandatory summary table appears — this is read programmatically by the `/ba-workflow` agent:
+At the end of the questions, a mandatory summary table appears — this is read programmatically by the `/ba` orchestrator:
 
 ```
 | ID    | Category       | Status     |
@@ -112,5 +125,5 @@ Shows which requirement was born from which client statement.
 | Skill | Relationship |
 |---|---|
 | `/ba` | Calls it automatically if no spec exists yet |
-| `/ba-workflow` | Checks answers based on the spec |
+| `/ba` | Checks answers and generates BA documents based on the spec |
 | `/business-analyst` | Generates BA documents based on the specification |

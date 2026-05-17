@@ -22,6 +22,8 @@ Memory exists in the form of files in the `.claude/memory/` folder. Other skills
 | `RESOLVED_QUESTIONS.md` | Archive of answered Q-XXX questions |
 | `DOMAIN_GLOSSARY.md` | Project-specific technical terms |
 | `RISKS.md` | Identified risks and assumptions |
+| `SPEC_LOG.md` | SHA-256 fingerprints of input files and generated IDs (managed by spec-builder) |
+| `CONVERSION_LOG.md` | Registry of converted files with SHA-256 (written by the convert_all Python package) |
 
 ---
 

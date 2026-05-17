@@ -1,4 +1,4 @@
-# BA Team – Be the Boss of a 5-member AI Team!
+# BA Team – Be the Boss of a 4-member AI Team!
 
 [Magyar változat](README.md) | [Handbook](HANDBOOK.md) *(Hungarian)*
 
@@ -169,7 +169,9 @@ BA documents are created in Markdown format and include Mermaid process flows. T
 | Excel (.xlsx) | Python + openpyxl |
 | Outlook (.msg) | Python + extract-msg |
 | Email (.eml) | Python stdlib (no extra package needed) |
-| PDF | Nothing needed – Claude reads natively |
+| PDF (.pdf) | Python + markitdown[pdf] |
+| PowerPoint (.pptx) | Python + markitdown + python-pptx |
+| Images (.png, .jpg, .bmp, .webp) | AI-based – no Python library needed |
 
 **7a. Install Python**
 
@@ -185,7 +187,7 @@ brew install python
 **7b. Install Python Libraries**
 
 ```
-pip install "markitdown[docx]" openpyxl extract-msg
+pip install "markitdown[docx,pdf]" openpyxl extract-msg python-pptx
 ```
 
 **Verification:**

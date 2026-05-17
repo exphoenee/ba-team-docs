@@ -73,7 +73,7 @@ The following files are placed in the `workflow/03_ba_docs/` folder:
 | `BRD.md` | Business Requirements Document |
 | `User_Stories.md` | User Stories with Gherkin acceptance criteria |
 | `Process_Flows.md` | Flowcharts (Mermaid diagrams) |
-| `Traceability_Matrix.md` | Traceability matrix |
+| `Traceability_Matrix.md` | Traceability matrix (source file → requirement → user story) |
 | `RAID_Log.md` | Risks, Assumptions, Issues, Dependencies |
 | `Glossary.md` | Domain glossary |
 

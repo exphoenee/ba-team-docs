@@ -95,9 +95,11 @@ Respond, and Claude will continue the work accordingly.
 
 ## The Background Script
 
-The session-loader runs a PowerShell (Windows) or Bash (macOS/Linux) script in the background:
-- Windows: `.claude/scripts/session-loader.ps1`
-- macOS/Linux: `.claude/scripts/session-loader.sh`
+The session-loader runs the platform-independent Python script:
+
+```bash
+python .claude/scripts/session_loader.py
+```
 
 The script examines the files in the workflow folders and reads project data from the memory files. It modifies nothing — it only reads.
 

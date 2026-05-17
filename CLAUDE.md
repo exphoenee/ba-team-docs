@@ -50,6 +50,7 @@ This includes every message shown to the user in the CLI, terminal, or VS Code c
 - `SPEC_OUTPUT.md` is a system-generated file — do not edit it manually
 - Every generated document must have unique IDs, traceability, and Mermaid diagrams where applicable
 - BA documents may only be generated when all Q-XXX questions are answered
+- Every element in SPEC_OUTPUT.md with a unique ID must carry a `[Forrás: filename · sha8]` source annotation (first 8 chars of the original file's SHA-256). See `.claude/rules/traceability.md`.
 
 ## Memory Access Rule
 
@@ -71,7 +72,22 @@ and notifies the user if action is required (e.g. answers are missing).
 | `workflow/02_answers/` | Answers from stakeholders (Q-XXX format) |
 | `workflow/03_ba_docs/` | Generated BA documents |
 | `.claude/memory/` | Persistent project memory (decisions, Q-XXX archive, etc.) |
-| `.claude/agents/` | Specialist agents (ba-orchestrator, spec-builder-agent, ba-document-agent, file-converter-agent, memory-agent) |
+| `.claude/agents/` | Specialist agents (ba-orchestrator, spec-builder-agent, ba-document-agent, memory-agent) |
 | `.claude/skills/` | User-facing entry points (slash commands — thin dispatchers) |
-| `.claude/scripts/` | session-loader scripts (PowerShell + Bash) |
+| `.claude/scripts/` | **Shared** scripts and packages used by multiple skills or agents |
+| `.claude/references/` | **Shared** reference files (templates, formats) used by multiple skills or agents |
+| `.claude/references/memory/` | Empty-state templates for all `.claude/memory/` files — source of truth for `reset_project.py` and `memory-agent` |
 | `.claude/rules/` | Persistent Claude rules (language, behaviour) |
+
+### Skill-level resource folders
+
+Each skill may contain its own `scripts/` and `references/` subfolders for resources
+that belong exclusively to that skill:
+
+| Path pattern | Contents |
+|---|---|
+| `.claude/skills/<skill>/scripts/` | Scripts used only by this skill |
+| `.claude/skills/<skill>/references/` | Templates and reference files used only by this skill |
+
+**Rule:** if a script or reference file is used by more than one skill or agent,
+it must live in `.claude/scripts/` or `.claude/references/` respectively — not inside a skill folder.

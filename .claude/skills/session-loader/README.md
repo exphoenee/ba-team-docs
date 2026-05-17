@@ -95,9 +95,11 @@ Válaszolj, és a Claude ennek megfelelően folytatja a munkát.
 
 ## A háttérben futó szkript
 
-A session-loader egy PowerShell (Windows) vagy Bash (macOS/Linux) szkriptet futtat a háttérben:
-- Windows: `.claude/scripts/session-loader.ps1`
-- macOS/Linux: `.claude/scripts/session-loader.sh`
+A session-loader a platform-független Python szkriptet futtatja:
+
+```bash
+python .claude/scripts/session_loader.py
+```
 
 A szkript a workflow mappák fájljait vizsgálja és a memória fájlokból olvassa ki a projekt adatokat. Nem módosít semmit — kizárólag olvas.
 

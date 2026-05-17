@@ -21,16 +21,17 @@ flowchart LR
     S2 --> A2[spec-builder-agent]
     S3 --> A3[ba-document-agent]
     S4 --> A4[memory-agent]
-    S5 --> A5[file-converter-agent]
+    S5 -->|"python run_convert.py"| PY[convert_all package]
 
-    A1 --> A5
+    A1 -->|"python run_convert.py"| PY
     A1 --> A4
     A1 --> A2
     A1 --> A3
     A2 --> A4
     A3 --> A4
-    A5 --> A4
 ```
+
+> File conversion is **not an AI agent** — the `convert_all` Python package handles it with 0 LLM tokens.
 
 ---
 
@@ -41,10 +42,11 @@ flowchart LR
 **Role:** The main coordinator. Assesses the current state of the workflow and delegates work to the appropriate specialist agent. It does not write specifications or generate BA documents itself.
 
 **Steps:**
-1. Loads memory (`memory-agent` targeted QUERY - relevant files only)
-2. Assesses workflow state (checks if conversion is needed via Glob pre-filtering)
-3. Dispatches `spec-builder-agent` OR `ba-document-agent`
-4. Reports back to the user
+1. Runs the `convert_all` Python package if needed (0 AI tokens)
+2. Loads memory (`memory-agent` targeted QUERY — relevant files only)
+3. Assesses workflow state
+4. Dispatches `spec-builder-agent` OR `ba-document-agent`
+5. Reports back to the user
 
 **When it's called:** Dispatched by the `/ba` skill.
 
@@ -62,15 +64,18 @@ flowchart LR
 
 **Steps:**
 1. Reads `SPEC_LOG` to detect changes
-2. Decides strategy: **Incremental** (reads only new/changed files) or **Full** rebuild
-3. Generates or updates the specification (FR-XXX, NFR-XXX, US-XXX, Q-XXX)
-4. Saves: `workflow/01_project_info/SPEC_OUTPUT.md`
-5. Updates memory via batch operation (`SPEC_LOG` UPSERT + other STOREs)
-6. Reports back to `ba-orchestrator`
+2. Computes SHA-256 fingerprints for all input files (`sha_map`)
+3. Decides strategy: **Incremental** (reads only new/changed files) or **Full** rebuild
+4. Generates or updates the specification (FR-XXX, NFR-XXX, US-XXX, Q-XXX) — every element receives a `[Forrás: filename · sha8]` source annotation
+5. Saves: `workflow/01_project_info/SPEC_OUTPUT.md`
+6. Updates memory via batch operation (`SPEC_LOG` UPSERT + other STOREs)
+7. Reports back to `ba-orchestrator`
 
 **When it's called:** Dispatched by `ba-orchestrator` (if SPEC_OUTPUT.md is missing or needs update) or directly by the `/spec-builder` skill.
 
 **Memory stored:** PROJECT_CONTEXT · STAKEHOLDERS · RISKS
+
+**Source traceability:** every generated element includes `[Forrás: filename · sha8]` — the original input file name and first 8 characters of its SHA-256. Makes it traceable exactly which document version each requirement originated from.
 
 ---
 
@@ -83,9 +88,10 @@ flowchart LR
 **Steps:**
 1. Reads SPEC_OUTPUT.md, answer files, and memory (excluding binaries)
 2. Generates all mandatory documents with Mermaid diagrams
-3. Saves: `workflow/03_ba_docs/`
-4. Saves learnings to memory (`memory-agent` BATCH STORE)
-5. Reports back to `ba-orchestrator`
+3. Preserves `[Forrás: filename · sha8]` source annotations — Traceability Matrix gains a `Forrás fájl` column
+4. Saves: `workflow/03_ba_docs/`
+5. Saves learnings to memory (`memory-agent` BATCH STORE)
+6. Reports back to `ba-orchestrator`
 
 **When it's called:** Dispatched by `ba-orchestrator` (if all Q-XXX are answered) or directly by the `/business-analyst` skill.
 
@@ -104,43 +110,6 @@ flowchart LR
 
 ---
 
-## `file-converter-agent`
-
-**File:** [file-converter-agent.md](file-converter-agent.md)
-
-**Role:** File converter. Converts non-markdown files in `workflow/01_project_info/` and `workflow/02_answers/` folders into Markdown format. Only converts changed files based on SHA-256 fingerprints.
-
-**Steps:**
-1. Retrieves conversion log from `memory-agent` (`LOAD_CONVERSION_LOG`)
-2. Assesses folders and identifies files to be converted
-3. Ultra-fast check (skips matches based on Size/Modified stats)
-4. Fast check based on fingerprints — converts only differing ones
-5. Verifies tool availability (Python, markitdown, openpyxl, extract-msg)
-6. Converts files (`[filename]_converted.md`)
-7. Updates conversion log via batch operation (`MEMORY_BATCH UPSERT`)
-8. Reports back: what succeeded, what was skipped, what requires manual intervention
-
-**When it's called:**
-
-| Caller | Scope (folder) |
-|---|---|
-| `/convert` skill | `01_project_info/` + `02_answers/` |
-| `ba-orchestrator` | `01_project_info/` + `02_answers/` |
-| `/spec-builder` skill | `01_project_info/` only |
-| `/business-analyst` skill | `02_answers/` only |
-
-**Tools:**
-
-| File Type | Tool |
-|---|---|
-| `.docx` / `.doc` | Python + markitdown[docx] |
-| `.xlsx` / `.xls` | Python + openpyxl |
-| `.msg` | Python + extract-msg |
-| `.eml` | Python stdlib (no extra package needed) |
-| `.pdf` | Natively readable – no conversion needed |
-
----
-
 ## `memory-agent`
 
 **File:** [memory-agent.md](memory-agent.md)
@@ -155,7 +124,7 @@ flowchart LR
 | `LOAD` | Reads all BA memory files, creates missing ones from templates |
 | `STORE` | Appends a new entry to the specified file (never deletes old ones) |
 | `QUERY` | Targeted query from one or more memory files |
-| `LOAD_CONVERSION_LOG` | Returns conversion log content (with Size/Modified/SHA-256 data) |
+| `LOAD_CONVERSION_LOG` | Returns conversion log content |
 | `MEMORY_UPSERT` | Updates or adds a row in the conversion log |
 
 **Memory Files:**
@@ -168,20 +137,20 @@ flowchart LR
 | `RESOLVED_QUESTIONS.md` | Answered Q-XXX archive |
 | `DOMAIN_GLOSSARY.md` | Domain terminology |
 | `RISKS.md` | Risks and assumptions |
-| `conversion_log.md` | SHA-256 fingerprints of converted files |
+| `CONVERSION_LOG.md` | Converted file registry (9 columns, includes output SHA-256 verification) |
 
-**When it's called:** Called by every other agent — `ba-orchestrator`, `spec-builder-agent`, `ba-document-agent`, `file-converter-agent`. Also dispatched directly by the `/memory-handler` skill.
+**When it's called:** Called by every other agent — `ba-orchestrator`, `spec-builder-agent`, `ba-document-agent`. Also dispatched directly by the `/memory-handler` skill.
 
-**Important Rule:** Only `memory-agent` can write and read in the `.claude/memory/` folder. All other agents request memory operations through this agent.
+**Important Rule:** Only `memory-agent` can write and read in the `.claude/memory/` folder (exception: the `convert_all` Python package writes `CONVERSION_LOG.md` directly).
 
 ---
 
 ## Summary of Responsibilities
 
-| Agent | Reads | Writes | Calls |
-|---|---|---|---|
-| `ba-orchestrator` | workflow folder states | – | `file-converter-agent`, `memory-agent`, `spec-builder-agent`, `ba-document-agent` |
-| `file-converter-agent` | raw workflow files | `*_converted.md` | `memory-agent` |
-| `spec-builder-agent` | `01_project_info/` raw files | `SPEC_OUTPUT.md` | `memory-agent` |
-| `ba-document-agent` | `SPEC_OUTPUT.md`, `02_answers/` | `03_ba_docs/` | `memory-agent` |
-| `memory-agent` | `.claude/memory/` | `.claude/memory/` | – |
+| Component | Type | Reads | Writes | Calls |
+|---|---|---|---|---|
+| `ba-orchestrator` | AI agent | workflow folder states | – | `memory-agent`, `spec-builder-agent`, `ba-document-agent` |
+| `convert_all` | Python package | raw workflow files | `*_converted.md`, `CONVERSION_LOG.md` | – |
+| `spec-builder-agent` | AI agent | `01_project_info/` raw files | `SPEC_OUTPUT.md` | `memory-agent` |
+| `ba-document-agent` | AI agent | `SPEC_OUTPUT.md`, `02_answers/` | `03_ba_docs/` | `memory-agent` |
+| `memory-agent` | AI agent | `.claude/memory/` | `.claude/memory/` | – |

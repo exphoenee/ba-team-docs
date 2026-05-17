@@ -22,6 +22,8 @@ A memória fájlok formájában él a `.claude/memory/` mappában. Más skillek 
 | `RESOLVED_QUESTIONS.md` | Megválaszolt Q-XXX kérdések archívuma |
 | `DOMAIN_GLOSSARY.md` | Projektspecifikus szakkifejezések |
 | `RISKS.md` | Azonosított kockázatok és feltételezések |
+| `SPEC_LOG.md` | Bemeneti fájlok SHA-256 ujjlenyomata és generált ID-k (spec-builder kezeli) |
+| `CONVERSION_LOG.md` | Konvertált fájlok nyilvántartása SHA-256-tal (convert_all Python csomag írja) |
 
 ---
 

@@ -1,4 +1,4 @@
-# BA Team – Legyél Te a főnök egy 5 fős AI csapat felett!
+# BA Team – Legyél Te a főnök egy 4 fős AI csapat felett!
 
 [English version](README.en.md) | [Kézikönyv](HANDBOOK.md)
 
@@ -169,7 +169,9 @@ A BA dokumentumok Markdown formátumban készülnek, és tartalmaznak Mermaid fo
 | Excel (.xlsx) | Python + openpyxl |
 | Outlook (.msg) | Python + extract-msg |
 | E-mail (.eml) | Python stdlib (külön csomag nem kell) |
-| PDF | Nem kell semmi – Claude natívan olvassa |
+| PDF (.pdf) | Python + markitdown[pdf] *(Claude natívan is olvassa, konverzió opcionális)* |
+| PowerPoint (.pptx) | Python + markitdown + python-pptx |
+| Képek (.png, .jpg, .bmp, .webp) | AI alapú – nincs szükség Python könyvtárra |
 
 **7a. Python telepítése**
 
@@ -185,7 +187,7 @@ brew install python
 **7b. Python könyvtárak telepítése**
 
 ```
-pip install "markitdown[docx]" openpyxl extract-msg
+pip install "markitdown[docx,pdf]" openpyxl extract-msg python-pptx
 ```
 
 **Ellenőrzés:**

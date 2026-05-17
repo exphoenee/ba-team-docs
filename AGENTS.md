@@ -13,9 +13,8 @@ flowchart TD
     ORC --> MA1["memory-agent\n(targeted QUERY)"]
     MA1 --> ORC
 
-    ORC -->|"Non-md files found"| FCA["file-converter-agent"]
-    FCA --> MA4["memory-agent\n(LOAD_LOG + BATCH UPSERT)"]
-    FCA --> ORC
+    ORC -->|"Non-md files found"| PY["convert_all\n(Python package, 0 AI tokens)"]
+    PY --> ORC
 
     ORC -->|"No spec"| SBA["spec-builder-agent"]
     ORC -->|"All Q-XXX answered"| BDA["ba-document-agent"]
@@ -35,7 +34,7 @@ flowchart TD
         RQ[RESOLVED_QUESTIONS.md]
         DG[DOMAIN_GLOSSARY.md]
         RK[RISKS.md]
-        CL[conversion_log.md]
+        CL[CONVERSION_LOG.md]
     end
 
     MA2 --> memory
@@ -73,6 +72,8 @@ Never writes spec content or BA documents itself.
 
 Reads processable files in `workflow/01_project_info/`, generates or updates the structured specification.
 Supports **incremental building** via `SPEC_LOG.md` fingerprints to save tokens.
+Every generated element (FR-XXX, NFR-XXX, US-XXX, Q-XXX, A-XXX, contradictions) receives a
+**source annotation** `[Forrás: filename · sha8]` referencing the original input file's SHA-256.
 
 **Output:** `workflow/01_project_info/SPEC_OUTPUT.md`
 
@@ -84,6 +85,8 @@ Supports **incremental building** via `SPEC_LOG.md` fingerprints to save tokens.
 
 Generates the full BA document set from spec, answers, and memory context.
 Mermaid diagrams are mandatory for every process described. All output in Hungarian.
+Preserves `[Forrás: filename · sha8]` source annotations from SPEC_OUTPUT.md throughout all documents.
+`Traceability_Matrix.md` includes a `Forrás fájl` column: source file → requirement → user story.
 
 **Output:** `workflow/03_ba_docs/` — BRD, User Stories, Process Flows, Traceability Matrix, RAID Log, Glossary
 
@@ -91,14 +94,13 @@ Mermaid diagrams are mandatory for every process described. All output in Hungar
 
 ---
 
-### `file-converter-agent`
+### `convert_all` Python package
 
-**File:** [.claude/agents/file-converter-agent.md](.claude/agents/file-converter-agent.md)
+**Entry point:** `python .claude/scripts/run_convert.py --scope [all|inputs|answers]`
 
-Converts non-markdown files in `workflow/01_project_info/` and `workflow/02_answers/` to `.md` format.
-Uses stat-based fast-skip (Size/Modified) and SHA-256 fingerprinting via `memory-agent` to skip files that have not changed.
-After conversion, updates the log via `memory-agent` (MEMORY_BATCH UPSERT).
-Provides installation instructions if a required tool is missing.
+Converts non-markdown files in `workflow/01_project_info/` and/or `workflow/02_answers/` to `.md` format.
+Not an AI agent — runs as a deterministic Python process. Uses zero LLM tokens.
+Stat-based fast-skip (Size/Modified), SHA-256 fingerprint check, writes `CONVERSION_LOG.md` directly.
 
 | Format | Tool |
 |---|---|
@@ -106,11 +108,12 @@ Provides installation instructions if a required tool is missing.
 | `.xlsx` / `.xls` | Python + openpyxl |
 | `.msg` | Python + extract-msg |
 | `.eml` | Python stdlib (no extra packages) |
-| `.pdf` | Natively readable — no conversion |
+| `.pdf` | Python + markitdown[pdf] |
+| `.pptx` / `.ppt` | Python + markitdown + python-pptx |
 
 **Output:** `[source-folder]/[filename]_converted.md`
 
-**Memory:** reads and writes `conversion_log.md` exclusively via `memory-agent`
+**Log:** writes `.claude/memory/CONVERSION_LOG.md` directly (9-column table, includes output SHA-256)
 
 ---
 
@@ -129,38 +132,43 @@ Every other agent must delegate memory operations here — no agent accesses `.c
 | `LOAD` | Read all BA memory files; create missing ones from templates |
 | `STORE` | Append a new entry to a BA memory file |
 | `QUERY` | Return targeted content from one or more memory files |
-| `LOAD_CONVERSION_LOG` | Return conversion_log.md (includes Size/Modified/SHA-256) |
-| `MEMORY_UPSERT` | Update or insert a row in conversion_log.md |
+| `LOAD_CONVERSION_LOG` | Return CONVERSION_LOG.md (includes Size/Modified/SHA-256) |
+| `MEMORY_UPSERT` | Update or insert a row in CONVERSION_LOG.md |
 
 ---
 
 ## Skills
 
 Skills live in `.claude/skills/`. They are invoked by the user via slash commands.
-Each skill is now a thin dispatcher — it delegates all work to an agent.
+Each skill is a thin dispatcher — it delegates all work to an agent or a Python script.
 
 | Skill | Dispatches | User guide |
 |---|---|---|
 | `/ba` | `ba-orchestrator` | [README](.claude/skills/ba/README.md) |
-| `/convert` | `file-converter-agent` | [README](.claude/skills/convert/README.md) |
+| `/convert` | `convert_all` Python package | [README](.claude/skills/convert/README.md) |
 | `/spec-builder` | `spec-builder-agent` | [README](.claude/skills/spec-builder/README.md) |
 | `/business-analyst` | `ba-document-agent` | [README](.claude/skills/business-analyst/README.md) |
 | `/memory-handler` | `memory-agent` | [README](.claude/skills/memory-handler/README.md) |
-| `/session-loader` | *(runs script, no agent)* | [README](.claude/skills/session-loader/README.md) |
+| `/session-loader` | `session_loader.py` Python script | [README](.claude/skills/session-loader/README.md) |
 | `/mermaid-diagrams` | *(inline, no agent)* | [README](.claude/skills/mermaid-diagrams/README.md) |
+
+> **Note:** `/ba` is the single recommended entry point for the full workflow.
+> See [CLAUDE.md](CLAUDE.md) for the authoritative workflow description and usage instructions.
 
 ---
 
-## Workflow Summary
+## Workflow State Machine
 
 ```mermaid
 flowchart LR
     A["01_project_info/\nRaw materials"] -->|"/ba"| B{ba-orchestrator\nstate?}
-    B -->|"📋 No spec"| C["spec-builder-agent\n→ SPEC_OUTPUT.md\n+ memory STORE"]
-    C --> D["⏳ Waiting for\nanswers in 02_answers/"]
-    D -->|"/ba"| B
-    B -->|"⛔ Missing Q-XXX"| E["Lists\nmissing answers"]
-    B -->|"✅ All ready"| F["ba-document-agent\n→ 03_ba_docs/\n+ memory STORE"]
+    B -->|"📋 No spec"| C["spec-builder-agent\n-> SPEC_OUTPUT.md\n+ SPEC_DIFF.md\n+ memory STORE"]
+    C --> D["Annotation\nvalidation"]
+    D --> E["Wait for\nanswers in 02_answers/"]
+    E -->|"/ba"| B
+    B -->|"Missing Q-XXX"| F["Lists\nmissing answers"]
+    B -->|"All ready"| G["ba-document-agent\n-> 03_ba_docs/\n+ memory STORE"]
+    B -->|"/ba --preview"| H["Preview report\n(no file writes)"]
 ```
 
 ---
@@ -183,3 +191,12 @@ Q-003: A fizetéseket a Stripe API kezeli, számlázást az ERP-be kell integrá
 ```
 
 > Note: Answer content is written in Hungarian, as Q-XXX answers are user-provided BA content.
+
+---
+
+## Related documentation
+
+- [CLAUDE.md](CLAUDE.md) — authoritative workflow instructions and language rules (single source of truth)
+- [HANDBOOK.md](HANDBOOK.md) — user-facing guide in Hungarian
+- [devdocs/troubleshooting.md](devdocs/troubleshooting.md) — debugging decision tree
+- [devdocs/improvements.md](devdocs/improvements.md) — known gaps and roadmap

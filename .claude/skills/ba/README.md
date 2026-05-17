@@ -73,7 +73,7 @@ A `workflow/03_ba_docs/` mappába az alábbi fájlok kerülnek:
 | `BRD.md` | Business Requirements Document |
 | `User_Stories.md` | User Story-k Gherkin elfogadási kritériumokkal |
 | `Process_Flows.md` | Folyamatábrák (Mermaid diagramok) |
-| `Traceability_Matrix.md` | Követhetőségi mátrix |
+| `Traceability_Matrix.md` | Követhetőségi mátrix (forrás fájl → követelmény → user story) |
 | `RAID_Log.md` | Kockázatok, feltételezések, függőségek |
 | `Glossary.md` | Domain szószedet |
 

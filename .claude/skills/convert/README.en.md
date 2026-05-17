@@ -4,7 +4,9 @@
 
 ## What is it for?
 
-The `/convert` command automatically transforms Office and Outlook files in the `workflow/01_project_info/` and `workflow/02_answers/` folders into Markdown format so that AI agents can process them.
+The `/convert` command automatically transforms Office, Outlook, and other files in the `workflow/01_project_info/` and `workflow/02_answers/` folders into Markdown format so that AI agents can process them.
+
+Conversion is handled by a **Python package** — not an AI agent — so it uses zero LLM tokens.
 
 ---
 
@@ -18,7 +20,9 @@ If you have copied files into the `workflow/01_project_info/` or `workflow/02_an
 | `.xlsx` / `.xls` (Excel) | Yes – Python + openpyxl required |
 | `.msg` (Outlook email) | Yes – Python + extract-msg required |
 | `.eml` (email file) | Yes – Python stdlib (no extra package needed) |
-| `.pdf` | No – Claude reads natively |
+| `.pdf` | Yes – Python + markitdown[pdf] required |
+| `.pptx` / `.ppt` (PowerPoint) | Yes – Python + markitdown + python-pptx |
+| `.png` / `.jpg` / `.jpeg` / `.bmp` / `.webp` (images) | Yes – AI-based processing (works without API key too) |
 | `.md` / `.txt` | No – already processable |
 
 ---
@@ -28,26 +32,25 @@ If you have copied files into the `workflow/01_project_info/` or `workflow/02_an
 1. Copy files to the `workflow/01_project_info/` folder
 2. In the Claude panel, type: `/convert`
 3. The system automatically:
-   - Examines which files require conversion
-   - Checks for required tools
+   - Examines which files require conversion (fast size + date check, then SHA-256)
    - Converts files into `[filename]_converted.md` format
-   - Reports what succeeded and what requires manual intervention
+   - Updates the conversion log (`.claude/memory/CONVERSION_LOG.md`)
+   - Reports what succeeded, was skipped, or failed
 4. Once conversion is complete: run the `/ba` command
 
 ---
 
 ## Installation Guide (if needed)
 
-If the agent indicates that a tool is missing:
+If the output contains `FAIL` lines indicating a missing tool:
 
 **Python** (for all conversions):
 - Windows: `winget install python`
 - Mac: `brew install python`
-- Details: [python.org/downloads](https://www.python.org/downloads/)
 
 **Python Libraries** (after installing Python):
 ```
-pip install "markitdown[docx]" openpyxl extract-msg
+pip install "markitdown[docx,pdf]" openpyxl extract-msg python-pptx
 ```
 
 ---
@@ -55,10 +58,26 @@ pip install "markitdown[docx]" openpyxl extract-msg
 ## What does it do exactly?
 
 - **Never modifies original files** — always creates a new `_converted.md` file
-- **Converts only changes** — recognizes unchanged files based on SHA-256 fingerprint and file metadata, saving time and tokens
-- **Does not convert PDF** — Claude can read it natively
-- **If a tool is missing**, it provides a detailed installation guide
+- **Converts only changes** — uses size + modified date fast-check, then SHA-256 fingerprint to skip unchanged files
+- **Output SHA-256 verification** — logs the fingerprint of each converted file; if someone manually edited a `_converted.md`, it receives `MODIFIED` status (edits are preserved, log is updated)
+- **Auto-reconverts deleted output** — if the source is unchanged but the `_converted.md` was deleted, it reconverts automatically
+- **If a tool is missing**, reports it as a `FAIL` line with installation instructions
 - After conversion, the `/ba` command processes all files
+
+### Image Processing (PNG, JPG, JPEG, BMP, WEBP)
+
+Images are converted using **AI** — the system interprets the image content and produces a Markdown description:
+
+| Condition | Method |
+|---|---|
+| `ANTHROPIC_API_KEY` is set | Python ImageConverter via Claude API (fast, automatically logged) |
+| No API key | `/convert` skill processes images in agent mode using the Claude Read tool |
+
+The generated description includes:
+- Visual content summary of the image
+- Recognized text (if any text is visible in the image)
+- Diagram / structure analysis (if applicable)
+- BA-relevant observations
 
 ---
 
@@ -80,6 +99,6 @@ The `/ba`, `/spec-builder`, and `/business-analyst` commands **automatically sta
 ```mermaid
 %%{init: {'flowchart': { 'nodeSpacing': 50, 'rankSpacing': 100 } }}%%
 flowchart TD
-    A["1. Copy files\nworkflow/01_project_info/ or workflow/02_answers/"] --> B["2. Run /convert\n.docx/.xlsx/.msg/.eml converted to _converted.md"]
+    A["1. Copy files\nworkflow/01_project_info/ or workflow/02_answers/"] --> B["2. Run /convert\n.docx/.xlsx/.msg/.eml/.pdf/.pptx → _converted.md"]
     B --> C["3. Run /ba\nClaude analyzes the materials"]
 ```
