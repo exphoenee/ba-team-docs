@@ -253,4 +253,41 @@ document.addEventListener('DOMContentLoaded', () => {
             if (currentAudio === audio) currentAudio = null;
         });
     });
+
+    var githubModal = document.getElementById('github-modal');
+    var githubBtn = document.getElementById('githubBtn');
+    var githubClose = document.getElementById('github-modal-close');
+    var githubBackdrop = document.getElementById('github-modal-backdrop');
+    var githubForm = document.getElementById('github-modal-form');
+
+    function openGithubModal() {
+        githubForm.reset();
+        var fsSuccess = githubModal.querySelector('[data-fs-success]');
+        if (fsSuccess) fsSuccess.style.display = 'none';
+        var fsError = githubModal.querySelector('[data-fs-error]');
+        if (fsError) fsError.style.display = 'none';
+        githubModal.classList.remove('modal-hidden');
+    }
+
+    function closeGithubModal() {
+        githubModal.classList.add('modal-hidden');
+    }
+
+    githubBtn.addEventListener('click', openGithubModal);
+    githubClose.addEventListener('click', closeGithubModal);
+    githubBackdrop.addEventListener('click', closeGithubModal);
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closeGithubModal();
+    });
+
+    githubForm.addEventListener('submit', function() {
+        closeGithubModal();
+    });
+
+    if (window.formspree) {
+        formspree('initForm', { formElement: '#github-modal-form', formId: 'xjgzokva' });
+    } else {
+        window.formspree = window.formspree || function() { (formspree.q = formspree.q || []).push(arguments); };
+        formspree('initForm', { formElement: '#github-modal-form', formId: 'xjgzokva' });
+    }
 });

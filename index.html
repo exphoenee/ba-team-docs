@@ -118,9 +118,9 @@
             <button class="mobile-menu" id="mobileMenu"><i class="fas fa-bars"></i></button>
             <div class="breadcrumb" id="breadcrumb">Home</div>
             <div class="top-actions">
-                <a href="https://github.com/exphoenee/ba-team" target="_blank" class="github-link">
+                <button id="githubBtn" class="github-link">
                     <i class="fab fa-github"></i> GitHub
-                </a>
+                </button>
             </div>
         </header>
         <div id="loader" class="loader-container">
@@ -130,9 +130,45 @@
             <!-- Content will be injected here -->
         </article>
         <footer class="main-footer">
-            <p>&copy; 2026 Viktor Bozzay. Minden jog fenntartva. -  version v%%VERSION%%</p>
+            <p>&copy; 2026 Viktor Bozzay. Minden jog fenntartva. -  version v1.1.0</p>
+            <a href="https://viktor.bozzay.online/" target="_blank" class="creator-link">Meet the Creator</a>
         </footer>
     </main>
 
+    <div id="github-modal" class="modal-hidden">
+        <div class="modal-backdrop" id="github-modal-backdrop"></div>
+        <div class="modal-dialog">
+            <div class="modal-dialog-header">
+                <h3>Hozzáférés kérése</h3>
+                <button class="modal-close" id="github-modal-close" type="button">&times;</button>
+            </div>
+            <div data-fs-success>
+                <p class="fs-success-title">Köszönöm az üzenetet!</p>
+                <p class="fs-success-msg">Visszajelzek hamarosan.</p>
+            </div>
+            <div data-fs-error></div>
+            <form id="github-modal-form">
+                <input type="hidden" name="_subject" value="BA-TEAM" />
+                <div class="modal-field">
+                    <label for="github-modal-name">Név</label>
+                    <input id="github-modal-name" type="text" name="name" required placeholder="Teljes név" data-fs-field />
+                    <span data-fs-error="name" class="fs-error-msg"></span>
+                </div>
+                <div class="modal-field">
+                    <label for="github-modal-email">E-mail</label>
+                    <input id="github-modal-email" type="email" name="email" required placeholder="e-mail címed" data-fs-field />
+                    <span data-fs-error="email" class="fs-error-msg"></span>
+                </div>
+                <div class="modal-field">
+                    <label for="github-modal-message">Üzenet</label>
+                    <textarea id="github-modal-message" name="message" required rows="5" placeholder="Miért szeretnéd elérni a BA Team-et?" data-fs-field></textarea>
+                    <span data-fs-error="message" class="fs-error-msg"></span>
+                </div>
+                <button type="submit" class="modal-submit" data-fs-submit-btn>Küldés</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/@formspree/ajax@1" defer></script>
 </body>
 </html>
