@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'skill-session-loader-en': './.claude/skills/session-loader/README.en.md',
         'skill-spec-builder': './.claude/skills/spec-builder/README.md',
         'skill-spec-builder-en': './.claude/skills/spec-builder/README.en.md',
-        'handbook': './Handbook.md',
+        'handbook': './HANDBOOK.md',
         'improvements': './devdocs/improvements.md',
         'troubleshooting': './devdocs/troubleshooting.md'
     };
