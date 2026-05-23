@@ -52,7 +52,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const routes = {
         'home': './README.md',
+        'home-en': './README.en.md',
         'agents': './.claude/agents/README.md',
+        'agents-en': './.claude/agents/README.en.md',
         'skill-ba': './.claude/skills/ba/README.md',
         'skill-ba-en': './.claude/skills/ba/README.en.md',
         'skill-business-analyst': './.claude/skills/business-analyst/README.md',
