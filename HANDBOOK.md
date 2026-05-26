@@ -28,11 +28,12 @@
     - [3.3 Python és fájlkonverziós könyvtárak (opcionális)](#33-python-és-fájlkonverziós-könyvtárak-opcionális)
     - [3.4 Első indítás ellenőrzése](#34-első-indítás-ellenőrzése)
   - [4. Mappa- és fájlstruktúra](#4-mappa--és-fájlstruktúra)
-    - [A három fő munkamappa](#a-három-fő-munkamappa)
+    - [Az öt fő munkamappa](#az-öt-fő-munkamappa)
     - [A memória mappa](#a-memória-mappa)
   - [5. Parancsok és skillek](#5-parancsok-és-skillek)
   - [6. A teljes munkafolyamat](#6-a-teljes-munkafolyamat)
     - [A munkafolyamat áttekintése](#a-munkafolyamat-áttekintése)
+    - [6.0 Discovery fázis (/discovery)](#60-discovery-fázis-discovery)
     - [6.1 Új projekt indítása](#61-új-projekt-indítása)
     - [6.2 Specifikáció készítése (/spec-builder)](#62-specifikáció-készítése-spec-builder)
     - [6.3 Kérdések megválaszolása](#63-kérdések-megválaszolása)
@@ -67,6 +68,7 @@
     - [Az automatikus értesítés aktiválása (Stop hook)](#az-automatikus-értesítés-aktiválása-stop-hook)
   - [14. Háttérben futó ügynökök](#14-háttérben-futó-ügynökök)
     - [ba-orchestrator](#ba-orchestrator)
+    - [discovery-agent](#discovery-agent)
     - [spec-builder-agent](#spec-builder-agent)
     - [ba-document-agent](#ba-document-agent)
     - [convert\_all Python csomag](#convert_all-python-csomag)
@@ -106,21 +108,24 @@ A BA Team a nyers projektanyagokból – e-mailek, meetingjegyzetek, Word dokume
 
 ## 2. Az AI csapat bemutatása
 
-A BA Team négy specializált AI ügynökből és egy Python konverziós csomagból áll. Az ügynököket nem közvetlenül te hívod – automatikusan aktiválódnak a megfelelő pillanatban.
+A BA Team öt specializált AI ügynökből és egy Python konverziós csomagból áll. Az ügynököket nem közvetlenül te hívod – automatikusan aktiválódnak a megfelelő pillanatban.
 
 ```mermaid
 flowchart TD
-    User["TE (Vezető)\n/ba – egyetlen parancs"]
+    User["TE (Vezető)\n/ba · /discovery"]
     Orchestrator["1. ba-orchestrator\nkoordinátor"]
-    SpecBuilder["2. spec-builder-agent\nspecifikáció-készítő"]
-    BADoc["3. ba-document-agent\ndokumentum-generáló"]
+    Discovery["2. discovery-agent\nDiscovery fázis"]
+    SpecBuilder["3. spec-builder-agent\nspecifikáció-készítő"]
+    BADoc["4. ba-document-agent\ndokumentum-generáló"]
     ConvertPkg["convert_all\nPython csomag\n(0 AI token)"]
-    MemoryAgent["4. memory-agent\n.claude/memory/ mappa"]
+    MemoryAgent["5. memory-agent\n.claude/memory/ mappa"]
 
     User --> Orchestrator
+    Orchestrator --> Discovery
     Orchestrator --> SpecBuilder
     Orchestrator --> BADoc
     Orchestrator --> ConvertPkg
+    Discovery --> MemoryAgent
     SpecBuilder --> MemoryAgent
     BADoc --> MemoryAgent
     Orchestrator --> MemoryAgent
@@ -129,10 +134,11 @@ flowchart TD
 | # | Komponens | Típus | Szerepe |
 |---|---|---|---|
 | 1 | **ba-orchestrator** | AI ügynök | Koordinátor: felméri az állapotot, eldönti mi a következő lépés |
-| 2 | **spec-builder-agent** | AI ügynök | Specifikáció-készítő: nyers anyagokból strukturált spec-et farag |
-| 3 | **ba-document-agent** | AI ügynök | Dokumentum-generáló: BRD, User Story-k, folyamatábrák |
+| 2 | **discovery-agent** | AI ügynök | Discovery specialista: korai anyagokból BC.md + kérdéslista, soha nem blokkolja a generálást |
+| 3 | **spec-builder-agent** | AI ügynök | Specifikáció-készítő: nyers anyagokból strukturált spec-et farag |
+| 4 | **ba-document-agent** | AI ügynök | Dokumentum-generáló: BRD, User Story-k, folyamatábrák |
 | – | **convert_all** | Python csomag | Fájlkonverzió: Office/Outlook fájlok → Markdown (0 AI token) |
-| 4 | **memory-agent** | AI ügynök | Memóriakezelő: döntések, stakeholderek, szakkifejezések tárolása |
+| 5 | **memory-agent** | AI ügynök | Memóriakezelő: döntések, stakeholderek, szakkifejezések tárolása |
 
 ---
 
@@ -182,6 +188,7 @@ Ha a szkript helyett kézzel szeretnéd elvégezni a telepítést:
 |---|---|---|
 | GitHub fiók | A projekt tárolása és letöltése | Ingyenes |
 | Visual Studio Code | Szövegszerkesztő | Ingyenes |
+| TypeDown App | Markdown szerkesztés és megjelenítés | Ingyenes |
 | Claude fiók | Az AI motor | Ingyenes / Pro |
 
 ---
@@ -330,8 +337,10 @@ Ha a rendszer megfelelően települt, az alábbi üzenetet látod:
 projekt-neve/
 ├── workflow/
 │   ├── 01_project_info/     ← IDE másold be az ügyfél anyagait
-│   ├── 02_answers/          ← IDE kerülnek a kérdésekre adott válaszok
-│   └── 03_ba_docs/          ← IDE kerülnek a kész BA dokumentumok
+│   ├── 02_discovery/        ← Discovery-agent kimenetei (BC.md, RAID)
+│   ├── 03_answers/          ← IDE kerülnek a kérdésekre adott válaszok
+│   ├── 04_decisions/        ← FORCED döntések (SDEC-XXX fájlok)
+│   └── 05_ba_docs/          ← IDE kerülnek a kész BA dokumentumok
 ├── .claude/
 │   ├── agents/              ← Specializált ügynökök (nem kell szerkeszteni)
 │   ├── skills/              ← Parancsok (slash commands)
@@ -343,7 +352,7 @@ projekt-neve/
 └── README.md                ← Leírás
 ```
 
-### A három fő munkamappa
+### Az öt fő munkamappa
 
 **`workflow/01_project_info/`** – Ide kerül minden ügyfél-anyag:
 - Meetingjegyzetek (.md, .txt, .docx)
@@ -352,12 +361,23 @@ projekt-neve/
 - Word dokumentumok (.docx)
 - PDF fájlok (natívan olvasható, nem kell konverzió)
 
-**`workflow/02_answers/`** – Ide írod a válaszokat a rendszer kérdéseire:
+**`workflow/02_discovery/`** – Discovery-agent kimenetei:
+- `BC.md` – Business Concept (probléma, célok, scope, MVP)
+- `Discovery_RAID.md` – korai kockázatok és feltételezések
+- `Discovery_Questions.md` – meeting-ready kérdéslista (discovery fázisból)
+- `_system/DISCOVERY_OUTPUT.md` – strukturált közbenső spec
+
+**`workflow/03_answers/`** – Ide írod a válaszokat a rendszer kérdéseire:
 - `answers.md` fájl (ajánlott)
 - Bármilyen más szöveges fájl
 - Office fájlok (automatikusan konvertálódnak)
 
-**`workflow/03_ba_docs/`** – A kész dokumentumok helye:
+**`workflow/04_decisions/`** – FORCED döntések helye:
+- `SDEC-XXX_nev.md` fájlok (YAML frontmatter)
+- Stakeholderek és PM itt írhatnak felül bármely specifikációs elemet
+- A sablont lásd: `.claude/references/decision_template.md`
+
+**`workflow/05_ba_docs/`** – A kész dokumentumok helye:
 - Ide generálja a rendszer az összes BA dokumentumot
 - Soha ne szerkeszd kézzel – a `/ba` újragenerálja
 
@@ -382,6 +402,7 @@ projekt-neve/
 | Parancs | Mire való |
 |---|---|
 | `/ba` | **Fő parancs** – automatikus következő lépés végrehajtása |
+| `/discovery` | Discovery fázis indítása – korai anyagokból BC + kérdéslista generálása |
 | `/session-loader` | Munkamenet betöltése, projekt állapot mutatása |
 | `/spec-builder` | Csak a specifikáció készítése (haladó használat) |
 | `/business-analyst` | Csak a BA dokumentumok generálása (haladó használat) |
@@ -389,7 +410,16 @@ projekt-neve/
 | `/mermaid-diagrams` | Önálló diagram készítése |
 | `/memory-handler` | Projekt memória megtekintése |
 
-> **A legtöbb esetben csak a `/ba` parancsra van szükséged.** A többi parancs haladó felhasználóknak és speciális esetekre való.
+> **A legtöbb esetben csak a `/ba` vagy `/discovery` parancsra van szükséged.** A többi parancs haladó felhasználóknak és speciális esetekre való.
+
+**`/ba` vs. `/discovery` — mikor melyiket?**
+
+| | `/discovery` | `/ba` |
+|---|---|---|
+| Fázis | Discovery — korai, hiányos anyag | Analysis — részletes, strukturált anyag |
+| Blokkolás Q-XXX-en? | **Nem** — mindig generál | **Igen** — megáll, ha Q-XXX nyitott |
+| Kimenet mélysége | Magas szintű: probléma, célok, scope, MVP | Részletes: FR/NFR/US követelmények |
+| Dokumentumok | BC.md, Discovery_RAID.md, Discovery_Questions.md | BRD, User_Stories, Process_Flows, RAID_Log, Glossary, Traceability_Matrix |
 
 ---
 
@@ -397,15 +427,102 @@ projekt-neve/
 
 ### A munkafolyamat áttekintése
 
+A BA Team két fő útvonalat támogat: a **Discovery fázist** (`/discovery`) és az **Analysis fázist** (`/ba`). A legtöbb projekt a Discovery fázissal indul.
+
+**Teljes tipikus munkafolyamat:**
+
+```mermaid
+flowchart TD
+    D1["1. Handover / meeting anyag\n→ workflow/01_project_info/"] -->|"/discovery"| D2
+    D2["2. discovery-agent\nBC.md + Discovery_Questions.md\nworkflow/02_discovery/"] -->|"Meeting → válaszok\n→ 03_answers/"| D3
+    D3["/discovery újra\nBC.md V2"] -->|"Discovery lezárva"| A1
+    A1["3. Bővített anyagok\n→ workflow/01_project_info/"] -->|"/ba"| A2
+    A2["4. spec-builder\nSPEC_OUTPUT.md + Q-XXX"] -->|"Válaszok\n→ 03_answers/"| A3
+    A3["5. /ba újra\nba-document-agent"] --> A4["workflow/05_ba_docs/\nBRD · User_Stories · ..."]
+    FORCED["FORCED döntések\n04_decisions/SDEC-XXX"] -->|"automatikusan detektálja"| A2
+```
+
+**Ha nincs Discovery fázis (már strukturált anyag van):**
+
 ```mermaid
 flowchart TD
     Step1["1. Anyagok bemásolása\nworkflow/01_project_info/"]
     Step2["2. /ba futtatása\nspec-builder → _system/SPEC_OUTPUT.md + Q-XXX"]
-    Step3["3. Válaszok beírása\nworkflow/02_answers/answers.md"]
-    Step4["4. /ba futtatása újra\nba-document-agent → 03_ba_docs/"]
+    Step2b["(opcionális) FORCED döntések\nworkflow/04_decisions/ → spec rebuild"]
+    Step3["3. Válaszok beírása\nworkflow/03_answers/answers.md"]
+    Step4["4. /ba futtatása újra\nba-document-agent → 05_ba_docs/"]
 
     Step1 --> Step2 --> Step3 --> Step4
+    Step2b -->|"automatikusan detektálja"| Step2
 ```
+
+---
+
+### 6.0 Discovery fázis (`/discovery`)
+
+A Discovery fázis a projekt legelején indul — amikor még nincs részletes specifikáció, csak sales handover, meeting jegyzetek vagy ügyfél emailek állnak rendelkezésre.
+
+**Mire való?**
+- Üzleti probléma, célok, scope, MVP összegyűjtése korai anyagokból
+- Strukturált kérdéslista a következő ügyfél meetingre
+- Business Concept (BC.md) draft dokumentum
+
+**Hogyan indul?**
+
+1. Másold be az anyagokat a `workflow/01_project_info/` mappába
+2. Futtasd: `/discovery`
+3. A `discovery-agent` legenerálja a Discovery csomagot a `workflow/02_discovery/` mappába
+
+**Ajánlott input sablonok:**
+
+| Sablon | Helye | Mire való |
+|---|---|---|
+| Sales → PM/BA Handover | `.claude/references/templates/handover_template.md` | Strukturált Sales átadás |
+| Discovery Meeting Notes | `.claude/references/templates/discovery_meeting_template.md` | Meeting lejegyzés |
+
+Másold ki a sablont, töltsd ki, majd tedd a `workflow/01_project_info/` mappába.
+
+**Discovery dokumentumkészlet (`workflow/02_discovery/`):**
+
+| Fájl | Tartalom |
+|---|---|
+| `BC.md` | Business Concept — fő Discovery deliverable (VÁZLAT fejléccel ha nyitott kérdések vannak) |
+| `Discovery_RAID.md` | Korai RAID — kockázatok, feltételezések, nyitott problémák |
+| `Discovery_Questions.md` | Meeting-ready kérdéslista tárgyalási sorrenddel |
+| `_system/DISCOVERY_OUTPUT.md` | Strukturált közbenső spec |
+
+**BC.md struktúra:**
+
+```
+1. Üzleti probléma és gyökérok     [Mermaid diagram kötelező]
+2. Üzleti célok                    [Mérhető eredménnyel]
+3. Megoldási scope                 [In scope / Out of scope, Mermaid diagram]
+4. MVP definíció                   [Must-have elemek]
+5. Feltételezések és kockázatok    [Korai RAID összefoglaló]
+6. Nyitott kérdések                [Q-XXX lista kategória szerint]
+7. Következő lépések
+```
+
+**Iteratív Discovery:**
+
+```
+1. /discovery → BC.md V1 + Discovery_Questions.md
+2. Meeting az ügyféllel → válaszok rögzítése → workflow/03_answers/
+3. /discovery újra → BC.md V2 (frissített, kevesebb nyitott kérdés)
+4. Discovery lezárva → /ba → teljes Analysis dokumentáció
+```
+
+**Discovery_Questions.md — meeting-ready kérdéslista:**
+
+A kérdések kategória szerint rendezve, javasolt tárgyalási sorrendben:
+
+| Kategória | Mikor kap ilyen jelzést |
+|---|---|
+| `[STAKEHOLDER]` | Döntéshozó ismeretlen, jóváhagyó személy nincs azonosítva |
+| `[SCOPE]` | Határ nem tiszta — mi van benne, mi nincs |
+| `[MVP]` | MVP definíció hiányos, must-have lista nem meghatározott |
+| `[FEASIBILITY]` | Megvalósíthatóság kérdéses — technikai vagy üzleti akadály lehetséges |
+| `[TECHNICAL]` | Technikai feltétel ismeretlen — rendszer, integráció, API |
 
 ---
 
@@ -480,12 +597,12 @@ A `/ba` addig nem generál BA dokumentumokat, amíg akár egyetlen Q-XXX kérdé
 | Q-002 | DATA        | Milyen adatmegőrzési idő szükséges? |
 | Q-005 | INTEGRATION | Melyik külső rendszer kezeli a fizetést? |
 
-Egészítsd ki a workflow/02_answers/ fájlokat, majd futtasd újra: /ba
+Egészítsd ki a workflow/03_answers/ fájlokat, majd futtasd újra: /ba
 ```
 
 **A válaszok formátuma**
 
-Hozz létre egy `answers.md` fájlt a `workflow/02_answers/` mappában:
+Hozz létre egy `answers.md` fájlt a `workflow/03_answers/` mappában:
 
 ```
 Q-001: A rendszer minden sikertelen belépési kísérletet naplóz;
@@ -521,7 +638,43 @@ Ha minden kérdés megválaszolt, futtasd újra:
 /ba
 ```
 
-A rendszer legenerálja a teljes dokumentációs csomagot a `workflow/03_ba_docs/` mappába.
+A rendszer legenerálja a teljes dokumentációs csomagot a `workflow/05_ba_docs/` mappába.
+
+---
+
+### 6.4b FORCED döntések (`04_decisions/`)
+
+Ha egy stakeholder vagy a PM felül szeretne írni egy spec-builder által levezetett követelményt — például jogszabályi változás, üzleti prioritás-váltás, vagy már megszületett stratégiai döntés miatt — ezt a `workflow/04_decisions/` mappában lévő `SDEC-XXX_nev.md` fájlokkal teheti meg.
+
+**Hogyan működik:**
+
+1. Hozz létre egy `SDEC-001_nev.md` fájlt a `workflow/04_decisions/` mappában (sablont lásd: `.claude/references/decision_template.md`)
+2. Töltsd ki a YAML frontmatter-t:
+
+```yaml
+---
+id: SDEC-001
+type: OVERRIDE          # OVERRIDE | ADDENDUM
+targets: [FR-012]       # melyik követelményt érinti
+forced: true
+decided_by: Product Owner
+date: 2024-03-15
+rationale: Jogszabályi változás miatt kötelező
+---
+
+Az új, felülírt követelmény szövege itt szerepel.
+```
+
+3. Futtasd: `/ba`
+
+A rendszer automatikusan észleli, hogy az SDEC fájl újabb, mint a spec — és újragenerálja a specifikációt a döntés beépítésével. Az érintett elem `[FORCED]` annotációt kap.
+
+| Döntés típus | Hatás |
+|---|---|
+| `OVERRIDE` | Felülírja a targetált ID(k) tartalmát |
+| `ADDENDUM` | Kiegészíti a targetált ID(k)-t, nem törli az eredetit |
+
+> **SDEC-XXX vs. DEC-XXX:** Az `SDEC-XXX` fájlok a `workflow/04_decisions/` mappában élnek és stakeholder döntéseket rögzítenek. A `DEC-XXX` azonosítók a `.claude/memory/DECISIONS.md`-ben élnek és az AI által belső munkamenet-döntéseket naplózzák.
 
 ---
 
@@ -562,12 +715,14 @@ Megmutatja:
        Megválaszolatlan kérdések: 2 db
          ❓ Q-003
          ❓ Q-007
-  [02] Válaszok:          1 fájl
-  [03] BA dokumentumok:   ÜRES
+  [02] Discovery:         ✅ BC.md, Discovery_RAID.md
+  [03] Válaszok:          1 fájl
+  [04] FORCED döntések:   ÜRES
+  [05] BA dokumentumok:   ÜRES
 
   JAVASOLT KÖVETKEZŐ LÉPÉS
   ⛔ 2 kérdés még megválaszolatlan.
-     → Egészítsd ki a workflow/02_answers/ fájlokat
+     → Egészítsd ki a workflow/03_answers/ fájlokat
      → Majd futtasd: /ba
 ============================================================
 ```
@@ -576,7 +731,26 @@ Megmutatja:
 
 ## 7. A generált dokumentumok
 
-### Kötelező dokumentumok
+### Discovery dokumentumok (`workflow/02_discovery/`)
+
+A `/discovery` parancs ezeket állítja elő:
+
+| Fájl | Megnevezés | Tartalom |
+|---|---|---|
+| `BC.md` | Business Concept | Üzleti probléma, célok, scope, MVP — VÁZLAT fejléccel ha nyitott kérdések vannak |
+| `Discovery_RAID.md` | Korai RAID | Kockázatok, feltételezések, nyitott issues (Discovery fázis) |
+| `Discovery_Questions.md` | Kérdéslista | Meeting-ready checklist STAKEHOLDER → SCOPE → MVP → FEASIBILITY sorrendben |
+| `_system/DISCOVERY_OUTPUT.md` | Közbenső spec | Strukturált PROB/GOAL/MVP/RISK/Q elemek forrásjelzéssel |
+
+> **Megjegyzés:** A `Discovery_RAID.md` és a `RAID_Log.md` különböző dokumentumok — előbbi a korai Discovery fázis durva RAID-je, utóbbi az Analysis fázis részletes végleges RAID logja.
+
+---
+
+### Analysis dokumentumok (`workflow/05_ba_docs/`)
+
+A `/ba` parancs ezeket állítja elő (ha minden Q-XXX megválaszolt):
+
+#### Kötelező dokumentumok
 
 | Fájl | Megnevezés | Tartalom |
 |---|---|---|
@@ -587,7 +761,7 @@ Megmutatja:
 | `RAID_Log.md` | RAID Log | Kockázatok, feltételezések, problémák, függőségek |
 | `Glossary.md` | Szójegyzék | Domain-specifikus szakkifejezések |
 
-### Opcionális dokumentumok (adatmennyiségtől függően)
+#### Opcionális dokumentumok (adatmennyiségtől függően)
 
 | Fájl | Tartalom |
 |---|---|
@@ -595,6 +769,15 @@ Megmutatja:
 | `UAT_Test_Cases.md` | Felhasználói elfogadási tesztesetek |
 | `Stakeholder_Map.md` | Érintetti térkép Mermaid diagrammal |
 | `Regulatory_Checklist.md` | GDPR, AML/KYC, PCI-DSS hatáselemzés |
+
+#### Rendszer fájlok (`workflow/05_ba_docs/_system/`)
+
+Minden BA dokumentum-generálás után automatikusan létrejönnek — nem kézzel szerkesztendők.
+
+| Fájl | Tartalom |
+|---|---|
+| `_system/BA_DOCS_LOG.md` | Generálási napló: timestamp, spec SHA, üzemmód (Analysis/Discovery/Draft) |
+| `_system/BA_DOCS_DIFF.md` | Változásnapló: mit módosított az utolsó futás, mely dokumentumok maradtak változatlanok |
 
 ### User Story formátum
 
@@ -621,6 +804,21 @@ Acceptance Criteria:
 
 ### Követelmény- és dokumentum azonosítók
 
+**Discovery fázis azonosítók** (a `discovery-agent` használja, `workflow/02_discovery/`-ban):
+
+| Azonosító | Típus | Leírás |
+|---|---|---|
+| `PROB-XXX` | Üzleti probléma | Azonosított probléma vagy fájdalompont |
+| `RC-XXX` | Gyökérok | A probléma mögötti ok (5 Miért módszer) |
+| `GOAL-XXX` | Üzleti cél | Mérhető üzleti eredmény |
+| `MVP-XXX` | MVP elem | Must-have elem az első kiadáshoz |
+| `ST-XXX` | Stakeholder | Érintett személy vagy szerepkör |
+| `RISK-XXX` | Kockázat | Korai kockázat vagy bizonytalanság |
+| `A-XXX` | Feltételezés | Amire a Discovery épít, de nincs megerősítve |
+| `Q-XXX` | Nyitott kérdés | Következő meetingre viendő kérdés |
+
+**Analysis fázis azonosítók** (a `spec-builder-agent` és `ba-document-agent` használja, `workflow/05_ba_docs/`-ban):
+
 | Azonosító | Típus | Leírás |
 |---|---|---|
 | `FR-XXX` | Funkcionális követelmény | Mit kell tudnia a rendszernek |
@@ -628,8 +826,9 @@ Acceptance Criteria:
 | `US-XXX` | User Story | Agile formátumú felhasználói igény |
 | `BR-XXX` | Üzleti követelmény | Magas szintű üzleti célok (BRD-ben) |
 | `A-XXX` | Feltételezés | Amire a spec épít, de nincs kimondva |
-| `DEC-XXX` | Döntés | Naplózott projekt-döntés |
 | `Q-XXX` | Kérdés | Hiányzó, tisztázandó információ |
+| `DEC-XXX` | Döntés | Naplózott AI-munkamenet döntés (`.claude/memory/`) |
+| `SDEC-XXX` | Stakeholder döntés | FORCED felülírás (`workflow/04_decisions/`) |
 
 ### Forrás- és státuszjelzők
 
@@ -637,18 +836,37 @@ Acceptance Criteria:
 |---|---|
 | `[EXPLICIT]` | Az ügyfél szó szerint kimondta a forrásanyagban |
 | `[INFERRED]` | Az AI logikusan következtette ki, de nem hangzott el szó szerint |
+| `[INFERRED:LOW]` | Könnyen következtethető; hasonló projekteknél általános feltételezés |
+| `[INFERRED:MED]` | Erre a domainre tipikus feltételezés; bizonyos fokú bizonytalanság |
+| `[INFERRED:HIGH]` | Egyetlen forrásból sem következtethető egyértelműen — automatikus RISK tétel a RAID_Log-ban |
 | `UNANSWERED` | A Q-XXX kérdés még megválaszolatlan |
+| `PARTIALLY_ANSWERED` | A spec-builder részleges választ kinyert a forrásanyagból — stakeholder megerősítés ajánlott |
 | `RESOLVED` | A Q-XXX kérdés megválaszolt és archivált |
+| `[SCOPE:CONFLICT]` | Ugyanaz az elem IN SCOPE és OUT OF SCOPE is egyszerre — döntés szükséges |
 
 ### Kérdés kategóriák
 
+**Analysis fázis (a `/ba` spec-buildere használja):**
+
 | Kategória | Mikor kap ilyen jelzést |
 |---|---|
-| `BUSINESS LOGIC` | Az üzleti logika hiányos vagy ellentmondásos |
+| `BUSINESS_LOGIC` | Az üzleti logika hiányos vagy ellentmondásos |
 | `DATA` | Adatok, mezők vagy formátumok meghatározása hiányzik |
-| `UX/UI` | A felhasználói felület nincs specifikálva |
+| `UX_UI` | A felhasználói felület nincs specifikálva |
 | `INTEGRATION` | Külső rendszer kapcsolat tisztázatlan |
 | `PRIORITY` | Követelmények prioritása nem egyértelmű |
+| `STAKEHOLDER` | Döntéshozó ismeretlen, jóváhagyó személy nincs azonosítva |
+| `TECHNICAL` | Technikai feltétel ismeretlen — rendszer, integráció, API |
+
+**Discovery fázis (a `/discovery` discovery-agentje használja):**
+
+| Kategória | Mikor kap ilyen jelzést |
+|---|---|
+| `[SCOPE]` | Határ nem tiszta — mi van benne, mi nincs |
+| `[MVP]` | MVP definíció hiányos, must-have lista nincs meghatározva |
+| `[FEASIBILITY]` | Megvalósíthatóság kérdéses — technikai vagy üzleti akadály lehetséges |
+| `[STAKEHOLDER]` | Döntéshozó ismeretlen, jóváhagyó személy nincs azonosítva |
+| `[TECHNICAL]` | Technikai feltétel ismeretlen — rendszer, integráció, API |
 
 ---
 
@@ -685,6 +903,10 @@ A BA Team egyik legfontosabb képessége az intelligens memóriakezelés. A `.cl
 - Azonosított kockázatok
 - Feltételezések (A-XXX)
 
+**Ügynök döntések (`AGENT_DECISIONS.md`):**
+- Belső orchestrátor és spec-builder döntések auditnapló-ja
+- Automatikusan generált bejegyzések, nem kézzel szerkesztendők
+
 ### Mikor frissül automatikusan?
 
 | Esemény | Mit ment |
@@ -693,6 +915,23 @@ A BA Team egyik legfontosabb képessége az intelligens memóriakezelés. A `.cl
 | Q-XXX megválaszolva | Kérdés és válasz az archívumba |
 | Döntés születik | Döntés és indoklás naplózva |
 | BA doc elkészül | Domain szószedet, RAID Log kockázatai |
+
+### Archívum mechanizmus
+
+Hosszabb projektek esetén a memória fájlok sok bejegyzést halmoznak fel — ez lassítja a betöltést és felesleges token-felhasználást okoz. Az archívum mechanizmus ezt kezeli.
+
+Minden memória tábla tartalmaz egy `Status` oszlopot:
+
+| Érték | Jelentés |
+|---|---|
+| `active` | Az AI figyelembe veszi a betöltéskor |
+| `archived` | Rejtett — a normál `LOAD` protokoll nem adja vissza |
+
+**Automatikus archiválás:** A `RESOLVED_QUESTIONS.md` sorai automatikusan `archived` státuszba kerülnek, miután a BA dokumentumok sikeresen legenerálódtak. Ezzel csökken a következő munkamenetek token-fogyasztása.
+
+**Manuális archiválás:** Ha egy döntés vagy kockázat már nem releváns, a `/memory-handler` skillen keresztül `archived`-re állítható.
+
+**Minden adat megmarad:** Az archivált bejegyzések nem törlődnek — a `LOAD_ALL` protokollal bármikor lekérdezhetők (pl. audit esetén).
 
 ### Fontos szabály: csak bővítés, soha törlés
 
@@ -774,10 +1013,10 @@ Ha `WARN` státuszt látsz a konverziós riportban:
 
 | Parancs | Melyik mappát konvertálja? |
 |---|---|
-| `/ba` | `01_project_info/` és `02_answers/` |
+| `/ba` | `01_project_info/` és `03_answers/` |
 | `/spec-builder` | csak `01_project_info/` |
-| `/business-analyst` | csak `02_answers/` |
-| `/convert` | `01_project_info/` és `02_answers/` |
+| `/business-analyst` | csak `03_answers/` |
+| `/convert` | `01_project_info/` és `03_answers/` |
 
 ---
 
@@ -859,7 +1098,7 @@ A rendszer minden Claude válasz után automatikusan ellenőrzi a workflow álla
 | Állapot | Értesítés |
 |---|---|
 | Feldolgozatlan bemeneti fájlok | `📋 N bemeneti fájl feldolgozásra vár. Futtasd: /ba` |
-| Spec kész, válaszok hiányoznak | `❓ Spec elkészült. Válaszokat várok a 02_answers/ mappában.` |
+| Spec kész, válaszok hiányoznak | `❓ Spec elkészült. Válaszokat várok a 03_answers/ mappában.` |
 | Válaszok megvannak, dokumentum nincs | `✅ Válaszok megtalálhatók. BA dokumentumok generálásához futtasd: /ba` |
 
 ### Az automatikus értesítés aktiválása (Stop hook)
@@ -893,31 +1132,62 @@ Az értesítések egy **Stop hook** segítségével működnek, amelyet a `.clau
 A fő koordinátor. Felméri a workflow állapotát és irányítja a többi ügynököt.
 
 **Lépései:**
-1. Betölti a memóriát (csak a szükséges fájlokat)
-2. Megvizsgálja a workflow állapotát
-3. Dispatchilja a megfelelő ügynököt
-4. Visszajelent a felhasználónak
+1. **Pre-flight:** Becsli a bemeneti fájlok token-terhelését — figyelmeztet ha >20 fájl vagy >100K becsült token (nem blokkolja a futást)
+2. Betölti a memóriát (csak a szükséges fájlokat)
+3. Megvizsgálja a workflow állapotát (bemenet, spec, válaszok, BA doksik)
+4. **FR prioritás előnézet:** BA doc-generálás előtt listázza a Fázis 1 / Fázis 2 FR elemeket
+5. Dispatchilja a megfelelő ügynököt
+6. Visszajelent a felhasználónak
 
 **Mikor áll meg:**
 - Ha nincs bemeneti fájl → kéri az anyagok bemásolását
 - Ha Q-XXX kérdések megválaszolatlanok → listázza és megáll
+- `PARTIALLY_ANSWERED` Q-XXX kérdések esetén **nem áll meg** — figyelmeztetést jelenít meg, továbblép
+
+### discovery-agent
+
+A Discovery fázis specialistája. Korai anyagokból (handover, meeting jegyzetek) Business Concept dokumentumot és kérdéslistát generál.
+
+**Lépései:**
+1. Beolvassa az anyagokat a `workflow/01_project_info/` mappából
+2. Beolvassa a már megérkezett válaszokat a `workflow/03_answers/` mappából (ha van)
+3. Generálja a `DISCOVERY_OUTPUT.md` közbenső specet (`workflow/02_discovery/_system/`)
+4. Generálja a három Discovery dokumentumot: `BC.md`, `Discovery_RAID.md`, `Discovery_Questions.md`
+5. Frissíti a memóriát
+
+**Fontos:** A discovery-agent **mindig** draft módban működik — Q-XXX kérdések soha nem blokkolják a generálást.
 
 ### spec-builder-agent
 
 **Lépései:**
-1. Beolvassa a SPEC_LOG-ot (változásdetektálás)
+1. Beolvassa a SPEC_LOG-ot + FORCED döntéseket (`workflow/04_decisions/`)
 2. Eldönti: inkrementális frissítés vagy teljes újragenerálás
-3. Generálja a specifikációt (FR-XXX, NFR-XXX, US-XXX, Q-XXX)
-4. Menti a `workflow/01_project_info/_system/SPEC_OUTPUT.md` fájlt
-5. Frissíti a memóriát
+3. **Inkrementális futásnál:** automatikusan ellenőrzi a nyitott Q-XXX kérdéseket az új forrásanyagokkal szemben — `PARTIALLY_ANSWERED` vagy `ANSWERED` státuszt állít be ha releváns szöveget talál
+4. Generálja a specifikációt (FR-XXX, NFR-XXX, US-XXX, Q-XXX):
+   - **Kérdések kategóriánként csoportosítva** (BUSINESS_LOGIC, DATA, UX_UI, INTEGRATION, PRIORITY, STAKEHOLDER, TECHNICAL) + összefoglaló táblázat Státusz oszloppal
+   - **SCOPE CONFLICT detektálás:** ha egy elem egyszerre IN SCOPE és OUT OF SCOPE → `[SCOPE:CONFLICT]` jelző, Q-XXX kérdés, érintett FR megjelölése
+   - **INFERRED kockázati besorolás:** `[INFERRED:LOW]`, `[INFERRED:MED]`, `[INFERRED:HIGH]` — HIGH elemek automatikusan RISK tételbe kerülnek a RAID_Log-ban
+5. Menti a `workflow/01_project_info/_system/SPEC_OUTPUT.md` fájlt
+6. Frissíti a memóriát
 
 ### ba-document-agent
 
 **Lépései:**
-1. Beolvassa a `workflow/01_project_info/_system/SPEC_OUTPUT.md` fájlt, a válaszfájlokat és a memóriát
-2. Generálja az összes kötelező dokumentumot Mermaid diagramokkal
-3. Menti a `workflow/03_ba_docs/` mappába
-4. Frissíti a memóriát
+1. Beolvassa a `SPEC_OUTPUT.md`-t, `SPEC_DIFF.md`-t, válaszfájlokat, FORCED döntéseket és a memóriát
+2. **Szelektív újragenerálás** (SPEC_DIFF.md alapján): csak a megváltozott elemek által érintett dokumentumokat generálja újra; a változatlanokat `[Nincs változás]` fejléccel jelöli
+3. Generálja a dokumentumokat Mermaid diagramokkal:
+   - **BRD:** tartalmaz `⚠️ Fázis-beosztás automatikusan generált` megjegyzést
+   - **RAID_Log:** `[INFERRED:HIGH]` feltételezésekből automatikusan RISK tételeket generál
+4. Mermaid szintaxis-ellenőrzés minden diagram után (regex-alapú, nem blokkoló)
+5. Menti a `workflow/05_ba_docs/` mappába
+6. Írja a `_system/BA_DOCS_LOG.md` generálási naplót (timestamp, spec SHA, üzemmód)
+7. Generálja a `_system/BA_DOCS_DIFF.md` változásnaplót (mi módosult, mi maradt változatlan)
+8. Frissíti a memóriát
+
+**Discovery-mélységű generálás (automatikus):**
+Ha `workflow/02_discovery/BC.md` és `SPEC_OUTPUT.md` egyaránt létezik (Discovery→Analysis átmenet),
+a dokumentumok Discovery-mélységűek lesznek: kevesebb FR, epikus US-ök, 5–8 általános UAT.
+Minden ilyen dokumentum tetején megjelenik: `📍 Generálás módja: DISCOVERY`
 
 ### convert_all Python csomag
 
@@ -943,11 +1213,12 @@ Az egyetlen ügynök, amely a `.claude/memory/` mappát kezeli. Minden más ügy
 | Művelet | Leírás |
 |---|---|
 | `BATCH` | Több művelet egy hívással (hatékonyabb) |
-| `LOAD` | Összes memóriafájl beolvasása |
+| `LOAD` | Összes memóriafájl beolvasása — csak `status: active` sorok (token-hatékony) |
+| `LOAD_ALL` | Összes sor, beleértve az archivált bejegyzéseket — csak audit/reset esetén |
 | `STORE` | Új bejegyzés hozzáfűzése (sosem töröl) |
 | `QUERY` | Célzott lekérdezés egy vagy több fájlból |
 | `LOAD_CONVERSION_LOG` | Konverziós napló beolvasása |
-| `MEMORY_UPSERT` | Sor frissítése a konverziós naplóban |
+| `MEMORY_UPSERT` | Sor frissítése vagy hozzáadása; `status: archived` archiváláshoz |
 
 ---
 
@@ -970,7 +1241,7 @@ A BA Team automatikusan értékeli a projekt érintettségét az alábbi szabál
 ## 16. Gyakori kérdések (GYIK)
 
 **Hol találom a kész BA dokumentumokat?**
-A `workflow/03_ba_docs/` mappában, VS Code-ban a bal oldali fájlböngészőben.
+A `workflow/05_ba_docs/` mappában, VS Code-ban a bal oldali fájlböngészőben.
 
 **Hogyan olvasom el szépen a dokumentumokat?**
 Kattints duplán a `.md` fájlra, majd nyomj `Ctrl+Shift+V` (Windows) / `Cmd+Shift+V` (Mac) billentyűt az előnézet megnyitásához.

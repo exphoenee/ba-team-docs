@@ -61,13 +61,15 @@ Shows exactly what is in each folder:
        Unanswered questions: 2
          ❓ Q-003
          ❓ Q-007
-  [02] Answers:            1 file
+  [02] Discovery:          ✅ BC.md, Discovery_RAID.md
+  [03] Answers:            1 file
        • answers_round1.md
-  [03] BA documents:       EMPTY
+  [04] FORCED decisions:   EMPTY
+  [05] BA documents:       EMPTY
 
   SUGGESTED NEXT STEP
   ⛔ Partial answers — 2 questions still unanswered.
-     → Complete the workflow/02_answers/ files
+     → Complete the workflow/03_answers/ files
      → Then run: /ba
 ============================================================
 ```

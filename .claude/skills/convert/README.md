@@ -4,7 +4,7 @@
 
 ## Mire való?
 
-A `/convert` parancs automatikusan átalakítja a `workflow/01_project_info/` és a `workflow/02_answers/` mappákban lévő Office, Outlook és egyéb fájlokat Markdown formátumba, hogy az AI ügynökök feldolgozhassák őket.
+A `/convert` parancs automatikusan átalakítja a `workflow/01_project_info/` és a `workflow/03_answers/` mappákban lévő Office, Outlook és egyéb fájlokat Markdown formátumba, hogy az AI ügynökök feldolgozhassák őket.
 
 A konverziót egy **Python csomag** végzi — nem AI agent — így egyetlen LLM tokent sem használ el.
 
@@ -12,7 +12,7 @@ A konverziót egy **Python csomag** végzi — nem AI agent — így egyetlen LL
 
 ## Mikor kell használni?
 
-Ha olyan fájlokat másoltál a `workflow/01_project_info/` vagy a `workflow/02_answers/` mappába, amelyek nem `.md` vagy `.txt` formátumúak:
+Ha olyan fájlokat másoltál a `workflow/01_project_info/` vagy a `workflow/03_answers/` mappába, amelyek nem `.md` vagy `.txt` formátumúak:
 
 | Fájltípus | Konverzió szükséges? |
 |---|---|
@@ -87,10 +87,10 @@ A `/ba`, `/spec-builder` és `/business-analyst` parancsok **automatikusan elind
 
 | Parancs | Melyik mappát konvertálja? |
 |---|---|
-| `/ba` | `01_project_info/` és `02_answers/` |
+| `/ba` | `01_project_info/` és `03_answers/` |
 | `/spec-builder` | csak `01_project_info/` |
-| `/business-analyst` | csak `02_answers/` |
-| `/convert` | `01_project_info/` és `02_answers/` |
+| `/business-analyst` | csak `03_answers/` |
+| `/convert` | `01_project_info/` és `03_answers/` |
 
 A `/convert` önállóan akkor hasznos, ha csak ellenőrizni szeretnéd a konverziót, vagy manuálisan szeretnéd futtatni a `/ba` előtt.
 
@@ -99,6 +99,6 @@ A `/convert` önállóan akkor hasznos, ha csak ellenőrizni szeretnéd a konver
 ```mermaid
 %%{init: {'flowchart': { 'nodeSpacing': 50, 'rankSpacing': 100 } }}%%
 flowchart TD
-    A["1. Fájlok bemásolása\nworkflow/01_project_info/ vagy workflow/02_answers/"] --> B["2. /convert futtatása\n.docx/.xlsx/.msg/.eml/.pdf/.pptx → _converted.md"]
+    A["1. Fájlok bemásolása\nworkflow/01_project_info/ vagy workflow/03_answers/"] --> B["2. /convert futtatása\n.docx/.xlsx/.msg/.eml/.pdf/.pptx → _converted.md"]
     B --> C["3. /ba futtatása\nClaude elemzi az anyagokat"]
 ```

@@ -16,9 +16,12 @@ flowchart TD
     ORC -->|"Non-md files found"| PY["convert_all\n(Python package, 0 AI tokens)"]
     PY --> ORC
 
-    ORC -->|"No spec"| SBA["spec-builder-agent"]
+    ORC -->|"No spec OR FORCED decision newer"| SBA["spec-builder-agent"]
     ORC -->|"All Q-XXX answered"| BDA["ba-document-agent"]
     ORC -->|"Missing answers"| STOP["⛔ Reports to user"]
+    ORC -->|"--discovery flag"| DA["discovery-agent"]
+    DA --> MA4["memory-agent\n(BATCH STORE)"]
+    DA --> ORC
 
     SBA --> MA2["memory-agent\n(BATCH STORE)"]
     BDA --> MA3["memory-agent\n(BATCH STORE)"]
@@ -60,9 +63,12 @@ Never writes spec content or BA documents itself.
 |---|---|
 | No input files | Reports: nothing to process |
 | No `_system/SPEC_OUTPUT.md` | Dispatches `spec-builder-agent` |
+| FORCED decision (`04_decisions/`) newer than spec | Dispatches `spec-builder-agent` to rebuild (bypassed by `--force`) |
 | Open Q-XXX, no answers | Reports: waiting for answers |
 | Unanswered Q-XXX | Reports: lists missing answers, stops |
+| Unanswered Q-XXX + `--draft` | Dispatches `ba-document-agent` in draft mode (VÁZLAT header) |
 | All Q-XXX answered | Dispatches `ba-document-agent` |
+| `--discovery` flag | Dispatches `discovery-agent` |
 
 ---
 
@@ -88,9 +94,27 @@ Mermaid diagrams are mandatory for every process described. All output in Hungar
 Preserves `[Forrás: filename · sha8]` source annotations from SPEC_OUTPUT.md throughout all documents.
 `Traceability_Matrix.md` includes a `Forrás fájl` column: source file → requirement → user story.
 
-**Output:** `workflow/03_ba_docs/` — BRD, User Stories, Process Flows, Traceability Matrix, RAID Log, Glossary
+**Output:** `workflow/05_ba_docs/` — BRD, User Stories, Process Flows, Traceability Matrix, RAID Log, Glossary
 
 **Memory stored:** RESOLVED_QUESTIONS · DECISIONS · DOMAIN_GLOSSARY · RISKS
+
+---
+
+### `discovery-agent`
+
+**File:** [.claude/agents/discovery-agent.md](.claude/agents/discovery-agent.md)
+
+Runs the discovery phase before full spec building. Reads raw materials in `workflow/01_project_info/`
+and produces structured discovery outputs in `workflow/02_discovery/`.
+
+**Output:**
+- `workflow/02_discovery/BC.md` — Business Context (problem, goals, scope, stakeholders)
+- `workflow/02_discovery/Discovery_RAID.md` — early risks and assumptions
+- `workflow/02_discovery/Discovery_Questions.md` — open questions for stakeholders
+
+**Dispatched by:** `ba-orchestrator` when `--discovery` flag is active, or directly by `/discovery` skill.
+
+**Memory stored:** PROJECT_CONTEXT · STAKEHOLDERS · RISKS
 
 ---
 
@@ -98,7 +122,7 @@ Preserves `[Forrás: filename · sha8]` source annotations from SPEC_OUTPUT.md t
 
 **Entry point:** `python .claude/scripts/run_convert.py --scope [all|inputs|answers]`
 
-Converts non-markdown files in `workflow/01_project_info/` and/or `workflow/02_answers/` to `.md` format.
+Converts non-markdown files in `workflow/01_project_info/` and/or `workflow/03_answers/` to `.md` format.
 Not an AI agent — runs as a deterministic Python process. Uses zero LLM tokens.
 Stat-based fast-skip (Size/Modified), SHA-256 fingerprint check, writes `CONVERSION_LOG.md` directly.
 
@@ -129,11 +153,12 @@ Every other agent must delegate memory operations here — no agent accesses `.c
 | Operation | Purpose |
 |---|---|
 | `BATCH` | Execute multiple STORE/UPSERT operations in one agent call (Efficiency) |
-| `LOAD` | Read all BA memory files; create missing ones from templates |
-| `STORE` | Append a new entry to a BA memory file |
+| `LOAD` | Read all BA memory files — returns only `status: active` rows (token-efficient) |
+| `LOAD_ALL` | Read all rows including archived (`status: archived`) — for audit/reset only |
+| `STORE` | Append a new entry to a BA memory file (default `status: active`) |
 | `QUERY` | Return targeted content from one or more memory files |
 | `LOAD_CONVERSION_LOG` | Return CONVERSION_LOG.md (includes Size/Modified/SHA-256) |
-| `MEMORY_UPSERT` | Update or insert a row in CONVERSION_LOG.md |
+| `MEMORY_UPSERT` | Update or insert a row; use `status: archived` to archive an entry |
 
 ---
 
@@ -145,6 +170,7 @@ Each skill is a thin dispatcher — it delegates all work to an agent or a Pytho
 | Skill | Dispatches | User guide |
 |---|---|---|
 | `/ba` | `ba-orchestrator` | [README](.claude/skills/ba/README.md) |
+| `/ba --discovery` | `ba-orchestrator` → `discovery-agent` | [README](.claude/skills/ba/README.md) |
 | `/convert` | `convert_all` Python package | [README](.claude/skills/convert/README.md) |
 | `/spec-builder` | `spec-builder-agent` | [README](.claude/skills/spec-builder/README.md) |
 | `/business-analyst` | `ba-document-agent` | [README](.claude/skills/business-analyst/README.md) |
@@ -159,16 +185,21 @@ Each skill is a thin dispatcher — it delegates all work to an agent or a Pytho
 
 ## Workflow State Machine
 
+> **Source of truth for user-facing workflow states:** [CLAUDE.md §`/ba` Skill States](CLAUDE.md).
+> This diagram shows the internal orchestrator routing; CLAUDE.md is the authoritative description
+> of what the user experiences.
+
 ```mermaid
 flowchart LR
     A["01_project_info/\nRaw materials"] -->|"/ba"| B{ba-orchestrator\nstate?}
-    B -->|"📋 No spec"| C["spec-builder-agent\n-> _system/SPEC_OUTPUT.md\n+ _system/SPEC_DIFF.md\n+ memory STORE"]
+    B -->|"No spec OR\nFORCED decision newer"| C["spec-builder-agent\n-> _system/SPEC_OUTPUT.md\n+ _system/SPEC_DIFF.md\n+ memory STORE"]
     C --> D["Annotation\nvalidation"]
-    D --> E["Wait for\nanswers in 02_answers/"]
+    D --> E["Wait for\nanswers in 03_answers/"]
     E -->|"/ba"| B
     B -->|"Missing Q-XXX"| F["Lists\nmissing answers"]
-    B -->|"All ready"| G["ba-document-agent\n-> 03_ba_docs/\n+ memory STORE"]
+    B -->|"All ready OR --draft"| G["ba-document-agent\n-> 05_ba_docs/\n+ memory STORE"]
     B -->|"/ba --preview"| H["Preview report\n(no file writes)"]
+    B -->|"/ba --discovery"| I["discovery-agent\n-> 02_discovery/"]
 ```
 
 ---
@@ -182,7 +213,7 @@ Full protocol reference: [`.claude/rules/memory-access.md`](.claude/rules/memory
 
 ---
 
-## Answer file format (`workflow/02_answers/answers.md`)
+## Answer file format (`workflow/03_answers/answers.md`)
 
 ```markdown
 Q-001: A rendszer minden sikertelen belépési kísérletet naplóz; 5 próba után fiókzárolás.

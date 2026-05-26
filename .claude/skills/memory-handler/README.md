@@ -86,6 +86,27 @@ MEMORY_QUERY: target=all
 
 ---
 
+## Archívum mechanizmus
+
+Minden memória tábla tartalmaz egy `Status` oszlopot (`active` / `archived`). Ez token-megtakarítást biztosít hosszabb projektek esetén.
+
+| Protokoll | Viselkedés |
+|---|---|
+| `LOAD` (alapértelmezett) | Csak `status: active` sorokat ad vissza |
+| `LOAD_ALL` | Minden sort visszaad — aktív és archivált egyaránt |
+
+**Mikor kerül sor archiválásra?**
+- Minden új sor alapértelmezetten `status: active` értékkel jön létre
+- A `RESOLVED_QUESTIONS.md` sorai automatikusan `archived`-re váltanak, miután a BA dokumentumok legenerálódtak
+- Manuális archiválás: `MEMORY_UPSERT` küldésével `status: archived` értékkel
+
+**Mikor használd a `LOAD_ALL`-t?**
+- Projekt audit: az összes (archivált) döntés vagy kérdés áttekintésekor
+- Projekt reset: az összes memória tartalom törlésekor és újraindításakor
+- Egyébként mindig a `LOAD` ajánlott — kevesebb token, gyorsabb válasz
+
+---
+
 ## Fontos szabályok
 
 - A memória fájlok csak bővülhetnek — meglévő tartalom soha nem törlődik

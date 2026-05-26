@@ -86,6 +86,27 @@ MEMORY_QUERY: target=all
 
 ---
 
+## Archive Mechanism
+
+Every memory table contains a `Status` column (`active` / `archived`). This reduces token usage on longer projects.
+
+| Protocol | Behaviour |
+|---|---|
+| `LOAD` (default) | Returns only `status: active` rows |
+| `LOAD_ALL` | Returns all rows — active and archived alike |
+
+**When does archiving happen?**
+- Every new row is created with `status: active` by default
+- `RESOLVED_QUESTIONS.md` rows are automatically set to `archived` after BA documents are generated
+- Manual archiving: send a `MEMORY_UPSERT` with `status: archived`
+
+**When to use `LOAD_ALL`?**
+- Project audit: reviewing all (including archived) decisions or questions
+- Project reset: when clearing and restarting the entire memory
+- Otherwise, always use `LOAD` — fewer tokens, faster response
+
+---
+
 ## Important Rules
 
 - Memory files can only expand — existing content is never deleted.

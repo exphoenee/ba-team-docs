@@ -10,10 +10,15 @@ The single entry point is `/ba` — the system automatically decides what action
 ```
 1. Copy project materials into → workflow/01_project_info/
 2. Run: /ba
-3. If questions are generated → answer them, copy into → workflow/02_answers/
+3. If questions are generated → answer them, copy into → workflow/03_answers/
 4. Run again: /ba
-5. Finished documents → workflow/03_ba_docs/
+5. Finished documents → workflow/05_ba_docs/
 ```
+
+> **One project per session.** Run only one project per Claude Code session.
+> For multiple projects, open a new Claude Code session for each one.
+> Running multiple projects in a single session causes unpredictable behaviour
+> because the `workflow/` folder is project-isolated (one folder = one project).
 
 ## `/ba` Skill States
 
@@ -21,9 +26,13 @@ The single entry point is `/ba` — the system automatically decides what action
 |---|---|
 | No input files | Reports that there is nothing to process |
 | Input exists, no spec | Runs spec-builder, saves `_system/SPEC_OUTPUT.md` |
-| Spec exists, 02_answers/ empty | Lists unanswered questions, stops |
+| FORCED decision newer than spec | Runs spec-builder to rebuild with applied decisions |
+| Spec exists, 03_answers/ empty | Lists unanswered questions, stops |
 | Spec exists, partial answers | Reports exactly which Q-XXX questions are missing, stops |
 | All questions answered | Automatically generates BA documents |
+| `/ba --draft` | Generates BA documents with VÁZLAT header even if Q-XXX are open |
+| `/ba --force` | Forces BA document regeneration, bypasses up-to-date check |
+| `/ba --discovery` | Runs discovery-agent instead of spec-builder/ba-document-agent |
 
 ## Language Rule
 
@@ -34,7 +43,7 @@ This includes every message shown to the user in the CLI, terminal, or VS Code c
 | File type | Language |
 |---|---|
 | `workflow/01_project_info/_system/SPEC_OUTPUT.md` | 🇭🇺 Hungarian |
-| All files in `workflow/03_ba_docs/` | 🇭🇺 Hungarian |
+| All files in `workflow/05_ba_docs/` | 🇭🇺 Hungarian |
 | All files in `.claude/memory/` | 🇬🇧 English (strictly — no Hungarian content) |
 | `README.md` files | 🇭🇺 Hungarian |
 | `CLAUDE.md`, `AGENTS.md` | 🇬🇧 English (Claude instruction files) |
@@ -43,10 +52,23 @@ This includes every message shown to the user in the CLI, terminal, or VS Code c
 
 ---
 
+## Setup
+
+After cloning, create your local config by copying the example:
+
+```
+cp .claude/settings.local.json.example .claude/settings.local.json
+```
+
+The `.claude/settings.local.json` file is git-ignored. Use it to override permissions or add
+machine-specific settings. Never commit it — it may contain absolute paths or local tool permissions.
+
+---
+
 ## Behaviour Rules
 
 - The `/ba` skill never asks the user what to do — it decides based on workflow state
-- Do not modify input files in `workflow/01_project_info/` or `workflow/02_answers/`
+- Do not modify input files in `workflow/01_project_info/` or `workflow/03_answers/`
 - `workflow/01_project_info/_system/SPEC_OUTPUT.md` is a system-generated file — do not edit it manually
 - Every generated document must have unique IDs, traceability, and Mermaid diagrams where applicable
 - BA documents may only be generated when all Q-XXX questions are answered
@@ -69,15 +91,27 @@ and notifies the user if action is required (e.g. answers are missing).
 | Folder | Contents |
 |---|---|
 | `workflow/01_project_info/` | Raw input materials + `_system/` generated spec outputs |
-| `workflow/02_answers/` | Answers from stakeholders (Q-XXX format) |
-| `workflow/03_ba_docs/` | Generated BA documents |
+| `workflow/02_discovery/` | Discovery-agent outputs — `BC.md`, `Discovery_RAID.md`, `Discovery_Questions.md` |
+| `workflow/03_answers/` | Answers from stakeholders (Q-XXX format — discovery + analysis) |
+| `workflow/04_decisions/` | FORCED stakeholder decisions (`SDEC-XXX` files with YAML frontmatter) |
+| `workflow/05_ba_docs/` | Generated BA documents |
 | `.claude/memory/` | Persistent project memory (decisions, Q-XXX archive, etc.) |
 | `.claude/agents/` | Specialist agents (ba-orchestrator, spec-builder-agent, ba-document-agent, memory-agent) |
 | `.claude/skills/` | User-facing entry points (slash commands — thin dispatchers) |
 | `.claude/scripts/` | **Shared** scripts and packages used by multiple skills or agents |
 | `.claude/references/` | **Shared** reference files (templates, formats) used by multiple skills or agents |
 | `.claude/references/memory/` | Empty-state templates for all `.claude/memory/` files — source of truth for `reset_project.py` and `memory-agent` |
+| `.claude/references/decision_template.md` | Template for `04_decisions/` SDEC-XXX decision files |
 | `.claude/rules/` | Persistent Claude rules (language, behaviour) |
+
+### FORCED Decisions (`workflow/04_decisions/`)
+
+Stakeholders and the PM can override any spec-builder-derived requirement by placing a
+`SDEC-XXX_name.md` file in `workflow/04_decisions/`. Files use YAML frontmatter — see
+`.claude/references/decision_template.md` for the template and field reference.
+
+For full documentation of the decision file format, frontmatter fields, and annotation behaviour,
+see `HANDBOOK.md` — section "FORCED döntések (`04_decisions/`)".
 
 ### Skill-level resource folders
 

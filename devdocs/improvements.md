@@ -33,7 +33,7 @@ pie title BA munka lefedettség (jelenlegi állapot)
 
 ### 1. Iteratív visszacsatolás (`/review` parancs)
 
-**Megjegyzés:** A jelenlegi rendszer már most is képes kezelni a visszacsatolást: ha a BA bemásolja a megrendelő megjegyzéseit új fájlként a `01_project_info/` vagy `02_answers/` mappába, majd futtat `/ba`-t, a spec-builder felismeri az új fájlt, frissíti a `SPEC_OUTPUT.md`-t, és a `ba-document-agent` legenerálja a frissített dokumentumokat. Tehát funkcionálisan a `/review` nem új képesség — **teljesítményoptimalizálás**.
+**Megjegyzés:** A jelenlegi rendszer már most is képes kezelni a visszacsatolást: ha a BA bemásolja a megrendelő megjegyzéseit új fájlként a `01_project_info/` vagy `03_answers/` mappába, majd futtat `/ba`-t, a spec-builder felismeri az új fájlt, frissíti a `SPEC_OUTPUT.md`-t, és a `ba-document-agent` legenerálja a frissített dokumentumokat. Tehát funkcionálisan a `/review` nem új képesség — **teljesítményoptimalizálás**.
 
 **Probléma:** A `ba-document-agent` jelenleg az összes engedélyezett dokumentumot újragenerálja (BRD, User Stories, Process Flows, RAID Log, Glossary, Traceability Matrix), még akkor is, ha a változás csak egy-két FR-XXX-et érint. Nagy projektnél (20+ követelmény) ez jelentős idő- és token-pazarlás.
 
@@ -52,7 +52,7 @@ flowchart TD
     C --> D{"Érintett\nkövetelmények\nazonosítása"}
     D --> E["FR-XXX, US-XXX\nmapping SPEC_LOG alapján"]
     E --> F["Csak az érintett\ndokumentumrészek\nregenerálása"]
-    F --> G["📁 Frissített BA docs\na 03_ba_docs/ mappában"]
+    F --> G["📁 Frissített BA docs\na 05_ba_docs/ mappában"]
 ```
 
 ---
@@ -72,7 +72,7 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    A["📂 02_answers/ fájlok\nbeolvasása"] --> B["Q-ID alapú\ncsoportosítás"]
+    A["📂 03_answers/ fájlok\nbeolvasása"] --> B["Q-ID alapú\ncsoportosítás"]
     B --> C{"Azonos Q-ID-re\ntöbb válasz?"}
     C -->|Nem| D["✅ Folytatás\nnormál workflow"]
     C -->|Igen| E{"Ellentmondás\ndetektálva?"}
@@ -258,6 +258,6 @@ Az alábbi lehetőségeid vannak a helyzet kezelésére:
 4. Te vagy a "főnök" – Diplomáciai út
 - Mivel a BA Team workflow lényege, hogy te irányítod az AI csapatot, a stratégiai döntések és az ügyfélkapcsolatok kezelése a te feladatod.
 - Ha nincs válasz, az AI „megállítja a gépsort”, hogy kényszerítsen téged a hiányzó információ beszerzésére az ügyféltől vagy a stakeholderektől.
-- Csak akkor futtasd újra a /ba parancsot, ha a workflow/02_answers/ mappába legalább egy ideiglenes (feltételezésen alapuló) választ beírtál.
+- Csak akkor futtasd újra a /ba parancsot, ha a workflow/03_answers/ mappába legalább egy ideiglenes (feltételezésen alapuló) választ beírtál.
 
 Összegezve: Ha nem tudsz érdemi választ adni, a legjobb módszer egy logikus feltételezés rögzítése, amely lehetővé teszi az AI számára a dokumentumok (BRD, User Story-k) legenerálását, miközben a Traceability Matrix és a RAID Log dokumentálja a döntés hátterét

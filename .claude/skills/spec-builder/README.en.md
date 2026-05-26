@@ -47,6 +47,42 @@ It accepts any raw text material:
 
 In the case of multiple documents, it merges them into **a single cohesive model**, not treating them as separate specifications.
 
+### Input Priority Order
+
+When information comes from multiple sources, the spec-builder processes them in the following priority order:
+
+| Priority | Source | Effect |
+|---|---|---|
+| **1 (FORCED)** | `workflow/04_decisions/` — SDEC-XXX files | Overrides targeted elements; `[FORCED]` annotation added |
+| 2 | `workflow/02_discovery/BC.md` | Priority base: problem, goals, scope |
+| 3 | `workflow/02_discovery/Discovery_RAID.md` | Early risks and assumptions |
+| 4 | `workflow/01_project_info/` | Raw input materials |
+| 5 | `workflow/03_answers/` | Stakeholder answers to Q-XXX questions |
+
+### FORCED Decisions (`04_decisions/`)
+
+`SDEC-XXX_name.md` files placed in `workflow/04_decisions/` allow stakeholders and the PM to override any requirement derived by spec-builder. Files use YAML frontmatter:
+
+```yaml
+---
+id: SDEC-001
+type: OVERRIDE          # OVERRIDE | ADDENDUM
+targets: [FR-012]       # which requirement(s) this affects
+forced: true
+decided_by: Product Owner
+date: 2024-03-15
+rationale: Required due to regulatory change
+---
+
+The new requirement text goes here.
+```
+
+- `OVERRIDE` — replaces the content of the targeted ID(s)
+- `ADDENDUM` — adds alongside the targeted ID(s) as a supplement
+- `forced: true` — required field; without it the decision is ignored
+
+Template file: `.claude/references/decision_template.md`
+
 ---
 
 ## What does it produce?

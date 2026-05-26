@@ -47,6 +47,42 @@ Bármilyen nyers szöveges anyagot elfogad:
 
 Több dokumentum esetén azokat **egyetlen összefüggő modellbe** olvasztja össze, nem kezeli őket külön specifikációként.
 
+### Bemenet prioritási sorrendje
+
+Ha több forrásból érkezik információ, a spec-builder az alábbi prioritási sorrendben dolgozza fel őket:
+
+| Prioritás | Forrás | Hatás |
+|---|---|---|
+| **1 (FORCED)** | `workflow/04_decisions/` — SDEC-XXX fájlok | Felülírja a targetált elemeket; `[FORCED]` annotáció kerül rá |
+| 2 | `workflow/02_discovery/BC.md` | Prioritásos alap: probléma, célok, scope |
+| 3 | `workflow/02_discovery/Discovery_RAID.md` | Korai kockázatok és feltételezések |
+| 4 | `workflow/01_project_info/` | Nyers bemeneti anyagok |
+| 5 | `workflow/03_answers/` | Stakeholder válaszok Q-XXX kérdésekre |
+
+### FORCED döntések (`04_decisions/`)
+
+A `workflow/04_decisions/` mappában elhelyezett `SDEC-XXX_nev.md` fájlokkal stakeholderek és a PM felülírhatnak bármely spec-builder által levezetett követelményt. A fájlok YAML frontmatter-t használnak:
+
+```yaml
+---
+id: SDEC-001
+type: OVERRIDE          # OVERRIDE | ADDENDUM
+targets: [FR-012]       # melyik követelményt érinti
+forced: true
+decided_by: Product Owner
+date: 2024-03-15
+rationale: Jogszabályi változás miatt kötelező
+---
+
+Az új követelmény szövege itt szerepel.
+```
+
+- `OVERRIDE` — felülírja a megadott targetált ID(k) tartalmát
+- `ADDENDUM` — hozzáad a targetált ID(k) mellé, kiegészíti
+- `forced: true` — kötelező mező; nélküle a döntés figyelmen kívül marad
+
+A sablon fájl: `.claude/references/decision_template.md`
+
 ---
 
 ## Mit állít elő?

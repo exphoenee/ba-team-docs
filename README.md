@@ -1,4 +1,4 @@
-# BA Team – Legyél Te a főnök egy 4 fős AI csapat felett!
+# BA Team – Legyél Te a főnök egy 5 fős AI csapat felett!
 
 [English version](README.en.md) | [Kézikönyv](HANDBOOK.md)
 
@@ -7,10 +7,11 @@
 > Ezzel a workflow-val nem egy egyszerű chat-botot kapsz, hanem egy komplett, specializált Business Analyst csapatot, akiknek Te vagy a vezetője. Miközben Te a stratégiai döntésekre és az ügyfélkapcsolatokra fókuszálsz, az AI kollégáid elvégzik a munka nehezét:
 >
 > 1. 📋 **Orchestrator**: A projektmenedzsered, aki összefogja a szálakat és tudja, hol tartotok.
-> 2. 🏗️ **Spec Builder**: A precíz elemződ, aki a nyers jegyzetekből tűpontos specifikációt farag.
-> 3. ✍️ **BA Document Agent**: A technikai íród, aki BRD-ket, User Story-kat és folyamatábrákat gyárt.
-> 4. 📂 **File Converter**: Az adat-specialistád, aki bármilyen Office fájlt másodpercek alatt AI-kész formátumra hoz.
-> 5. 🧠 **Memory Agent**: A stratégiai tanácsadód, aki egyetlen döntést vagy stakeholder adatot sem felejt el.
+> 2. 🔍 **Discovery Agent**: A Discovery specialistád, aki korai anyagokból Business Concept dokumentumot és kérdéslistát állít elő — sosem blokkolja a munkát nyitott kérdések miatt.
+> 3. 🏗️ **Spec Builder**: A precíz elemződ, aki a nyers jegyzetekből tűpontos specifikációt farag.
+> 4. ✍️ **BA Document Agent**: A technikai íród, aki BRD-ket, User Story-kat és folyamatábrákat gyárt.
+> 5. 📂 **File Converter**: Az adat-specialistád, aki bármilyen Office fájlt másodpercek alatt AI-kész formátumra hoz.
+> 6. 🧠 **Memory Agent**: A stratégiai tanácsadód, aki egyetlen döntést vagy stakeholder adatot sem felejt el.
 >
 > **Emeld a hatékonyságodat a következő szintre: delegálj a BA Team-nek, és koncentrálj a valódi értékteremtésre!**
 
@@ -19,6 +20,8 @@
 Ez a repository Claude AI-hoz készített skilleket és ügynököket tartalmaz, amelyek célja a **Business Analyst kollégák munkájának támogatása** az IT projektek teljes requirements engineering folyamatán át.
 
 A részletes használati útmutató, parancsleírások, workflow-magyarázat és GYIK a **[Kézikönyvben](HANDBOOK.md)** található.
+
+Mivel az AI a markdown fájlokat preferálja, ezért egy markdown szerkesztő és olvasó applikáció beszerzése a mint pl. a TypeDown a Microsoft Storeból erőssen ajánlott, és vagy a VS Code Markdown Preview Mermaid Support kiegészítő is.
 
 ---
 

@@ -4,7 +4,7 @@
 
 ## What is it for?
 
-The `/convert` command automatically transforms Office, Outlook, and other files in the `workflow/01_project_info/` and `workflow/02_answers/` folders into Markdown format so that AI agents can process them.
+The `/convert` command automatically transforms Office, Outlook, and other files in the `workflow/01_project_info/` and `workflow/03_answers/` folders into Markdown format so that AI agents can process them.
 
 Conversion is handled by a **Python package** — not an AI agent — so it uses zero LLM tokens.
 
@@ -12,7 +12,7 @@ Conversion is handled by a **Python package** — not an AI agent — so it uses
 
 ## When should it be used?
 
-If you have copied files into the `workflow/01_project_info/` or `workflow/02_answers/` folder that are not in `.md` or `.txt` format:
+If you have copied files into the `workflow/01_project_info/` or `workflow/03_answers/` folder that are not in `.md` or `.txt` format:
 
 | File Type | Conversion Needed? |
 |---|---|
@@ -87,10 +87,10 @@ The `/ba`, `/spec-builder`, and `/business-analyst` commands **automatically sta
 
 | Command | Which folder does it convert? |
 |---|---|
-| `/ba` | `01_project_info/` and `02_answers/` |
+| `/ba` | `01_project_info/` and `03_answers/` |
 | `/spec-builder` | `01_project_info/` only |
-| `/business-analyst` | `02_answers/` only |
-| `/convert` | `01_project_info/` and `02_answers/` |
+| `/business-analyst` | `03_answers/` only |
+| `/convert` | `01_project_info/` and `03_answers/` |
 
 `/convert` is useful independently if you just want to verify conversion or run it manually before `/ba`.
 
@@ -99,6 +99,6 @@ The `/ba`, `/spec-builder`, and `/business-analyst` commands **automatically sta
 ```mermaid
 %%{init: {'flowchart': { 'nodeSpacing': 50, 'rankSpacing': 100 } }}%%
 flowchart TD
-    A["1. Copy files\nworkflow/01_project_info/ or workflow/02_answers/"] --> B["2. Run /convert\n.docx/.xlsx/.msg/.eml/.pdf/.pptx → _converted.md"]
+    A["1. Copy files\nworkflow/01_project_info/ or workflow/03_answers/"] --> B["2. Run /convert\n.docx/.xlsx/.msg/.eml/.pdf/.pptx → _converted.md"]
     B --> C["3. Run /ba\nClaude analyzes the materials"]
 ```

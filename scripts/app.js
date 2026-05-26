@@ -71,17 +71,28 @@ document.addEventListener('DOMContentLoaded', () => {
         'skill-spec-builder-en': './.claude/skills/spec-builder/README.en.md',
         'handbook': './HANDBOOK.md',
         'improvements': './devdocs/improvements.md',
-        'troubleshooting': './devdocs/troubleshooting.md'
+        'troubleshooting': './devdocs/troubleshooting.md',
+        'performance': './devdocs/performance.md'
     };
 
     const skillsToggle = document.getElementById('skillsToggle');
     const skillsSubmenu = document.getElementById('skillsSubmenu');
-    const hasSubmenu = document.querySelector('.has-submenu');
+    const skillsMenu = skillsToggle.closest('.has-submenu');
 
     skillsToggle.addEventListener('click', (e) => {
         e.preventDefault();
         skillsSubmenu.classList.toggle('open');
-        hasSubmenu.classList.toggle('open');
+        skillsMenu.classList.toggle('open');
+    });
+
+    const troubleshootingToggle = document.getElementById('troubleshootingToggle');
+    const troubleshootingSubmenu = document.getElementById('troubleshootingSubmenu');
+    const troubleshootingMenu = document.getElementById('troubleshootingMenu');
+
+    troubleshootingToggle.addEventListener('click', (e) => {
+        e.preventDefault();
+        troubleshootingSubmenu.classList.toggle('open');
+        troubleshootingMenu.classList.toggle('open');
     });
 
     async function loadPage(hash) {
@@ -89,7 +100,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (page.startsWith('skill-')) {
             skillsSubmenu.classList.add('open');
-            hasSubmenu.classList.add('open');
+            skillsMenu.classList.add('open');
+        }
+
+        if (page === 'troubleshooting' || page === 'performance') {
+            troubleshootingSubmenu.classList.add('open');
+            troubleshootingMenu.classList.add('open');
         }
 
         const url = routes[page];

@@ -253,8 +253,10 @@ python .claude/scripts/reset_project.py --yes
 
 A reset elvégzi:
 - `workflow/01_project_info/` — minden fájl törlése (`.gitkeep` megmarad)
-- `workflow/02_answers/` — minden fájl törlése
-- `workflow/03_ba_docs/` — minden fájl törlése
+- `workflow/02_discovery/` — minden fájl törlése (`.gitkeep` megmarad)
+- `workflow/03_answers/` — minden fájl törlése
+- `workflow/04_decisions/` — minden fájl törlése (`.gitkeep` megmarad)
+- `workflow/05_ba_docs/` — minden fájl törlése
 - `.claude/memory/CONVERSION_LOG.md` — üres 9-oszlopos táblára reset
 - `.claude/memory/` többi fájl (DECISIONS, STAKEHOLDERS, stb.) — törlés (memory-agent hozza létre újra az első futáskor)
 

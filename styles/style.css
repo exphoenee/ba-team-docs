@@ -176,6 +176,10 @@ h1, h2, h3, h4 {
     gap: 0.25rem;
 }
 
+.submenu li > a:first-child {
+    flex: 1;
+}
+
 .submenu a {
     font-size: 0.9rem;
     padding: 0.5rem 0.75rem;

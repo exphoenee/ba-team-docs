@@ -61,13 +61,15 @@ Pontosan megmutatja, mi van az egyes mappákban:
        Megválaszolatlan kérdések: 2 db
          ❓ Q-003
          ❓ Q-007
-  [02] Válaszok:          1 fájl
+  [02] Discovery:         ✅ BC.md, Discovery_RAID.md
+  [03] Válaszok:          1 fájl
        • answers_round1.md
-  [03] BA dokumentumok:   ÜRES
+  [04] FORCED döntések:   ÜRES
+  [05] BA dokumentumok:   ÜRES
 
   JAVASOLT KÖVETKEZŐ LÉPÉS
   ⛔ Részleges válaszok — 2 kérdés még megválaszolatlan.
-     → Egészítsd ki a workflow/02_answers/ fájlokat
+     → Egészítsd ki a workflow/03_answers/ fájlokat
      → Majd futtasd: /ba
 ============================================================
 ```

@@ -1,4 +1,4 @@
-# BA Team – Be the Boss of a 4-member AI Team!
+# BA Team – Be the Boss of a 5-member AI Team!
 
 [Magyar változat](README.md) | [Handbook](HANDBOOK.md) *(Hungarian)*
 
@@ -7,10 +7,11 @@
 > With this workflow, you don't just get a simple chatbot, but a complete, specialized Business Analyst team with you as the lead. While you focus on strategic decisions and client relationships, your AI colleagues do the heavy lifting:
 >
 > 1. 📋 **Orchestrator**: Your project manager who keeps track of everything and knows where you are.
-> 2. 🏗️ **Spec Builder**: Your precise analyst who carves a pinpoint specification out of raw notes.
-> 3. ✍️ **BA Document Agent**: Your technical writer who produces BRDs, User Stories, and process flows.
-> 4. 📂 **File Converter**: Your data specialist who converts any Office file into AI-ready format in seconds.
-> 5. 🧠 **Memory Agent**: Your strategic advisor who never forgets a single decision or stakeholder detail.
+> 2. 🔍 **Discovery Agent**: Your Discovery specialist who produces a Business Concept document and question list from early materials — never blocks work due to open questions.
+> 3. 🏗️ **Spec Builder**: Your precise analyst who carves a pinpoint specification out of raw notes.
+> 4. ✍️ **BA Document Agent**: Your technical writer who produces BRDs, User Stories, and process flows.
+> 5. 📂 **File Converter**: Your data specialist who converts any Office file into AI-ready format in seconds.
+> 6. 🧠 **Memory Agent**: Your strategic advisor who never forgets a single decision or stakeholder detail.
 >
 > **Take your efficiency to the next level: delegate to the BA Team and focus on real value creation!**
 
@@ -19,6 +20,8 @@
 This repository contains Claude AI skills and agents designed to **support Business Analyst colleagues** throughout the entire requirements engineering process of IT projects.
 
 For the full usage guide, command reference, workflow explanation, and FAQ, see the **[Handbook](HANDBOOK.md)** *(available in Hungarian only)*.
+
+Because AI prefers markdown files, it is strongly recommended to install a markdown editor and reader application such as TypeDown from the Microsoft Store, or the VS Code Markdown Preview Mermaid Support extension.
 
 ---
 
