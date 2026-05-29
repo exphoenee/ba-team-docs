@@ -16,7 +16,7 @@ flowchart TD
     ORC -->|"Non-md files found"| PY["convert_all\n(Python package, 0 AI tokens)"]
     PY --> ORC
 
-    ORC -->|"No spec OR FORCED decision newer"| SBA["spec-builder-agent"]
+    ORC -->|"No spec OR FORCED decision newer"| SBA["extraction-agent"]
     ORC -->|"All Q-XXX answered"| BDA["ba-document-agent"]
     ORC -->|"Missing answers"| STOP["⛔ Reports to user"]
     ORC -->|"--discovery flag"| DA["discovery-agent"]
@@ -62,8 +62,8 @@ Never writes spec content or BA documents itself.
 | State detected | Action |
 |---|---|
 | No input files | Reports: nothing to process |
-| No `_system/SPEC_OUTPUT.md` | Dispatches `spec-builder-agent` |
-| FORCED decision (`04_decisions/`) newer than spec | Dispatches `spec-builder-agent` to rebuild (bypassed by `--force`) |
+| No `_system/SPEC_OUTPUT.md` | Dispatches `extraction-agent` |
+| FORCED decision (`04_decisions/`) newer than spec | Dispatches `extraction-agent` to rebuild (bypassed by `--force`) |
 | Open Q-XXX, no answers | Reports: waiting for answers |
 | Unanswered Q-XXX | Reports: lists missing answers, stops |
 | Unanswered Q-XXX + `--draft` | Dispatches `ba-document-agent` in draft mode (VÁZLAT header) |
@@ -72,9 +72,9 @@ Never writes spec content or BA documents itself.
 
 ---
 
-### `spec-builder-agent`
+### `extraction-agent`
 
-**File:** [.claude/agents/extractor-agent.md](.claude/agents/extractor-agent.md)
+**File:** [.claude/agents/extraction-agent.md](.claude/agents/extraction-agent.md)
 
 Reads processable files in `workflow/01_project_info/`, generates or updates the structured specification.
 Supports **incremental building** via `SPEC_LOG.md` fingerprints to save tokens.
@@ -172,7 +172,7 @@ Each skill is a thin dispatcher — it delegates all work to an agent or a Pytho
 | `/ba` | `ba-orchestrator` | [README](.claude/skills/ba/README.md) |
 | `/ba --discovery` | `ba-orchestrator` → `discovery-agent` | [README](.claude/skills/ba/README.md) |
 | `/convert` | `convert_all` Python package | [README](.claude/skills/convert/README.md) |
-| `/extractor` | `spec-builder-agent` | [README](.claude/skills/extractor/README.md) |
+| `/extractor` | `extraction-agent` | [README](.claude/skills/extractor/README.md) |
 | `/business-analyst` | `ba-document-agent` | [README](.claude/skills/business-analyst/README.md) |
 | `/memory-handler` | `memory-agent` | [README](.claude/skills/memory-handler/README.md) |
 | `/session-loader` | `session_loader.py` Python script | [README](.claude/skills/session-loader/README.md) |
@@ -195,7 +195,7 @@ Each skill is a thin dispatcher — it delegates all work to an agent or a Pytho
 ```mermaid
 flowchart LR
     A["01_project_info/\nRaw materials"] -->|"/ba"| B{ba-orchestrator\nstate?}
-    B -->|"No spec OR\nFORCED decision newer"| C["spec-builder-agent\n-> _system/SPEC_OUTPUT.md\n+ _system/SPEC_DIFF.md\n+ memory STORE"]
+    B -->|"No spec OR\nFORCED decision newer"| C["extraction-agent\n-> _system/SPEC_OUTPUT.md\n+ _system/SPEC_DIFF.md\n+ memory STORE"]
     C --> D["Annotation\nvalidation"]
     D --> E["Wait for\nanswers in 03_answers/"]
     E -->|"/ba"| B

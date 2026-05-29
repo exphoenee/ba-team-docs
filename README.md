@@ -8,7 +8,7 @@
 >
 > 1. 📋 **Orchestrator**: A projektmenedzsered, aki összefogja a szálakat és tudja, hol tartotok.
 > 2. 🔍 **Discovery Agent**: A Discovery specialistád, aki korai anyagokból Business Concept dokumentumot és kérdéslistát állít elő — sosem blokkolja a munkát nyitott kérdések miatt.
-> 3. 🏗️ **Spec Builder**: A precíz elemződ, aki a nyers jegyzetekből tűpontos specifikációt farag.
+> 3. 🏗️ **Extraction Agent**: A precíz elemződ, aki a nyers jegyzetekből tűpontos specifikációt farag.
 > 4. ✍️ **BA Document Agent**: A technikai íród, aki BRD-ket, User Story-kat és folyamatábrákat gyárt.
 > 5. 🔬 **RCA Agent**: A diagnosztikád, aki megmutatja, hol érdemes beavatkozni — oksági láncok, hurkok és driver/tünet besorolás.
 > 6. 🔎 **Validation Agent**: A minőségőröd, aki az RCA után, dokumentumgenerálás előtt ellenőrzi, hogy minden kötelező elem megvan-e.

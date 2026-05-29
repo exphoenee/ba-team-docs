@@ -12,6 +12,7 @@
 | `/mermaid-diagrams` | Önálló diagram készítése |
 | `/memory-handler` | Projekt memória megtekintése |
 | `/self-dev` | **Fejlesztési igény rögzítése** – BA Tool módosítási/fejlesztési kérések elküldése a fejlesztőnek |
+| `/validate` | Specifikáció minőségőr – SPEC_OUTPUT.md ellenőrzése 8 dimenzión (PASS/WARN/BLOCK státusz) |
 | `/check-state` | **Projekt állapotfelmérés** – a workflow mappák vizsgálata, fázis meghatározása, hiányzó lépések listázása |
 | `/help [parancs]` | **Súgó megjelenítése** – parancslista, projekt állapot, következő lépés javaslat; `/help <parancs>` részletes segítség |
 
