@@ -32,9 +32,26 @@ The discovery-agent saves its outputs to `workflow/02_discovery/`:
 | File | Contents |
 |---|---|
 | `BC.md` | Business Concept — the main Discovery deliverable |
-| `Discovery_RAID.md` | Early RAID — risks, assumptions, open issues |
+| `Discovery_RAID.md` | Early RAID — risks, assumptions, open issues (+ optional RCA sections) |
 | `Discovery_Questions.md` | Meeting-ready question checklist by category |
 | `_system/DISCOVERY_OUTPUT.md` | Structured intermediate spec (basis for the above) |
+
+### Discovery_RAID.md — optional RCA sections
+
+When the source materials contain sufficient causal structure, `Discovery_RAID.md` may include two optional sections:
+
+**Root cause summary (preliminary RCA)** — when ≥3 root causes with identifiable causal links are found:
+```
+| RC-001 | Missing project sponsor | Driver (probable) | RC-003, RC-005 |
+```
+This is a preliminary estimate — for full analysis run: `/rca`
+
+**Self-reinforcing loops** — when a feedback loop of ≥3 distinct elements is identifiable:
+```
+| ISSUE-001 | Scope creep → resource shortage → quality drop → further scope creep | Early scope freeze |
+```
+
+> If the source materials do not provide enough structured causal evidence, these sections are omitted entirely — that is the normal case.
 
 ### Business Concept (BC.md) structure
 

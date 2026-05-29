@@ -156,10 +156,46 @@ Megmutatja, hogy az ügyfél melyik kijelentéséből melyik követelmény szül
 
 ---
 
+## Változások (v3.0 — extraction-agent refaktor)
+
+- A skill mostantól az `extraction-agent`-et dispatchilja (korábban: `spec-builder-agent`). A `/spec-builder` parancs neve nem változott — a változás belső.
+- A `--force` flag mostantól kikapcsolja a Discovery mélységű módot — teljes Analysis mélységű dokumentumokat generál, még akkor is, ha korábban volt Discovery fázis.
+- **BR-kinyerés:** a rendszer aktívan keresi a konkrét számokat és KPI-kat a forrásanyagokban. Ha nem talál, Q-XXX kérdést generál.
+- **GDPR-kezelés megosztva:** az extraction-agent detektálja a személyes adat FR-eket és generálja a RISK-XXX / ISSUE-XXX bejegyzéseket; a BLOCK döntés (ha ezek hiányoznak) a `validation-agent`-nél van.
+
+## Mit nyerés ki a spec-builder?
+
+### Funkcionális követelmények (FR)
+
+A rendszer az alábbi domain-eket aktívan keresi a forrásokban:
+szervezeti hierarchia · checkpoint/mérföldkő · szakmai fejlődés · projekt életciklus ·
+partner/alvállalkozó · értesítések · audit log · munkaidő
+
+### Nem-funkcionális követelmények (NFR)
+
+5 kötelező kategória minden projektben:
+- **Teljesítmény** (egyidejű felhasználók, válaszidő)
+- **Platform/Deployment** (OS, böngésző, hálózat)
+- **UI/UX** (nyelv, eszköz, akadálymentesség)
+- **Adatkezelés** (megőrzési idő, GDPR)
+- **Biztonság** (autentikáció, RBAC, audit log)
+
+Ha egy kategória nem szerepel a forrásban, `[INFERRED:LOW]` annotációval kerül bele.
+
+### GDPR automatikus trigger
+
+Ha a forrásban munkaidő, bér, személyes adat FR azonosítható →
+az extraction-agent automatikusan generál RISK-XXX (GDPR megfelelőség) és
+ISSUE-XXX (hatásvizsgálat szükséges) bejegyzéseket a specifikációba.
+
+Ha a GDPR kockázat az elkészült specifikációból hiányzik, a `validation-agent` **BLOCK** státusszal megállítja a BA dokumentumok generálását. A `Regulatory_Checklist.md`-t a `ba-document-agent` állítja elő.
+
+---
+
 ## Kapcsolódó skillek
 
 | Skill | Kapcsolat |
 |---|---|
-| `/ba` | Automatikusan hívja, ha nincs még spec |
-| `/ba` | A spec alapján ellenőrzi a válaszokat és generálja a BA dokumentumokat |
+| `/ba` | Automatikusan hívja, ha nincs még spec; a spec alapján ellenőrzi a válaszokat és generálja a BA dokumentumokat |
+| `/validate` | A spec elkészülte után ellenőrzi annak minőségét — önállóan futtatható |
 | `/business-analyst` | A specifikáció alapján generálja a BA dokumentumokat |

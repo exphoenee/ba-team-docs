@@ -83,12 +83,12 @@ A generált leírás tartalmaz:
 
 ## Automatikus konverzió – nem kell mindig /convert-et futtatni
 
-A `/ba`, `/spec-builder` és `/business-analyst` parancsok **automatikusan elindítják a konverziót** a megfelelő mappán:
+A `/ba`, `/extractor` és `/business-analyst` parancsok **automatikusan elindítják a konverziót** a megfelelő mappán:
 
 | Parancs | Melyik mappát konvertálja? |
 |---|---|
 | `/ba` | `01_project_info/` és `03_answers/` |
-| `/spec-builder` | csak `01_project_info/` |
+| `/extractor` | csak `01_project_info/` |
 | `/business-analyst` | csak `03_answers/` |
 | `/convert` | `01_project_info/` és `03_answers/` |
 

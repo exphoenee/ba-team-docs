@@ -15,8 +15,9 @@ A skill senior enterprise BA tudással rendelkezik: érti az Agile, Scrum és SA
 ## Hogyan használd?
 
 Győződj meg arról, hogy:
-- `workflow/01_project_info/_system/SPEC_OUTPUT.md` létezik (a `/spec-builder` elkészítette)
+- `workflow/01_project_info/_system/SPEC_OUTPUT.md` létezik (a `/extractor` elkészítette)
 - `workflow/03_answers/` tartalmaz válasz fájlokat (minden Q-XXX kérdés megválaszolva)
+- (opcionális) `workflow/01_project_info/_system/SPEC_VALIDATION.md` létezik — a `/validate` vagy a `/ba` automatikusan hozza létre
 
 Ha vannak FORCED döntések (`workflow/04_decisions/` — SDEC-XXX fájlok), azok automatikusan beépülnek a dokumentumokba.
 
@@ -25,6 +26,20 @@ Majd a Claude panelen írd be:
 ```
 /business-analyst
 ```
+
+---
+
+## Validációs figyelmeztetések a dokumentumokban
+
+Ha a `/validate` (vagy a `/ba`) által létrehozott `SPEC_VALIDATION.md` WARN státuszú elemeket tartalmaz, azok megjelennek a generált dokumentumokban:
+
+```
+[⚠️ Validációs figyelmeztetés: BR-003 — hiányzó KPI, Q-XXX nyitott]
+```
+
+Ez nem blokkolja a generálást — de láthatóvá teszi a BA számára, hol szükséges még pontosítás.
+
+Ha a `SPEC_VALIDATION.md` BLOCK státuszú, a `/ba` megáll a generálás előtt. Direktben (`/business-analyst`) futtatva a skill figyelmeztet, de folytatja.
 
 ---
 
@@ -141,6 +156,60 @@ Minden Discovery-mélységű dokumentum tetején ez a fejléc jelenik meg:
 
 Ha Analysis-mélységű dokumentumokra van szükséged (Discovery-alapú projekten), futtasd: `/ba --force`
 
+> **Fontos:** Discovery-mélységű dokumentumok csak az **első** Analysis futásnál keletkeznek automatikusan (amikor `workflow/05_ba_docs/` még üres). Minden további futásnál és `--force` esetén mindig Analysis mélység az alapértelmezett.
+
+---
+
+## Generált dokumentumok minősége
+
+### User Stories
+
+Analysis módban minden US-hez minimum 3 Gherkin elfogadási kritérium (Given/When/Then) kerül:
+- **Scenario 1 — Happy path:** normál sikeres eset
+- **Scenario 2 — Edge case:** határeset
+- **Scenario 3 — Error case:** hibakezelés
+
+Minden US-hez specifikus szerepkör szükséges (pl. "Projektvezető", "Junior tervező" — nem csak "Felhasználó").
+
+Discovery módban 1–2 egyszerűsített elfogadási kritérium elegendő.
+
+### UAT Tesztesetek
+
+Minden teszteset kötelező struktúrája Analysis módban:
+- **Előfeltételek** (rendszerállapot a teszt előtt)
+- **Tesztlépések** (számozva)
+- **Elvárt eredmény**
+- **Elfogadási kritérium** (**MEGFELELT** / **NEM FELELT MEG** feltétel)
+
+Discovery módban általános, TC-XXX azonosító nélküli szcenáriók elegendők.
+
+### Feltételezések és kockázatok
+
+Az `[INFERRED:HIGH]` annotációjú feltételezések egyszerre jelennek meg:
+- az **A-XXX feltételezések listájában** (megmarad)
+- a **RAID Log RISK szekciójában** (addicionális bejegyzés)
+
+A két bejegyzés egymást kiegészíti, nem helyettesíti. Az A-XXX sor hivatkozik a RISK-XXX-re, és fordítva.
+
+Ha a feltételezés és más A-XXX / RISK bejegyzések között egyértelmű oksági összefüggés azonosítható, az A-XXX sor opcionálisan tartalmaz egy downstream hivatkozást is:
+```
+→ Downstream hatás: A-003 (csúszó döntések), RISK-004 (scope kúszás)
+```
+
+### RAID Log — kockázatok prioritizálása
+
+Minden RISK bejegyzés tartalmaz egy `Szerep` mezőt, amely az RCA módszertan alapján mutatja meg a kockázat funkcióját a kauzális láncban:
+
+| Szerep | Mit jelent | Teendő |
+|---|---|---|
+| **Driver** | Sok downstream hatással — ez okozza a többit | **Prioritás 1 — itt beavatkozni** |
+| **Köztes csomópont** | Okozza ÉS okozzák — kritikus közvetítő | Figyelni |
+| **Hurokerősítő** | Önfenntartó körben szerepel | Hurkot megszakítani |
+| **Tünet / végpont** | Sok upstream ok — itt látszik a fájdalom | Nem itt kezdeni a megoldást |
+| **Validálandó** | Nem volt elegendő adat az osztályozáshoz | Workshopon tisztázni |
+
+Ha a `/rca` skill is lefutott, a Szerep mezők automatikusan az IR_Elemzés kimenetéből töltődnek ki.
+
 ---
 
 ## Kapcsolódó skillek
@@ -149,6 +218,6 @@ Ha Analysis-mélységű dokumentumokra van szükséged (Discovery-alapú projekt
 |---|---|
 | `/ba` | Automatikusan hívja, ha minden Q-XXX megválaszolt |
 | `/discovery` | Discovery fázis belépési pontja — a discovery-agent kimenetéből dolgozik ez a skill |
-| `/spec-builder` | Előállítja azt a specifikációt, amiből ez dolgozik |
+| `/extractor` | Előállítja azt a specifikációt, amiből ez dolgozik |
 | `/mermaid-diagrams` | Ha önálló diagramra van szükség |
 | `/memory-handler` | Az elkészített döntéseket és szakkifejezéseket ide menti |

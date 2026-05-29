@@ -15,8 +15,9 @@ The skill possesses senior enterprise BA knowledge: it understands Agile, Scrum,
 ## How to use it?
 
 Make sure that:
-- `workflow/01_project_info/_system/SPEC_OUTPUT.md` exists (prepared by `/spec-builder`)
+- `workflow/01_project_info/_system/SPEC_OUTPUT.md` exists (prepared by `/extractor`)
 - `workflow/03_answers/` contains answer files (all Q-XXX questions answered)
+- (optional) `workflow/01_project_info/_system/SPEC_VALIDATION.md` exists — created automatically by `/validate` or `/ba`
 
 If there are FORCED decisions (`workflow/04_decisions/` — SDEC-XXX files), they are automatically incorporated into the documents.
 
@@ -25,6 +26,20 @@ Then, in the Claude panel, type:
 ```
 /business-analyst
 ```
+
+---
+
+## Validation Warnings in Documents
+
+If `SPEC_VALIDATION.md` (created by `/validate` or `/ba`) contains WARN-level items, they appear in the generated documents:
+
+```
+[⚠️ Validation warning: BR-003 — missing KPI, Q-XXX open]
+```
+
+This does not block generation — it makes visible where further clarification is needed.
+
+If `SPEC_VALIDATION.md` has BLOCK status, `/ba` stops before generation. When run directly (`/business-analyst`), the skill shows a warning but continues.
 
 ---
 
@@ -141,6 +156,60 @@ Every Discovery-depth document gets this header:
 
 To get Analysis-depth documents on a Discovery-based project, run: `/ba --force`
 
+> **Important:** Discovery-depth documents are only generated automatically on the **first** Analysis run (when `workflow/05_ba_docs/` is still empty). Every subsequent run and every `--force` run defaults to Analysis depth.
+
+---
+
+## Document Quality
+
+### User Stories
+
+In Analysis mode, every US receives a minimum of 3 Gherkin acceptance criteria (Given/When/Then):
+- **Scenario 1 — Happy path:** normal successful case
+- **Scenario 2 — Edge case:** boundary condition
+- **Scenario 3 — Error case:** error handling
+
+Every US must specify a concrete role (e.g., "Project Manager", "Junior Designer" — not just "User").
+
+In Discovery mode, 1–2 simplified acceptance criteria are sufficient.
+
+### UAT Test Cases
+
+Mandatory structure for every test case in Analysis mode:
+- **Preconditions** (system state before the test)
+- **Test steps** (numbered)
+- **Expected result**
+- **Acceptance criterion** (**PASSED** / **FAILED** condition)
+
+In Discovery mode, general epic-level scenarios without TC-XXX identifiers are sufficient.
+
+### Assumptions and Risks
+
+Assumptions annotated `[INFERRED:HIGH]` appear in both:
+- the **A-XXX assumptions list** (preserved)
+- the **RAID Log RISK section** (additive entry)
+
+The two entries complement each other — they are not mutually exclusive. The A-XXX row references the RISK-XXX, and vice versa.
+
+If a clear causal link between the assumption and other A-XXX / RISK entries is identifiable, the A-XXX entry optionally includes a downstream reference:
+```
+→ Downstream hatás: A-003 (delayed decisions), RISK-004 (scope creep)
+```
+
+### RAID Log — risk prioritisation
+
+Every RISK entry includes a `Szerep` (Role) field showing its position in the causal chain:
+
+| Role | Meaning | Action |
+|---|---|---|
+| **Driver** | Many downstream effects — this causes the others | **Priority 1 — intervene here** |
+| **Köztes csomópont** | Caused by AND causes others — critical intermediary | Monitor |
+| **Hurokerősítő** | Part of a self-reinforcing loop | Break the loop |
+| **Tünet / végpont** | Many upstream causes — pain is visible here | Do not start solution here |
+| **Validálandó** | Insufficient data to classify | Clarify in workshop |
+
+If the `/rca` skill has also been run, the Role fields are populated automatically from the IR_Elemzés output.
+
 ---
 
 ## Related Skills
@@ -149,6 +218,6 @@ To get Analysis-depth documents on a Discovery-based project, run: `/ba --force`
 |---|---|
 | `/ba` | Calls it automatically when all Q-XXX are answered |
 | `/discovery` | Discovery phase entry point — this skill works from the discovery-agent's output |
-| `/spec-builder` | Produces the specification that this works from |
+| `/extractor` | Produces the specification that this works from |
 | `/mermaid-diagrams` | If a standalone diagram is needed |
 | `/memory-handler` | Saves prepared decisions and technical terms here |

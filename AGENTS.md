@@ -74,7 +74,7 @@ Never writes spec content or BA documents itself.
 
 ### `spec-builder-agent`
 
-**File:** [.claude/agents/spec-builder-agent.md](.claude/agents/spec-builder-agent.md)
+**File:** [.claude/agents/extractor-agent.md](.claude/agents/extractor-agent.md)
 
 Reads processable files in `workflow/01_project_info/`, generates or updates the structured specification.
 Supports **incremental building** via `SPEC_LOG.md` fingerprints to save tokens.
@@ -172,11 +172,14 @@ Each skill is a thin dispatcher — it delegates all work to an agent or a Pytho
 | `/ba` | `ba-orchestrator` | [README](.claude/skills/ba/README.md) |
 | `/ba --discovery` | `ba-orchestrator` → `discovery-agent` | [README](.claude/skills/ba/README.md) |
 | `/convert` | `convert_all` Python package | [README](.claude/skills/convert/README.md) |
-| `/spec-builder` | `spec-builder-agent` | [README](.claude/skills/spec-builder/README.md) |
+| `/extractor` | `spec-builder-agent` | [README](.claude/skills/extractor/README.md) |
 | `/business-analyst` | `ba-document-agent` | [README](.claude/skills/business-analyst/README.md) |
 | `/memory-handler` | `memory-agent` | [README](.claude/skills/memory-handler/README.md) |
 | `/session-loader` | `session_loader.py` Python script | [README](.claude/skills/session-loader/README.md) |
 | `/mermaid-diagrams` | *(inline, no agent)* | [README](.claude/skills/mermaid-diagrams/README.md) |
+| `/self-dev` | Python script → Formspree | [README](.claude/skills/self-dev/README.md) |
+| `/check-state` | *(inline state check)* | [README](.claude/skills/check-state/README.md) |
+| `/help` | *(inline state check + doc search)* | [README](.claude/skills/help/README.md) |
 
 > **Note:** `/ba` is the single recommended entry point for the full workflow.
 > See [CLAUDE.md](CLAUDE.md) for the authoritative workflow description and usage instructions.

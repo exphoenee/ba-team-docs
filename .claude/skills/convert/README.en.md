@@ -83,12 +83,12 @@ The generated description includes:
 
 ## Automatic Conversion – No need to always run /convert
 
-The `/ba`, `/spec-builder`, and `/business-analyst` commands **automatically start conversion** on the appropriate folder:
+The `/ba`, `/extractor`, and `/business-analyst` commands **automatically start conversion** on the appropriate folder:
 
 | Command | Which folder does it convert? |
 |---|---|
 | `/ba` | `01_project_info/` and `03_answers/` |
-| `/spec-builder` | `01_project_info/` only |
+| `/extractor` | `01_project_info/` only |
 | `/business-analyst` | `03_answers/` only |
 | `/convert` | `01_project_info/` and `03_answers/` |
 

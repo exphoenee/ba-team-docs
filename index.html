@@ -33,20 +33,59 @@
         <div class="sidebar-scroll">
         <ul class="nav-links">
             <li class="nav-item-with-lang"><a href="#home" class="active"><i class="fas fa-home"></i> Kezdőlap <span class="lang-tag">HU</span></a><a href="#home-en" class="lang-alt">EN</a></li>
-            <li class="nav-item-with-lang"><a href="#agents"><i class="fas fa-users-gear"></i> Ügynökök <span class="lang-tag">HU</span></a><a href="#agents-en" class="lang-alt">EN</a></li>
+            <li class="has-submenu">
+                <a href="javascript:void(0)" id="agentsToggle"><i class="fas fa-users-gear"></i> Ügynökök <i class="fas fa-chevron-down toggle-icon"></i></a>
+                <ul class="submenu" id="agentsSubmenu">
+                    <li class="nav-item-with-lang"><a href="#agents">Összes ügynök <span class="lang-tag">HU</span></a><a href="#agents-en" class="lang-alt">EN</a></li>
+                    <li class="nav-item-with-lang"><a href="#agent-ba-orchestrator">ba-orchestrator <span class="lang-tag">HU</span></a><a href="#agent-ba-orchestrator-en" class="lang-alt">EN</a></li>
+                    <li class="nav-item-with-lang"><a href="#agent-extraction-agent">extraction-agent <span class="lang-tag">HU</span></a><a href="#agent-extraction-agent-en" class="lang-alt">EN</a></li>
+                    <li class="nav-item-with-lang"><a href="#agent-ba-document-agent">ba-document-agent <span class="lang-tag">HU</span></a><a href="#agent-ba-document-agent-en" class="lang-alt">EN</a></li>
+                    <li class="nav-item-with-lang"><a href="#agent-discovery-agent">discovery-agent <span class="lang-tag">HU</span></a><a href="#agent-discovery-agent-en" class="lang-alt">EN</a></li>
+                    <li class="nav-item-with-lang"><a href="#agent-memory-agent">memory-agent <span class="lang-tag">HU</span></a><a href="#agent-memory-agent-en" class="lang-alt">EN</a></li>
+                    <li class="nav-item-with-lang"><a href="#agent-rca-agent">rca-agent <span class="lang-tag">HU</span></a><a href="#agent-rca-agent-en" class="lang-alt">EN</a></li>
+                    <li class="nav-item-with-lang"><a href="#agent-validation-agent">validation-agent <span class="lang-tag">HU</span></a><a href="#agent-validation-agent-en" class="lang-alt">EN</a></li>
+                </ul>
+            </li>
             <li class="has-submenu">
                 <a href="javascript:void(0)" id="skillsToggle"><i class="fas fa-bolt"></i> Parancsok <i class="fas fa-chevron-down toggle-icon"></i></a>
                 <ul class="submenu" id="skillsSubmenu">
                     <li><a href="#skill-ba">/ba <span class="lang-tag">HU</span></a><a href="#skill-ba-en" class="lang-alt">EN</a></li>
                     <li><a href="#skill-business-analyst">/business-analyst <span class="lang-tag">HU</span></a><a href="#skill-business-analyst-en" class="lang-alt">EN</a></li>
+                    <li><a href="#skill-check-state">/check-state <span class="lang-tag">HU</span></a><a href="#skill-check-state-en" class="lang-alt">EN</a></li>
                     <li><a href="#skill-convert">/convert <span class="lang-tag">HU</span></a><a href="#skill-convert-en" class="lang-alt">EN</a></li>
+                    <li><a href="#skill-discovery">/discovery <span class="lang-tag">HU</span></a><a href="#skill-discovery-en" class="lang-alt">EN</a></li>
+                    <li><a href="#skill-help">/help <span class="lang-tag">HU</span></a><a href="#skill-help-en" class="lang-alt">EN</a></li>
                     <li><a href="#skill-memory-handler">/memory-handler <span class="lang-tag">HU</span></a><a href="#skill-memory-handler-en" class="lang-alt">EN</a></li>
                     <li><a href="#skill-mermaid-diagrams">/mermaid-diagrams <span class="lang-tag">HU</span></a><a href="#skill-mermaid-diagrams-en" class="lang-alt">EN</a></li>
                     <li><a href="#skill-session-loader">/session-loader <span class="lang-tag">HU</span></a><a href="#skill-session-loader-en" class="lang-alt">EN</a></li>
-                    <li><a href="#skill-spec-builder">/spec-builder <span class="lang-tag">HU</span></a><a href="#skill-spec-builder-en" class="lang-alt">EN</a></li>
+                    <li><a href="#skill-rca">/rca <span class="lang-tag">HU</span></a><a href="#skill-rca-en" class="lang-alt">EN</a></li>
+                    <li><a href="#skill-self-dev">/self-dev <span class="lang-tag">HU</span></a><a href="#skill-self-dev-en" class="lang-alt">EN</a></li>
+                    <li><a href="#skill-extractor">/extractor <span class="lang-tag">HU</span></a><a href="#skill-extractor-en" class="lang-alt">EN</a></li>
+                    <li><a href="#skill-validate">/validate <span class="lang-tag">HU</span></a><a href="#skill-validate-en" class="lang-alt">EN</a></li>
                 </ul>
             </li>
-            <li><a href="#handbook"><i class="fas fa-book"></i> Kézikönyv</a></li>
+            <li class="has-submenu">
+                <a href="javascript:void(0)" id="handbookToggle"><i class="fas fa-book"></i> Kézikönyv <i class="fas fa-chevron-down toggle-icon"></i></a>
+                <ul class="submenu" id="handbookSubmenu">
+                    <li class="nav-item-with-lang"><a href="#handbook">Tartalomjegyzék <span class="lang-tag">HU</span></a><a href="#handbook-en" class="lang-alt">EN</a></li>
+                    <li class="nav-item-with-lang"><a href="#handbook-ch01">1. A termékről <span class="lang-tag">HU</span></a><a href="#handbook-ch01-en" class="lang-alt">EN</a></li>
+                    <li class="nav-item-with-lang"><a href="#handbook-ch02">2. AI csapat <span class="lang-tag">HU</span></a><a href="#handbook-ch02-en" class="lang-alt">EN</a></li>
+                    <li class="nav-item-with-lang"><a href="#handbook-ch03">3. Telepítés <span class="lang-tag">HU</span></a><a href="#handbook-ch03-en" class="lang-alt">EN</a></li>
+                    <li class="nav-item-with-lang"><a href="#handbook-ch04">4. Mappa-struktúra <span class="lang-tag">HU</span></a><a href="#handbook-ch04-en" class="lang-alt">EN</a></li>
+                    <li class="nav-item-with-lang"><a href="#handbook-ch05">5. Parancsok <span class="lang-tag">HU</span></a><a href="#handbook-ch05-en" class="lang-alt">EN</a></li>
+                    <li class="nav-item-with-lang"><a href="#handbook-ch06">6. Munkafolyamat <span class="lang-tag">HU</span></a><a href="#handbook-ch06-en" class="lang-alt">EN</a></li>
+                    <li class="nav-item-with-lang"><a href="#handbook-ch07">7. Dokumentumok <span class="lang-tag">HU</span></a><a href="#handbook-ch07-en" class="lang-alt">EN</a></li>
+                    <li class="nav-item-with-lang"><a href="#handbook-ch08">8. Azonosítók <span class="lang-tag">HU</span></a><a href="#handbook-ch08-en" class="lang-alt">EN</a></li>
+                    <li class="nav-item-with-lang"><a href="#handbook-ch09">9. Memória <span class="lang-tag">HU</span></a><a href="#handbook-ch09-en" class="lang-alt">EN</a></li>
+                    <li class="nav-item-with-lang"><a href="#handbook-ch10">10. Konverzió <span class="lang-tag">HU</span></a><a href="#handbook-ch10-en" class="lang-alt">EN</a></li>
+                    <li class="nav-item-with-lang"><a href="#handbook-ch11">11. Speciális esetek <span class="lang-tag">HU</span></a><a href="#handbook-ch11-en" class="lang-alt">EN</a></li>
+                    <li class="nav-item-with-lang"><a href="#handbook-ch12">12. Diagramok <span class="lang-tag">HU</span></a><a href="#handbook-ch12-en" class="lang-alt">EN</a></li>
+                    <li class="nav-item-with-lang"><a href="#handbook-ch13">13. Értesítések <span class="lang-tag">HU</span></a><a href="#handbook-ch13-en" class="lang-alt">EN</a></li>
+                    <li class="nav-item-with-lang"><a href="#handbook-ch14">14. Ügynökök <span class="lang-tag">HU</span></a><a href="#handbook-ch14-en" class="lang-alt">EN</a></li>
+                    <li class="nav-item-with-lang"><a href="#handbook-ch15">15. Szabályozás <span class="lang-tag">HU</span></a><a href="#handbook-ch15-en" class="lang-alt">EN</a></li>
+                    <li class="nav-item-with-lang"><a href="#handbook-ch16">16. GYIK <span class="lang-tag">HU</span></a><a href="#handbook-ch16-en" class="lang-alt">EN</a></li>
+                </ul>
+            </li>
             <li><a href="#improvements"><i class="fas fa-lightbulb"></i> Fejlesztési javaslatok</a></li>
             <li class="has-submenu" id="troubleshootingMenu">
                 <a href="javascript:void(0)" id="troubleshootingToggle"><i class="fas fa-wrench"></i> Hibaelhárítás <i class="fas fa-chevron-down toggle-icon"></i></a>

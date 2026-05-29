@@ -147,7 +147,7 @@ Ha elegendő adat áll rendelkezésre, ezek is elkészülnek:
 
 | Skill | Kapcsolat |
 |---|---|
-| `/spec-builder` | A `/ba` ezt futtatja az első fázisban |
+| `/extractor` | A `/ba` ezt futtatja az első fázisban |
 | `/business-analyst` | A `/ba` ezt futtatja a dokumentum-generálási fázisban |
 | `/memory-handler` | A `/ba` ezt használja a memória olvasásához és írásához |
 | `/session-loader` | Session elején futtatandó az állapot betöltéséhez |

@@ -190,7 +190,7 @@ Perzisztencia: Biztosítja, hogy a különböző projektfázisokon és munkamene
 A források nem említenek külön kategóriát a „politikai” vagy „diplomáciai” döntésekre, azonban a workflow felépítése pontosan az ilyen érzékeny, emberi mérlegelést igénylő helyzetek kezelésére szolgál az alábbi mechanizmusokon keresztül:
 
 1. Az ellentmondások felszínre hozása (nem feloldása)
-A rendszer alapelve, hogy a /spec-builder soha nem oldja fel csendben az ellentmondásokat. Ha a politikai érdekek mentén különböző érintettek (stakeholderek) mást mondanak, az AI ezt konfliktusként jelzi a specifikációban, és nem próbál meg „okosabb” lenni az embernél.
+A rendszer alapelve, hogy a /extractor soha nem oldja fel csendben az ellentmondásokat. Ha a politikai érdekek mentén különböző érintettek (stakeholderek) mást mondanak, az AI ezt konfliktusként jelzi a specifikációban, és nem próbál meg „okosabb” lenni az embernél.
 
 2. Q-XXX kérdések és emberi döntéshozatal
 Minden olyan pontot, ahol diplomáciai egyeztetésre van szükség, a rendszer nyitott kérdésként (Q-XXX) jelöl meg.
@@ -214,7 +214,7 @@ A file-converter-agent feladata tisztán technikai: az ő dolga mindössze annyi
 
 Azonban a rendszer egésze – különösen a spec-builder-agent – éppen azért lett így kialakítva, hogy az ilyen „emberi” helyzeteket kezelni tudja, de ne helyetted, hanem a te kezed alá dolgozva:
 
-- Az ellentmondás felszínre hozása: Ha a vezérigazgató hajnali kettőkor beírja, hogy „NEM!!!”, az valószínűleg ellentmond egy korábbi követelménynek. A /spec-builder egyik legfontosabb szabálya, hogy soha nem oldja fel csendben az ellentmondásokat. Ehelyett a SPEC_OUTPUT.md fájlban jelzi a konfliktust, és megmutatja, hol ütköznek az információk.
+- Az ellentmondás felszínre hozása: Ha a vezérigazgató hajnali kettőkor beírja, hogy „NEM!!!”, az valószínűleg ellentmond egy korábbi követelménynek. A /extractor egyik legfontosabb szabálya, hogy soha nem oldja fel csendben az ellentmondásokat. Ehelyett a SPEC_OUTPUT.md fájlban jelzi a konfliktust, és megmutatja, hol ütköznek az információk.
 
 - A „NEM!!!” mint Explicit adat: A rendszer megkülönbözteti az [EXPLICIT] (szó szerint elhangzott) és az [INFERRED] (következtetett) információkat. Egy ilyen határozott elutasítás explicit tiltásként vagy kockázatként bekerül a rendszerbe, és azonnal megállítja a folyamatot.
 
@@ -228,7 +228,7 @@ A rendszerben alkalmazott szigorú szabály, miszerint nem generálhatók BA dok
 1. Az "audit-kész" dokumentáció garantálása
 A BA Team workflow célja nem csupán vázlatok készítése, hanem audit-kész, professzionális dokumentációs csomagok (BRD, User Story-k, RAID Log) előállítása. Ha a rendszer megengedné a generálást hiányzó adatokkal, a dokumentumok tele lennének tisztázatlan pontokkal, ami alkalmatlanná tenné őket a fejlesztői átadásra vagy egy hivatalos auditra.
 2. A "csendes döntéshozatal" elkerülése
-A /spec-builder alapelve, hogy soha nem talál ki követelményt, amit az ügyfél nem mondott ki, és soha nem oldja fel csendben az ellentmondásokat. Ha a rendszer továbblépne válaszok nélkül, az AI-nak "halucinálnia" vagy feltételeznie kellene az üzleti logikát, ami súlyos hibákhoz vezethetne a szoftverfejlesztés során.
+A /extractor alapelve, hogy soha nem talál ki követelményt, amit az ügyfél nem mondott ki, és soha nem oldja fel csendben az ellentmondásokat. Ha a rendszer továbblépne válaszok nélkül, az AI-nak "halucinálnia" vagy feltételeznie kellene az üzleti logikát, ami súlyos hibákhoz vezethetne a szoftverfejlesztés során.
 3. Forrás-szintű követhetőség (Traceability)
 A rendszer egyik legfontosabb képessége a Traceability Matrix, amely minden követelményt visszavezet az eredeti forrásra (pl. egy emailre vagy egy megválaszolt kérdésre). Ha hiányoznak a válaszok, ez a láncolat megszakad, és nem lehetne pontosan dokumentálni, miért úgy működik a rendszer, ahogy.
 4. Technikai kényszer: a TBD nem válasz
@@ -246,7 +246,7 @@ Ha egy kérdésre (Q-XXX) még nincs válaszod, a rendszer nem fogja engedni a B
 Az alábbi lehetőségeid vannak a helyzet kezelésére:
 1. Fogalmazz meg egy Feltételezést (Assumption)
 - Ha a pontos válasz még nem ismert, de a munka folytatásához szükséges egy irány, válaszolj a kérdésre egy feltételezéssel.
-- A /spec-builder külön kategóriaként kezeli a feltételezéseket (A-XXX), amelyekre a specifikáció építhet, amíg a tények be nem igazolódnak.
+- A /extractor külön kategóriaként kezeli a feltételezéseket (A-XXX), amelyekre a specifikáció építhet, amíg a tények be nem igazolódnak.
 - Ezzel a rendszer túllép a kérdésen, de a későbbi dokumentációban (például a RAID Log-ban) jól láthatóan megmarad, hogy ez egy bizonytalan pont.
 
 2. Jelöld meg Kockázatként
