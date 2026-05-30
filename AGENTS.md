@@ -169,6 +169,7 @@ Each skill is a thin dispatcher — it delegates all work to an agent or a Pytho
 
 | Skill | Dispatches | User guide |
 |---|---|---|
+| `/self-improve` | *(inline, featureRequests implementálása)* | [README](.claude/skills/self-improve/README.md) |
 | `/ba` | `ba-orchestrator` | [README](.claude/skills/ba/README.md) |
 | `/ba --discovery` | `ba-orchestrator` → `discovery-agent` | [README](.claude/skills/ba/README.md) |
 | `/convert` | `convert_all` Python package | [README](.claude/skills/convert/README.md) |

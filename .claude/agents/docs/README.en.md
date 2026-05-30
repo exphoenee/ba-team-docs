@@ -9,6 +9,8 @@ This folder contains the specialized agents of the BA workflow. Agents are not d
 ```mermaid
 flowchart LR
     U([User])
+    U -->|/self-dev| A8[self-care-agent]
+    U -->|/self-improve| A8
     U -->|/ba| A1[ba-orchestrator]
     U -->|/business-analyst| A3[ba-document-agent]
     U -->|/discovery| A4[discovery-agent]
@@ -38,3 +40,4 @@ flowchart LR
 | `validation-agent` | Spec quality gate — PASS/WARN/BLOCK status | [validation-agent.en.md](validation-agent.en.md) |
 | `rca-agent` | Root cause analysis — causal chains, IR matrix | [rca-agent.en.md](rca-agent.en.md) |
 | `memory-agent` | Memory manager — all other agents read/write through this | [memory-agent.en.md](memory-agent.en.md) |
+| `self-care-agent` | Self-development orchestrator — feature request analysis and implementation | [self-care-agent.en.md](self-care-agent.en.md) |

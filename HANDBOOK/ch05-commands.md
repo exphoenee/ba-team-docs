@@ -2,6 +2,7 @@
 
 | Parancs | Mire való |
 |---|---|
+| `/self-improve` | Jóváhagyott feature request implementálása – TODO lista alapján létrehozza/módosítja a fájlokat |
 | `/ba` | **Fő parancs** – automatikus következő lépés végrehajtása |
 | `/discovery` | Discovery fázis indítása – korai anyagokból BC + kérdéslista generálása |
 | `/rca` | Gyökérok-elemzés – Chain/IR módszertan alapján |

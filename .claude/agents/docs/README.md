@@ -9,6 +9,8 @@ Ez a mappa tartalmazza a BA workflow specializált ügynökeit. Az agentek nem k
 ```mermaid
 flowchart LR
     U([Felhasználó])
+    U -->|/self-dev| A8[self-care-agent]
+    U -->|/self-improve| A8
     U -->|/ba| A1[ba-orchestrator]
     U -->|/business-analyst| A3[ba-document-agent]
     U -->|/discovery| A4[discovery-agent]
@@ -38,3 +40,4 @@ flowchart LR
 | `validation-agent` | Spec minőségőre — PASS/WARN/BLOCK státusz | [validation-agent.md](validation-agent.md) |
 | `rca-agent` | Gyökérok-elemzés — oksági láncok, IR mátrix | [rca-agent.md](rca-agent.md) |
 | `memory-agent` | Memória kezelő — minden más agent ezen keresztül ír/olvas | [memory-agent.md](memory-agent.md) |
+| `self-care-agent` | Önfejlesztés orchestrátor — feature request elemzés és implementáció | [self-care-agent.md](self-care-agent.md) |
