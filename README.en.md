@@ -1,4 +1,4 @@
-# BA Team – Be the Boss of a 7-member AI Team!
+# BA Team – Be the Boss of an 8-member AI Team!
 
 [Magyar változat](README.md) | [Handbook](HANDBOOK.md) *(Hungarian)*
 
@@ -8,12 +8,13 @@
 >
 > 1. 📋 **Orchestrator**: Your project manager who keeps track of everything and knows where you are.
 > 2. 🔍 **Discovery Agent**: Your Discovery specialist who produces a Business Concept document and question list from early materials — never blocks work due to open questions.
-> 3. 🏗️ **Spec Builder**: Your precise analyst who carves a pinpoint specification out of raw notes.
+> 3. 🏗️ **Extraction Agent**: Your precise analyst who carves a pinpoint specification out of raw notes.
 > 4. ✍️ **BA Document Agent**: Your technical writer who produces BRDs, User Stories, and process flows.
 > 5. 🔬 **RCA Agent**: Your diagnostics expert who shows where to intervene — causal chains, self-reinforcing loops, and driver/symptom classification.
 > 6. 🔎 **Validation Agent**: Your quality guard, who checks after RCA and before document generation that every required element is present.
 > 7. 📂 **File Converter**: Your data specialist who converts any Office file into AI-ready format in seconds.
 > 8. 🧠 **Memory Agent**: Your strategic advisor who never forgets a single decision or stakeholder detail.
+> 9. 🔧 **Self-Care Agent**: Your development assistant who captures, analyses, and implements feature requests for the BA Tool itself.
 >
 > **Take your efficiency to the next level: delegate to the BA Team and focus on real value creation!**
 
