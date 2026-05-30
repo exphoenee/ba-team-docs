@@ -20,6 +20,31 @@
 
 ---
 
+## Teljesítmény referencia
+
+Valós teszteken mért értékek egy komplett BA dokumentumcsomag előállításához (9–11 dokumentum).
+
+### Összesített futtatási statisztika
+
+| Teszt | Fázis | Generált doksik | Tokenek (össz.) | Futásidő | Becsült compute-költség |
+|:---|:---|---:|---:|---:|---:|
+| **A** | Teljes BA workflow (discovery → analysis) | 11 | 416 994 | 68 perc | ~$3,50 |
+| **B** | BA dokumentum generálás (v1) | 9 | 583 756 | 164 perc | ~$3,15–$3,86 |
+| **C** | BA dokumentum generálás (v2) | 9 | 263 256 | 35 perc | ~$1,73 |
+| **D** | Discovery fázis (6 iteráció) | 3 | 701 401 | 74 perc | ~$4,21 |
+| | **Mindösszesen** | **32** | **~1,96M** | **~5,6 óra** | **~$12,60–$13,30** |
+
+### Emberi idő vs. AI idő — Megtakarítás
+
+| Teszt | AI futásidő | Emberi baseline (becsült) | Megtakarítás | Compute költség |
+|:---|---:|---:|---:|---:|
+| Teljes BA workflow | ~0,6–2,7 óra | 1–5 munkanap (8–40 óra) | **~89–97%** | ~$1,73–$3,86 |
+| Discovery (6 iteráció) | ~1,2 óra | 3–5 munkanap (24–40 óra) | **~95–97%** | ~$4,21 |
+
+**Konklúzió:** Egy komplett BA dokumentumcsomag **~35 perc alatt, ~$1,70–$3,50** compute-költséggel előállítható. Ez **1–3 munkanapnyi szenior BA munkát vált ki**.
+
+---
+
 Ez a repository Claude AI-hoz készített skilleket és ügynököket tartalmaz, amelyek célja a **Business Analyst kollégák munkájának támogatása** az IT projektek teljes requirements engineering folyamatán át.
 
 A részletes használati útmutató, parancsleírások, workflow-magyarázat és GYIK a **[Kézikönyvben](HANDBOOK.md)** található.
@@ -224,3 +249,5 @@ pip show markitdown openpyxl extract-msg
 5. Ha ezt látod, az alap telepítés sikeres.
 
 > **Python ellenőrzése:** Ha telepítetted a Pythont (7. lépés), a Claude panelen írd be: `/convert` — ha a rendszer jelzi, hogy nincs konvertálandó fájl, a Python és a könyvtárak is működnek.
+
+*Részletes teljesítményadatok és token-bontás: [Kézikönyv 3. fejezet](HANDBOOK/ch03-performance.md)*
