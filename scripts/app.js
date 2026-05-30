@@ -139,6 +139,9 @@ document.addEventListener('DOMContentLoaded', () => {
         'handbook-ch18-en': './HANDBOOK/ch18-performance.en.md',
         'handbook-ch19-audio': './HANDBOOK/ch19-audio-transcription.md',
         'handbook-ch19-audio-en': './HANDBOOK/ch19-audio-transcription.en.md',
+        'release-v1-2-0': './devdocs/release-notes/v1-2-0.md',
+        'release-v1-1-0': './devdocs/release-notes/v1-1-0.md',
+        'release-v1-0-1': './devdocs/release-notes/v1-0-1.md',
         'improvements': './devdocs/improvements.md'
     };
 
@@ -172,6 +175,16 @@ document.addEventListener('DOMContentLoaded', () => {
         handbookMenu.classList.toggle('open');
     });
 
+    const releaseToggle = document.getElementById('releaseToggle');
+    const releaseSubmenu = document.getElementById('releaseSubmenu');
+    const releaseMenu = releaseToggle.closest('.has-submenu');
+
+    releaseToggle.addEventListener('click', (e) => {
+        e.preventDefault();
+        releaseSubmenu.classList.toggle('open');
+        releaseMenu.classList.toggle('open');
+    });
+
     async function loadPage(hash) {
         const page = hash.replace('#', '') || 'home';
 
@@ -188,6 +201,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (page.startsWith('handbook')) {
             handbookSubmenu.classList.add('open');
             handbookMenu.classList.add('open');
+        }
+
+        if (page.startsWith('release-')) {
+            releaseSubmenu.classList.add('open');
+            releaseMenu.classList.add('open');
         }
 
         const url = routes[page];
