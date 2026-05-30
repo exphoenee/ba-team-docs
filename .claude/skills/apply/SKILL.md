@@ -154,12 +154,12 @@ Read each file before editing. Apply only the change described in the TODO item.
 <li class="nav-item-with-lang"><a href="#agent-<name>"><name> <span class="lang-tag">HU</span></a><a href="#agent-<name>-en" class="lang-alt">EN</a></li>
 ```
 
-### Running copy_readmes.py
+### Running deploy_docs.py
 
-When the TODO list contains `python scripts/copy_readmes.py futtatása`:
+When the TODO list contains `python scripts/deploy_docs.py futtatása`:
 
 ```bash
-python app/scripts/copy_readmes.py
+python scripts/deploy_docs.py
 ```
 
 Mark this item `[x]` after the script completes successfully.

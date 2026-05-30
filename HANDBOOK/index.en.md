@@ -1,7 +1,7 @@
 # BA Team – User Handbook
 
-**Version:** %%VERSION%%
-**Date:** %%DATE_EN%%
+**Version:** 1.2.0
+**Date:** May 2026
 **Product:** BA Team – AI-powered Business Analyst Workflow
 
 ---
@@ -29,4 +29,4 @@
 
 ---
 
-*BA Team User Handbook – v%%VERSION%% – %%DATE_EN%%*
+*BA Team User Handbook – v1.2.0 – May 2026*
