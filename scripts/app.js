@@ -142,6 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'release-v1-2-0': './devdocs/release-notes/v1-2-0.md',
         'release-v1-1-0': './devdocs/release-notes/v1-1-0.md',
         'release-v1-0-1': './devdocs/release-notes/v1-0-1.md',
+        'release-v1-0-0': './devdocs/release-notes/v1-0-0.md',
         'improvements': './devdocs/improvements.md'
     };
 
