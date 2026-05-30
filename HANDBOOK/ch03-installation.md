@@ -162,7 +162,60 @@ pip show markitdown openpyxl extract-msg python-pptx
 
 ---
 
-## 3.4 Első indítás ellenőrzése
+## 3.4 Hangátirat-függőségek (opcionális)
+
+> Csak akkor szükséges, ha meeting-felvételeket vagy videókat is be szeretnél adni a rendszernek.
+
+A BA Tool képes automatikusan szövegessé alakítani az audio/videó fájlokat (`.mp3`, `.m4a`, `.wav`, `.mp4`, `.mkv` stb.) a `/convert` parancs futtatásakor. Ehhez két eszköz szükséges:
+
+### FFmpeg telepítése (kötelező a hangátíráshoz)
+
+**Windows (ajánlott):**
+```powershell
+winget install "FFmpeg (Essentials Build)"
+```
+
+*Vagy:* a `whisr/whisr/setup.py` futtatásakor automatikusan letöltődik a projekt `bin/` könyvtárába.
+
+**Mac:**
+```bash
+brew install ffmpeg
+```
+
+### faster-whisper (Python csomag)
+
+```
+pip install faster-whisper
+```
+
+### CUDA GPU gyorsítás (opcionális — ~5–10× gyorsabb)
+
+A teljes CUDA Toolkit telepítése **nem szükséges**. Elég a két pip csomag:
+
+```
+pip install nvidia-cublas-cu12 nvidia-cuda-nvrtc-cu12
+```
+
+> **Megjegyzés:** A pip csomagok tartalmazzák a szükséges DLL-eket. Python 3.13-on is működik — PyTorch nem szükséges.
+
+### Modell beállítása
+
+Az első futtatáskor a modell automatikusan letöltődik (~244 MB a `small` modellnél). Az `app/config.json` fájlban módosítható:
+
+```json
+{
+  "transcriber_options": {
+    "model": "light",
+    "mode": "auto"
+  }
+}
+```
+
+`"light"` = `"small"` modell (ajánlott alapértelmezés). Részletes modell-összehasonlítást lásd: [19. fejezet](ch19-audio-transcription.md).
+
+---
+
+## 3.5 Első indítás ellenőrzése
 
 1. VS Code-ban nyisd meg a Claude panelt (bal oldali sáv, Claude ikon)
 2. Írd be: `/session-loader`

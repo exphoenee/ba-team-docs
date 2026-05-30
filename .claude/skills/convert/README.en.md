@@ -23,6 +23,8 @@ If you have copied files into the `workflow/01_project_info/` or `workflow/03_an
 | `.pdf` | Yes – Python + markitdown[pdf] required |
 | `.pptx` / `.ppt` (PowerPoint) | Yes – Python + markitdown + python-pptx |
 | `.png` / `.jpg` / `.jpeg` / `.bmp` / `.webp` (images) | Yes – AI-based processing (works without API key too) |
+| `.mp3` / `.m4a` / `.wav` / `.ogg` / `.flac` / `.aac` / `.wma` / `.opus` (audio) | Yes – faster-whisper transcription (FFmpeg + faster-whisper required) |
+| `.mp4` / `.mkv` / `.mov` / `.webm` / `.avi` (video) | Yes – ffmpeg audio extraction + faster-whisper transcription |
 | `.md` / `.txt` | No – already processable |
 
 ---
@@ -52,6 +54,25 @@ If the output contains `FAIL` lines indicating a missing tool:
 ```
 pip install "markitdown[docx,pdf]" openpyxl extract-msg python-pptx
 ```
+
+**Audio transcription (optional — only if meeting recordings are in the workflow):**
+
+FFmpeg:
+```powershell
+winget install "FFmpeg (Essentials Build)"
+```
+
+faster-whisper:
+```
+pip install faster-whisper
+```
+
+CUDA GPU acceleration (optional — ~5–10× faster, PyTorch not required):
+```
+pip install nvidia-cublas-cu12 nvidia-cuda-nvrtc-cu12
+```
+
+> See detailed model comparison and recommendations: [Chapter 19 – Audio Transcription](../../HANDBOOK/ch19-audio-transcription.en.md)
 
 ---
 

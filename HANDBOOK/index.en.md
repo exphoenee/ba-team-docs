@@ -26,6 +26,7 @@
 16. [FAQ](ch16-faq.en.md) — Frequently asked questions
 17. [Troubleshooting](ch17-troubleshooting.en.md) — Decision trees for the most common issues
 18. [Performance Reference](ch18-performance.en.md) — Run time and token estimates
+19. [Audio Transcription](ch19-audio-transcription.en.md) — Automatic transcription of meeting recordings and videos, model comparison
 
 ---
 

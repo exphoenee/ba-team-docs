@@ -74,7 +74,60 @@ pip install "markitdown[docx,pdf]" openpyxl extract-msg python-pptx
 
 ---
 
-## 3.4 First Launch Verification
+## 3.4 Audio Transcription Dependencies (Optional)
+
+> Only needed if you want to include meeting recordings or videos in the system.
+
+The BA Tool can automatically transcribe audio/video files (`.mp3`, `.m4a`, `.wav`, `.mp4`, `.mkv` etc.) when running `/convert`. Two tools are required:
+
+### FFmpeg Installation (required for audio transcription)
+
+**Windows (recommended):**
+```powershell
+winget install "FFmpeg (Essentials Build)"
+```
+
+*Or:* runs `whisr/whisr/setup.py` — automatically downloads FFmpeg to the project `bin/` folder.
+
+**Mac:**
+```bash
+brew install ffmpeg
+```
+
+### faster-whisper (Python package)
+
+```
+pip install faster-whisper
+```
+
+### CUDA GPU Acceleration (optional — ~5–10× faster)
+
+Full CUDA Toolkit installation is **not required**. Only these two pip packages are needed:
+
+```
+pip install nvidia-cublas-cu12 nvidia-cuda-nvrtc-cu12
+```
+
+> **Note:** The pip packages include the required DLLs. Works on Python 3.13 — PyTorch is not needed.
+
+### Configuring the Model
+
+On first run, the model is downloaded automatically (~244 MB for the `small` model). Configurable in `app/config.json`:
+
+```json
+{
+  "transcriber_options": {
+    "model": "light",
+    "mode": "auto"
+  }
+}
+```
+
+`"light"` = `"small"` model (recommended default). For detailed model comparison, see: [Chapter 19](ch19-audio-transcription.en.md).
+
+---
+
+## 3.5 First Launch Verification
 
 1. Open the Claude panel in VS Code (left sidebar, Claude icon)
 2. Type: `/session-loader`

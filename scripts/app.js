@@ -137,6 +137,8 @@ document.addEventListener('DOMContentLoaded', () => {
         'handbook-ch17-en': './HANDBOOK/ch17-troubleshooting.en.md',
         'handbook-ch18': './HANDBOOK/ch18-performance.md',
         'handbook-ch18-en': './HANDBOOK/ch18-performance.en.md',
+        'handbook-ch19-audio': './HANDBOOK/ch19-audio-transcription.md',
+        'handbook-ch19-audio-en': './HANDBOOK/ch19-audio-transcription.en.md',
         'improvements': './devdocs/improvements.md'
     };
 

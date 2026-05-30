@@ -19,6 +19,8 @@ A `/convert` parancs (és az automatikus konverzió) ezt a lépést végzi el: a
 | PDF | `.pdf` | Python markitdown[pdf] | Szöveges tartalom; scanned PDF-nél WARN |
 | PowerPoint | `.pptx`, `.ppt` | Python markitdown + python-pptx | Diacímek, szöveges blokkok |
 | Képek | `.png`, `.jpg`, `.jpeg`, `.bmp`, `.webp` | Claude API (vision) | AI értelmezi a vizuális tartalmat |
+| Hangfájlok | `.mp3`, `.m4a`, `.wav`, `.ogg`, `.flac`, `.aac`, `.wma`, `.opus` | faster-whisper hangátirat | FFmpeg + faster-whisper szükséges |
+| Videó | `.mp4`, `.mkv`, `.mov`, `.webm`, `.avi` | ffmpeg audio kinyerés + faster-whisper | Hang automatikusan kinyerve, videó törlődik |
 | Markdown / szöveg | `.md`, `.txt` | — | Nem kell konvertálni — közvetlenül feldolgozható |
 
 ---
@@ -69,6 +71,18 @@ Az `/rca` parancs opcionálisan fogad egy Excel gyökéroklistát:
 3. Az `rca-agent` az így keletkező `rca_input_[név]_converted.md`-t olvassa be
 
 **Az Excel elvárása:** az első oszlopban legyenek a gyökérok-szövegek. A többi oszlop opcionálisan csoportokat, forrásokat vagy megjegyzéseket tartalmazhat.
+
+---
+
+## Hangfájlok és videók
+
+A BA Tool képes automatikusan szövegessé alakítani meeting-felvételeket (`.mp3`, `.m4a`, `.wav` stb.) és videókat (`.mp4`, `.mkv` stb.). A `/convert` parancs futtatásakor:
+
+1. **Audio fájlok** esetén a rendszer közvetlenül transcribál faster-whisper segítségével
+2. **Videó fájlok** esetén a rendszer először kinyeri az audiót (ffmpeg), majd azt transcribálja — a videó törlésre kerül sikeres kinyerés után
+3. Az output fájl neve: `{fájlnév}_{modell}_converted.md` (pl. `meeting_small_converted.md`)
+
+Részletes modell-összehasonlítás, teljesítményadatok és telepítési útmutató: [19. fejezet – Hangátirat](ch19-audio-transcription.md)
 
 ---
 

@@ -23,6 +23,8 @@ Ha olyan fájlokat másoltál a `workflow/01_project_info/` vagy a `workflow/03_
 | `.pdf` | Igen – Python + markitdown[pdf] szükséges |
 | `.pptx` / `.ppt` (PowerPoint) | Igen – Python + markitdown + python-pptx |
 | `.png` / `.jpg` / `.jpeg` / `.bmp` / `.webp` (képek) | Igen – AI alapú feldolgozás (API kulcs nélkül is működik) |
+| `.mp3` / `.m4a` / `.wav` / `.ogg` / `.flac` / `.aac` / `.wma` / `.opus` (hang) | Igen – faster-whisper hangátirat (FFmpeg + faster-whisper szükséges) |
+| `.mp4` / `.mkv` / `.mov` / `.webm` / `.avi` (videó) | Igen – ffmpeg hangkinyerés + faster-whisper átirat |
 | `.md` / `.txt` | Nem – már feldolgozható |
 
 ---
@@ -52,6 +54,25 @@ Ha a kimenet `FAIL` sorokat tartalmaz hiányzó eszközre utalva:
 ```
 pip install "markitdown[docx,pdf]" openpyxl extract-msg python-pptx
 ```
+
+**Hangátirat (opcionális — csak ha meeting-felvételek is vannak):**
+
+FFmpeg:
+```powershell
+winget install "FFmpeg (Essentials Build)"
+```
+
+faster-whisper:
+```
+pip install faster-whisper
+```
+
+CUDA GPU gyorsítás (opcionális — ~5–10× gyorsabb, PyTorch nem szükséges):
+```
+pip install nvidia-cublas-cu12 nvidia-cuda-nvrtc-cu12
+```
+
+> Lásd részletes modell-összehasonlítást és ajánlásokat: [19. fejezet – Hangátirat](../../HANDBOOK/ch19-audio-transcription.md)
 
 ---
 

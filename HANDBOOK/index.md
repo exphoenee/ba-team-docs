@@ -26,6 +26,7 @@
 16. [Gyakori kérdések (GYIK)](ch16-faq.md) — Gyakori problémák és válaszok
 17. [Hibaelhárítás](ch17-troubleshooting.md) — Döntési fák a leggyakoribb hibákhoz
 18. [Teljesítmény-referencia](ch18-performance.md) — Futási idő- és token-becslések
+19. [Hangátirat](ch19-audio-transcription.md) — Meeting-felvételek és videók automatikus átírása, modell-összehasonlítás
 
 ---
 
