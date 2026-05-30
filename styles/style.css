@@ -166,7 +166,7 @@ h1, h2, h3, h4 {
 }
 
 .submenu.open {
-    max-height: 500px; /* Large enough for the list */
+    max-height: 100000px;
 }
 
 .submenu li {

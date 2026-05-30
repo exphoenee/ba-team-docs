@@ -1,6 +1,6 @@
-# BA Team – Hibaelhárítási útmutató
+# 17. Hibaelhárítás
 
-**Mikor használd ezt a dokumentumot:** Ha a `/ba`, `/discovery` vagy egy másik parancs nem várt eredményt hoz, kövesd az alábbi döntési fát.
+**Mikor használd ezt a fejezetet:** Ha a `/ba`, `/discovery` vagy egy másik parancs nem várt eredményt hoz, kövesd az alábbi döntési fát.
 
 ---
 

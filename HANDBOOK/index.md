@@ -1,7 +1,7 @@
 # BA Team – Felhasználói Kézikönyv
 
-**Verzió:** 1.0
-**Dátum:** 2026. május
+**Verzió:** %%VERSION%%
+**Dátum:** %%DATE_HU%%
 **Termék:** BA Team – AI-alapú Business Analyst Munkafolyamat
 
 ---
@@ -24,7 +24,9 @@
 14. [Háttérben futó ügynökök](ch14-agents.md) — Részletes agent leírások
 15. [Szabályozói megfelelőség](ch15-compliance.md) — GDPR, PCI-DSS, AML/KYC
 16. [Gyakori kérdések (GYIK)](ch16-faq.md) — Gyakori problémák és válaszok
+17. [Hibaelhárítás](ch17-troubleshooting.md) — Döntési fák a leggyakoribb hibákhoz
+18. [Teljesítmény-referencia](ch18-performance.md) — Futási idő- és token-becslések
 
 ---
 
-*BA Team Felhasználói Kézikönyv – v1.0 – 2026. május*
+*BA Team Felhasználói Kézikönyv – v%%VERSION%% – %%DATE_HU%%*

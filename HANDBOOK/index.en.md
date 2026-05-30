@@ -1,7 +1,7 @@
 # BA Team – User Handbook
 
-**Version:** 1.0
-**Date:** May 2026
+**Version:** %%VERSION%%
+**Date:** %%DATE_EN%%
 **Product:** BA Team – AI-powered Business Analyst Workflow
 
 ---
@@ -24,7 +24,9 @@
 14. [Background Agents](ch14-agents.en.md) — Detailed agent descriptions
 15. [Regulatory Compliance](ch15-compliance.en.md) — GDPR, PCI-DSS, AML/KYC
 16. [FAQ](ch16-faq.en.md) — Frequently asked questions
+17. [Troubleshooting](ch17-troubleshooting.en.md) — Decision trees for the most common issues
+18. [Performance Reference](ch18-performance.en.md) — Run time and token estimates
 
 ---
 
-*BA Team User Handbook – v1.0 – May 2026*
+*BA Team User Handbook – v%%VERSION%% – %%DATE_EN%%*

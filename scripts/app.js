@@ -133,9 +133,11 @@ document.addEventListener('DOMContentLoaded', () => {
         'handbook-ch15-en': './HANDBOOK/ch15-compliance.en.md',
         'handbook-ch16': './HANDBOOK/ch16-faq.md',
         'handbook-ch16-en': './HANDBOOK/ch16-faq.en.md',
-        'improvements': './devdocs/improvements.md',
-        'troubleshooting': './devdocs/troubleshooting.md',
-        'performance': './devdocs/performance.md'
+        'handbook-ch17': './HANDBOOK/ch17-troubleshooting.md',
+        'handbook-ch17-en': './HANDBOOK/ch17-troubleshooting.en.md',
+        'handbook-ch18': './HANDBOOK/ch18-performance.md',
+        'handbook-ch18-en': './HANDBOOK/ch18-performance.en.md',
+        'improvements': './devdocs/improvements.md'
     };
 
     const agentsToggle = document.getElementById('agentsToggle');
@@ -156,16 +158,6 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         skillsSubmenu.classList.toggle('open');
         skillsMenu.classList.toggle('open');
-    });
-
-    const troubleshootingToggle = document.getElementById('troubleshootingToggle');
-    const troubleshootingSubmenu = document.getElementById('troubleshootingSubmenu');
-    const troubleshootingMenu = document.getElementById('troubleshootingMenu');
-
-    troubleshootingToggle.addEventListener('click', (e) => {
-        e.preventDefault();
-        troubleshootingSubmenu.classList.toggle('open');
-        troubleshootingMenu.classList.toggle('open');
     });
 
     const handbookToggle = document.getElementById('handbookToggle');
@@ -189,11 +181,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (page.startsWith('skill-')) {
             skillsSubmenu.classList.add('open');
             skillsMenu.classList.add('open');
-        }
-
-        if (page === 'troubleshooting' || page === 'performance') {
-            troubleshootingSubmenu.classList.add('open');
-            troubleshootingMenu.classList.add('open');
         }
 
         if (page.startsWith('handbook')) {
