@@ -1,6 +1,6 @@
-# BA Team – Teljesítmény-referencia
+# 18. Teljesítmény-referencia
 
-**Mikor használd ezt a dokumentumot:** Ha meg szeretnéd becsülni, mennyi ideig tart egy `/ba` futtatás és mennyi tokent fog felhasználni.
+**Mikor használd ezt a fejezetet:** Ha meg szeretnéd becsülni, mennyi ideig tart egy `/ba` futtatás és mennyi tokent fog felhasználni.
 
 ---
 

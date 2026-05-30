@@ -30,9 +30,16 @@ The single entry point is `/ba` — the system automatically decides what action
 | Spec exists, 03_answers/ empty | Lists unanswered questions, stops |
 | Spec exists, partial answers | Reports exactly which Q-XXX questions are missing, stops |
 | All questions answered | Automatically generates BA documents |
-| `/ba --draft` | Generates BA documents with VÁZLAT header even if Q-XXX are open |
+| `/ba --draft` | Generates draft BA documents into `workflow/05_ba_docs/_draft/` with VÁZLAT header even if Q-XXX are open |
 | `/ba --force` | Forces BA document regeneration, bypasses up-to-date check |
 | `/ba --discovery` | Runs discovery-agent instead of spec-builder/ba-document-agent |
+| `/rca` | Runs the full RCA/Chain/IR analysis on a root-cause Excel input |
+| `/rca --quick` | Chain_Long + Loop_Summary only (no IR_Mátrix) |
+| `/rca --validate` | QA check only on existing RCA_Analysis.md |
+| `/check-state` | Show current project phase, folder status, missing steps |
+| `/help` | Full help: commands list, project state, next-step advice |
+| `/help <command>` | Detailed help for a specific command (e.g. `/help ba`) |
+| `/help <query>` | Search documentation (HANDBOOK, skills, agents) for a topic |
 
 ## Language Rule
 
@@ -96,7 +103,7 @@ and notifies the user if action is required (e.g. answers are missing).
 | `workflow/04_decisions/` | FORCED stakeholder decisions (`SDEC-XXX` files with YAML frontmatter) |
 | `workflow/05_ba_docs/` | Generated BA documents |
 | `.claude/memory/` | Persistent project memory (decisions, Q-XXX archive, etc.) |
-| `.claude/agents/` | Specialist agents (ba-orchestrator, spec-builder-agent, ba-document-agent, memory-agent) |
+| `.claude/agents/` | Specialist agents (ba-orchestrator, spec-builder-agent, ba-document-agent, discovery-agent, rca-agent, memory-agent) |
 | `.claude/skills/` | User-facing entry points (slash commands — thin dispatchers) |
 | `.claude/scripts/` | **Shared** scripts and packages used by multiple skills or agents |
 | `.claude/references/` | **Shared** reference files (templates, formats) used by multiple skills or agents |

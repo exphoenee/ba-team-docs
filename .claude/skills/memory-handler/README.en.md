@@ -129,4 +129,4 @@ If you want to review or manually modify the memory content, open the files in t
 | `/ba` | Loads and updates memory on every run |
 | `/session-loader` | Summarizes memory content during loading |
 | `/business-analyst` | Saves decisions and technical terms here |
-| `/spec-builder` | Saves stakeholders, risks, and context here |
+| `/extractor` | Saves stakeholders, risks, and context here |

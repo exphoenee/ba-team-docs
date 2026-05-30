@@ -1,4 +1,4 @@
-# BA Team – Legyél Te a főnök egy 5 fős AI csapat felett!
+# BA Team – Legyél Te a főnök egy 8 fős AI csapat felett!
 
 [English version](README.en.md) | [Kézikönyv](HANDBOOK.md)
 
@@ -8,10 +8,13 @@
 >
 > 1. 📋 **Orchestrator**: A projektmenedzsered, aki összefogja a szálakat és tudja, hol tartotok.
 > 2. 🔍 **Discovery Agent**: A Discovery specialistád, aki korai anyagokból Business Concept dokumentumot és kérdéslistát állít elő — sosem blokkolja a munkát nyitott kérdések miatt.
-> 3. 🏗️ **Spec Builder**: A precíz elemződ, aki a nyers jegyzetekből tűpontos specifikációt farag.
+> 3. 🏗️ **Extraction Agent**: A precíz elemződ, aki a nyers jegyzetekből tűpontos specifikációt farag.
 > 4. ✍️ **BA Document Agent**: A technikai íród, aki BRD-ket, User Story-kat és folyamatábrákat gyárt.
-> 5. 📂 **File Converter**: Az adat-specialistád, aki bármilyen Office fájlt másodpercek alatt AI-kész formátumra hoz.
-> 6. 🧠 **Memory Agent**: A stratégiai tanácsadód, aki egyetlen döntést vagy stakeholder adatot sem felejt el.
+> 5. 🔬 **RCA Agent**: A diagnosztikád, aki megmutatja, hol érdemes beavatkozni — oksági láncok, hurkok és driver/tünet besorolás.
+> 6. 🔎 **Validation Agent**: A minőségőröd, aki az RCA után, dokumentumgenerálás előtt ellenőrzi, hogy minden kötelező elem megvan-e.
+> 7. 📂 **File Converter**: Az adat-specialistád, aki bármilyen Office fájlt másodpercek alatt AI-kész formátumra hoz.
+> 8. 🧠 **Memory Agent**: A stratégiai tanácsadód, aki egyetlen döntést vagy stakeholder adatot sem felejt el.
+> 9. 🔧 **Self-Care Agent**: A fejlesztési asszisztensed, aki rögzíti, elemzi és implementálja a BA Tool saját fejlesztési igényeit.
 >
 > **Emeld a hatékonyságodat a következő szintre: delegálj a BA Team-nek, és koncentrálj a valódi értékteremtésre!**
 

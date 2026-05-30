@@ -156,10 +156,46 @@ Shows which requirement was born from which client statement.
 
 ---
 
+## Changes (v3.0 — extraction-agent refactor)
+
+- The skill now dispatches `extraction-agent` (formerly: `spec-builder-agent`). The `/spec-builder` command name has not changed — the change is internal.
+- The `--force` flag now disables Discovery-depth mode — it generates full Analysis-depth documents, even if a Discovery phase was run previously.
+- **BR extraction:** the system actively searches for concrete numbers and KPIs in source materials. If none are found, a Q-XXX question is generated.
+- **GDPR handling split:** extraction-agent detects personal data FRs and generates RISK-XXX / ISSUE-XXX entries; the BLOCK decision (if these are missing) is in `validation-agent`.
+
+## What does spec-builder extract?
+
+### Functional Requirements (FR)
+
+The system actively searches the following domains in sources:
+organizational hierarchy · checkpoint/milestone · professional development · project lifecycle ·
+partner/subcontractor · notifications · audit log · time logging
+
+### Non-Functional Requirements (NFR)
+
+5 mandatory categories in every project:
+- **Performance** (concurrent users, response time)
+- **Platform/Deployment** (OS, browser, network)
+- **UI/UX** (language, device, accessibility)
+- **Data management** (retention period, GDPR)
+- **Security** (authentication, RBAC, audit log)
+
+If a category is not in the source, it is added with a `[INFERRED:LOW]` annotation.
+
+### GDPR Automatic Trigger
+
+If HR, payroll, timelog, working hours, or bonus keywords are identifiable in FRs →
+extraction-agent automatically generates RISK-XXX (GDPR compliance) and
+ISSUE-XXX (impact assessment required) entries in the specification.
+
+If the GDPR risk is missing from the completed specification, `validation-agent` will stop the BA document generation with a **BLOCK** status. `Regulatory_Checklist.md` is produced by `ba-document-agent`.
+
+---
+
 ## Related Skills
 
 | Skill | Relationship |
 |---|---|
-| `/ba` | Calls it automatically if no spec exists yet |
-| `/ba` | Checks answers and generates BA documents based on the spec |
+| `/ba` | Calls it automatically if no spec exists yet; checks answers and generates BA documents based on the spec |
+| `/validate` | After spec completion, checks its quality — can also be run standalone |
 | `/business-analyst` | Generates BA documents based on the specification |

@@ -22,7 +22,13 @@ Ha olyan fájlokat másoltál a `workflow/01_project_info/` vagy a `workflow/03_
 | `.eml` (e-mail fájl) | Igen – Python stdlib (külön csomag nem kell) |
 | `.pdf` | Igen – Python + markitdown[pdf] szükséges |
 | `.pptx` / `.ppt` (PowerPoint) | Igen – Python + markitdown + python-pptx |
+| `.csv` | Igen – markitdown (beépített, külön csomag nem kell) |
+| `.json` | Igen – Python stdlib, Markdown táblázattá alakítja |
+| `.xml` | Igen – Python stdlib, Markdown táblázattá alakítja |
+| `.html` / `.htm` | Igen – markitdown (beépített, külön csomag nem kell) |
 | `.png` / `.jpg` / `.jpeg` / `.bmp` / `.webp` (képek) | Igen – AI alapú feldolgozás (API kulcs nélkül is működik) |
+| `.mp3` / `.m4a` / `.wav` / `.ogg` / `.flac` / `.aac` / `.wma` / `.opus` (hang) | Igen – faster-whisper hangátirat (FFmpeg + faster-whisper szükséges) |
+| `.mp4` / `.mkv` / `.mov` / `.webm` / `.avi` (videó) | Igen – ffmpeg hangkinyerés + faster-whisper átirat |
 | `.md` / `.txt` | Nem – már feldolgozható |
 
 ---
@@ -53,6 +59,25 @@ Ha a kimenet `FAIL` sorokat tartalmaz hiányzó eszközre utalva:
 pip install "markitdown[docx,pdf]" openpyxl extract-msg python-pptx
 ```
 
+**Hangátirat (opcionális — csak ha meeting-felvételek is vannak):**
+
+FFmpeg:
+```powershell
+winget install "FFmpeg (Essentials Build)"
+```
+
+faster-whisper:
+```
+pip install faster-whisper
+```
+
+CUDA GPU gyorsítás (opcionális — ~5–10× gyorsabb, PyTorch nem szükséges):
+```
+pip install nvidia-cublas-cu12 nvidia-cuda-nvrtc-cu12
+```
+
+> Lásd részletes modell-összehasonlítást és ajánlásokat: [19. fejezet – Hangátirat](../../HANDBOOK/ch19-audio-transcription.md)
+
 ---
 
 ## Mit csinál pontosan?
@@ -66,12 +91,13 @@ pip install "markitdown[docx,pdf]" openpyxl extract-msg python-pptx
 
 ### Képfeldolgozás (PNG, JPG, JPEG, BMP, WEBP)
 
-A képek konverziója **AI-alapú** — a rendszer értelmezi a kép tartalmát és Markdown leírást készít belőle:
+A képek konverziója **kétlépéses fallback stratégiával** történik:
 
-| Feltétel | Módszer |
-|---|---|
-| `ANTHROPIC_API_KEY` be van állítva | Python ImageConverter a Claude API-n keresztül (gyors, automatikusan naplózott) |
-| Nincs API kulcs | `/convert` skill agent-módban dolgozza fel a Claude Read eszközével |
+| Lépés | Feltétel | Módszer |
+|---|---|---|
+| 1. | markitdown elérhető | MarkItDown OCR — beágyazott szöveg és struktúra kinyerése |
+| 2. | `ANTHROPIC_API_KEY` be van állítva | Claude Vision API — részletes, struktúrált BA-leírás |
+| 3. | Nincs API kulcs | `/convert` skill agent-módban dolgozza fel a Claude Read eszközével |
 
 A generált leírás tartalmaz:
 - A kép vizuális tartalmának összefoglalása
@@ -83,12 +109,12 @@ A generált leírás tartalmaz:
 
 ## Automatikus konverzió – nem kell mindig /convert-et futtatni
 
-A `/ba`, `/spec-builder` és `/business-analyst` parancsok **automatikusan elindítják a konverziót** a megfelelő mappán:
+A `/ba`, `/extractor` és `/business-analyst` parancsok **automatikusan elindítják a konverziót** a megfelelő mappán:
 
 | Parancs | Melyik mappát konvertálja? |
 |---|---|
 | `/ba` | `01_project_info/` és `03_answers/` |
-| `/spec-builder` | csak `01_project_info/` |
+| `/extractor` | csak `01_project_info/` |
 | `/business-analyst` | csak `03_answers/` |
 | `/convert` | `01_project_info/` és `03_answers/` |
 

@@ -32,9 +32,26 @@ A discovery-agent a `workflow/02_discovery/` mappába menti a kimeneteit:
 | Fájl | Tartalom |
 |---|---|
 | `BC.md` | Business Concept — a Discovery fázis fő deliverable-je |
-| `Discovery_RAID.md` | Korai RAID — kockázatok, feltételezések, nyitott problémák |
+| `Discovery_RAID.md` | Korai RAID — kockázatok, feltételezések, nyitott problémák (+ opcionális RCA szekciók) |
 | `Discovery_Questions.md` | Meeting-ready kérdéslista kategóriák szerint |
 | `_system/DISCOVERY_OUTPUT.md` | Strukturált közbenső spec (a fenti dokumentumok alapja) |
+
+### Discovery_RAID.md — opcionális RCA szekciók
+
+Ha az anyagokban elegendő ok-okozati struktúra azonosítható, a `Discovery_RAID.md` két opcionális szekciót is tartalmazhat:
+
+**Gyökérok összefoglaló (előzetes RCA)** — ha ≥3 gyökérok kauzális kapcsolata egyértelműen azonosítható:
+```
+| RC-001 | Hiányzó projekt-sponsor | Driver (valószínű) | RC-003, RC-005 |
+```
+Ez előzetes becslés — teljes elemzéshez futtasd: `/rca`
+
+**Öngerjesztő hurkok** — ha legalább 3 elemből álló visszacsatoló lánc azonosítható:
+```
+| ISSUE-001 | Scope kúszás → erőforrás-hiány → minőségcsökkenés → újabb scope kúszás | Korai scope freeze |
+```
+
+> Ha a forrásanyagok nem adnak elegendő strukturált okozati összefüggést, ezek a szekciók teljesen elmaradnak — ez a normális eset.
 
 ### Business Concept (BC.md) struktúra
 

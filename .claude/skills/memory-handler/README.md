@@ -129,4 +129,4 @@ Ha szeretnéd átnézni vagy kézzel módosítani a memória tartalmát, nyisd m
 | `/ba` | Minden futásnál betölti és frissíti a memóriát |
 | `/session-loader` | A betöltés során összegzi a memória tartalmát |
 | `/business-analyst` | Döntéseket és szakkifejezéseket ment ide |
-| `/spec-builder` | Stakeholdereket, kockázatokat és kontextust ment ide |
+| `/extractor` | Stakeholdereket, kockázatokat és kontextust ment ide |

@@ -147,7 +147,7 @@ If enough data is available, these are also prepared:
 
 | Skill | Relationship |
 |---|---|
-| `/spec-builder` | `/ba` runs this in the first phase |
+| `/extractor` | `/ba` runs this in the first phase |
 | `/business-analyst` | `/ba` runs this in the document generation phase |
 | `/memory-handler` | `/ba` uses this to read and write memory |
 | `/session-loader` | To be run at the start of a session to load state |
