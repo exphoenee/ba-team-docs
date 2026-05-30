@@ -28,6 +28,13 @@ Az `extraction-agent` kizárólag kinyerést végez — minőségellenőrzés n�
 - SCOPE CONFLICT detekció (OB-20)
 - INFERRED kockázati besorolás (OB-21)
 - BR KPI-kinyerés + NFR taxonómia (OB-24b)
+- **Compliance domain auto-generálás (OB-24c)** — `workflow/REGULATION/*.md` alapján automatikusan hozzáadja a szükséges RISK-XXX és ISSUE-XXX elemeket, ha az FR-ek megfelelőségi kulcsszavakat tartalmaznak
+
+### Compliance auto-generálás (OB-24c)
+
+Az `extraction-agent` betölti a `workflow/REGULATION/` mappában lévő domain fájlokat, és minden `block: true` domain esetén automatikusan hozzáadja a szükséges spec-elemeket (pl. RISK-XXX, ISSUE-XXX), ha az FR szövege domain-kulcsszót tartalmaz. Ez biztosítja, hogy a `validation-agent` Check 4 ne BLOCK-oljon feleslegesen.
+
+Ha a `workflow/REGULATION/` mappa nem létezik, az `extraction-agent` csendes fallback-et alkalmaz — nem generál hibát.
 
 ## Kapcsolódó komponensek
 

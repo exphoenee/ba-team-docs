@@ -23,11 +23,25 @@ Two ways:
 | BR metric coverage | ⚠️ WARN |
 | NFR taxonomy (5 categories) | ⚠️ WARN |
 | FR domain coverage (OB-24b) | ⚠️ WARN |
-| GDPR trigger | ❌ BLOCK |
+| Compliance domain trigger (from `workflow/REGULATION/*.md`) | ❌ BLOCK or ⚠️ WARN (per domain `block:` flag) |
 | SCOPE CONFLICT open questions | ⚠️ WARN |
 | INFERRED:HIGH paired with RISK-XXX | ⚠️ WARN |
 | Q-XXX ratio > 50% | ⚠️ WARN |
 | Duplicate ID | ❌ BLOCK |
+
+### Check 4 — Compliance domain trigger
+
+The `validation-agent` reads keywords and required elements from domain files in `workflow/REGULATION/` — no hardcoded keyword list exists in the agent instruction.
+
+**How it works:**
+1. Loads all `workflow/REGULATION/*.md` files (excluding `custom_domain_template.md`)
+2. Matches every FR text against the loaded keywords
+3. If a match is found and a required spec element (e.g. RISK-XXX, ISSUE-XXX) is missing:
+   - `block: true` domain → **BLOCK** status (source rule file named in the report)
+   - `block: false` domain → **WARN** status
+4. If `workflow/REGULATION/` does not exist → Check 4 skipped, WARN in report
+
+**Adding a custom compliance domain:** Copy `custom_domain_template.md`, fill it in, and save it in `workflow/REGULATION/` under any filename.
 
 ## What does it produce?
 

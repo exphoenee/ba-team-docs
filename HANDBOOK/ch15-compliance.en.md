@@ -1,13 +1,128 @@
 # 15. Regulatory Compliance
 
-BA Team automatically evaluates project involvement in regulatory areas and generates a `Regulatory_Checklist.md` if needed:
+## 15.1 Overview
 
-| Regulation | Area |
+The BA Tool uses a two-layer compliance system:
+
+1. **`workflow/REGULATION/` folder** — domain files (built-in + user-defined) that define keywords and required spec elements
+2. **Automatic checking** — `extraction-agent` proactively adds required RISK/ISSUE elements; `validation-agent` checks and returns BLOCK/WARN status
+
+No hardcoded keyword list exists in any AI agent file — all keywords are read from `workflow/REGULATION/*.md`. This lets you customise which compliance areas are active per project.
+
+---
+
+## 15.2 The `workflow/REGULATION/` folder
+
+```
+workflow/REGULATION/
+├── gdpr.md                    ← built-in (GDPR personal data) — BLOCK
+├── pci-dss.md                 ← built-in (payment card data) — BLOCK
+├── security.md                ← built-in (security baseline) — WARN
+├── custom_domain_template.md  ← template for your own domain file
+└── (aml-kyc.md, sox.md, ...)  ← your own domain files
+```
+
+The folder is part of `workflow/` and can be versioned and customised per project. Built-in files can be edited.
+
+---
+
+## 15.3 Domain file format
+
+All files (built-in and user-defined) use the same structure:
+
+```markdown
+---
+domain: GDPR
+block: true
+description: Personal data handling — GDPR compliance mandatory
+required_elements: [RISK-XXX, ISSUE-XXX]
+---
+
+## Kulcsszavak
+
+personal data, PII, name, email, phone, address, social security number,
+health data, medical record, biometric, HR, payroll, timelog,
+személyes adat, munkavállalói, egészségügyi, bér, munkaidő, bónusz,
+ügyfél adat, adóazonosító, employee, user data, customer data
+```
+
+**Frontmatter fields:**
+
+| Field | Type | Description |
+|---|---|---|
+| `domain` | text | Human-readable identifier — shown in validation report |
+| `block` | `true` / `false` | `true` = BLOCK status when triggered; `false` = WARN |
+| `description` | text | Short description — shown in BLOCK/WARN message |
+| `required_elements` | list | Elements that must be present in the spec (e.g. `[RISK-XXX, ISSUE-XXX]`) |
+
+Keywords under the `## Kulcsszavak` section are comma-separated. Case-insensitive. One line = one logical group.
+
+---
+
+## 15.4 Built-in domain files
+
+| File | Domain | Level | Example keywords |
+|---|---|---|---|
+| `gdpr.md` | GDPR | ❌ BLOCK | personal data, PII, HR, payroll, timelog, bér, munkaidő, egészségügyi... |
+| `pci-dss.md` | PCI-DSS | ❌ BLOCK | credit card, CVV, PAN, kártyaszám, bankkártya, payment card... |
+| `security.md` | Security | ⚠️ WARN | password, encryption, authentication, RBAC, audit log, titkosítás... |
+
+---
+
+## 15.5 Adding a custom compliance domain
+
+1. Copy the template:
+   ```
+   workflow/REGULATION/custom_domain_template.md → workflow/REGULATION/my_domain.md
+   ```
+2. Edit the frontmatter: fill in `domain`, `block`, `description`, `required_elements`
+3. Add keywords under `## Kulcsszavak`
+4. Save — the system automatically loads it on the next `/ba` run
+
+**Example — AML/KYC domain:**
+```markdown
+---
+domain: AML/KYC
+block: true
+description: Anti-money laundering and customer due diligence — AML/KYC compliance mandatory
+required_elements: [RISK-XXX, ISSUE-XXX]
+---
+
+## Kulcsszavak
+
+money laundering, KYC, customer due diligence, suspicious transaction,
+pénzmosás, ügyfél-átvilágítás, gyanús tranzakció, PEP, beneficial owner
+```
+
+---
+
+## 15.6 How compliance checking works
+
+**Extraction phase** (`extraction-agent`):
+- Loads REGULATION files
+- If an FR text matches a keyword from a `block: true` domain and the required element (e.g. RISK-XXX) is missing → automatically adds it to the spec
+
+**Validation phase** (`validation-agent`, Check 4):
+- Re-checks all loaded domain keywords
+- If required element is missing: `block: true` → **BLOCK**, `block: false` → **WARN**
+- Every message names the source rule file
+
+**If `workflow/REGULATION/` does not exist:**
+- Extraction: silent fallback (no error)
+- Validation: Check 4 skipped + WARN in report (not BLOCK)
+
+---
+
+## 15.7 Regulatory_Checklist.md generation
+
+The BA Tool generates a `Regulatory_Checklist.md` document in `workflow/05_ba_docs/` when applicable:
+
+| Regulation | Trigger |
 |---|---|
-| **GDPR** | General Data Protection Regulation |
-| **PCI-DSS** | Payment card data security |
-| **AML/KYC** | Anti-money laundering and customer due diligence |
-| **SOX** | Sarbanes-Oxley — corporate governance |
+| **GDPR** | Personal data handling FR |
+| **PCI-DSS** | Payment card data FR |
+| **AML/KYC** | Anti-money laundering process FR |
+| **SOX** | Corporate governance / financial reporting |
 | **Solvency II** | Insurance solvency |
 | **HIPAA** | Healthcare data handling |
 | **FCA** | Financial conduct requirements |

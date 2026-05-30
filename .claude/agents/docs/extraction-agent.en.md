@@ -28,6 +28,13 @@ The `extraction-agent` focuses exclusively on extraction — without quality che
 - SCOPE CONFLICT detection (OB-20)
 - INFERRED risk classification (OB-21)
 - BR KPI extraction + NFR taxonomy (OB-24b)
+- **Compliance domain auto-generation (OB-24c)** — reads `workflow/REGULATION/*.md` and automatically adds required RISK-XXX and ISSUE-XXX entries when FRs match compliance keywords
+
+### Compliance auto-generation (OB-24c)
+
+The `extraction-agent` loads domain files from `workflow/REGULATION/` and, for each `block: true` domain, automatically adds the required spec elements (e.g. RISK-XXX, ISSUE-XXX) when an FR text contains a domain keyword. This ensures `validation-agent` Check 4 does not BLOCK unnecessarily.
+
+If `workflow/REGULATION/` does not exist, the `extraction-agent` applies a silent fallback — no error is raised.
 
 ## Related components
 

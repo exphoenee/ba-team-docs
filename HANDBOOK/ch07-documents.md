@@ -56,6 +56,22 @@ Minden BA dokumentum-generálás után automatikusan létrejönnek:
 | `_system/BA_DOCS_LOG.md` | Generálási napló: timestamp, spec SHA, üzemmód (normal / draft / force) |
 | `_system/BA_DOCS_DIFF.md` | Változásnapló: mi módosult, mi maradt változatlan az utolsó futáshoz képest |
 
+### Vázlat almappa (`workflow/05_ba_docs/_draft/`)
+
+A `/ba --draft` parancs a dokumentumokat ebbe az almappába írja — a valódi `workflow/05_ba_docs/` mappát nem érinti.
+
+| Fájl / mappa | Tartalom |
+|---|---|
+| `_draft/BRD.md`, `_draft/User_Stories.md` stb. | Vázlat BA dokumentumok — minden fejlécben ⚠️ **VÁZLAT** jelzés |
+| `_draft/_system/BA_DOCS_LOG.md` | Vázlat generálási napló |
+| `_draft/_system/BA_DOCS_DIFF.md` | Vázlat változásnapló |
+
+**A `_draft/` mappa viselkedése:**
+
+- A `/ba` (vázlat nélkül) **figyelmen kívül hagyja** a `_draft/` tartalmát — a projekt nem kerül "Kész" állapotba attól, hogy vázlat fájlok vannak a mappában
+- A vázlat fájlok manuálisan törölhetők, ha már nincs rájuk szükség
+- A memória archivál (Q-XXX lezárása) **csak a végleges** (`/ba`, nem `--draft`) futásnál történik meg
+
 ---
 
 ## RCA dokumentumok (`workflow/05_ba_docs/`)

@@ -23,11 +23,25 @@ Kétféleképpen:
 | BR metrika-lefedettség | ⚠️ WARN |
 | NFR taxonómia (5 kategória) | ⚠️ WARN |
 | FR domain-lefedettség (OB-24b) | ⚠️ WARN |
-| GDPR trigger | ❌ BLOCK |
+| Compliance domain trigger (`workflow/REGULATION/*.md` alapján) | ❌ BLOCK vagy ⚠️ WARN (domain `block:` mezőjétől függően) |
 | SCOPE CONFLICT nyitott kérdések | ⚠️ WARN |
 | INFERRED:HIGH melletti RISK-XXX | ⚠️ WARN |
 | Q-XXX arány > 50% | ⚠️ WARN |
 | Duplikált ID | ❌ BLOCK |
+
+### Check 4 — Compliance domain trigger
+
+A `validation-agent` a `workflow/REGULATION/` mappában lévő domain fájlokból olvassa ki a kulcsszavakat és a szükséges elemeket — nincs égetett szólista az agent utasításban.
+
+**Hogyan működik?**
+1. Betölti a `workflow/REGULATION/*.md` fájlokat (kivéve `custom_domain_template.md`)
+2. Minden FR szövegét összeveti a betöltött kulcsszavakkal
+3. Ha egyezés van és a szükséges spec-elem (pl. RISK-XXX, ISSUE-XXX) hiányzik:
+   - `block: true` domainben → **BLOCK** státusz (a forrás szabályfájl megnevezve)
+   - `block: false` domainben → **WARN** státusz
+4. Ha a `workflow/REGULATION/` mappa nem létezik → Check 4 kihagyva, WARN a riportban
+
+**Saját compliance domain hozzáadása:** Másold a `custom_domain_template.md`-t, töltsd ki, és mentsd el a `workflow/REGULATION/` mappába tetszőleges névvel.
 
 ## Mit állít elő?
 

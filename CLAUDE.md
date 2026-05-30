@@ -30,7 +30,7 @@ The single entry point is `/ba` — the system automatically decides what action
 | Spec exists, 03_answers/ empty | Lists unanswered questions, stops |
 | Spec exists, partial answers | Reports exactly which Q-XXX questions are missing, stops |
 | All questions answered | Automatically generates BA documents |
-| `/ba --draft` | Generates BA documents with VÁZLAT header even if Q-XXX are open |
+| `/ba --draft` | Generates draft BA documents into `workflow/05_ba_docs/_draft/` with VÁZLAT header even if Q-XXX are open |
 | `/ba --force` | Forces BA document regeneration, bypasses up-to-date check |
 | `/ba --discovery` | Runs discovery-agent instead of spec-builder/ba-document-agent |
 | `/rca` | Runs the full RCA/Chain/IR analysis on a root-cause Excel input |

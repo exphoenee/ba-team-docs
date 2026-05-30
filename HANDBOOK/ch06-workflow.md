@@ -161,6 +161,33 @@ A rendszer legenerálja a teljes dokumentációs csomagot a `workflow/05_ba_docs
 
 ---
 
+## 6.4c Vázlat generálás nyitott kérdésekkel (`/ba --draft`)
+
+Ha nem akarsz várni az összes válaszra, de szükséged van egy előzetes dokumentumcsomagra, használd a `--draft` flaget:
+
+```
+/ba --draft
+```
+
+**Fontos különbség a normál futástól:**
+
+| | `/ba` | `/ba --draft` |
+|---|---|---|
+| Szükséges válaszok | Összes Q-XXX | Nem szükséges |
+| Kimeneti mappa | `workflow/05_ba_docs/` | `workflow/05_ba_docs/_draft/` |
+| Dokumentum fejléc | Normál | ⚠️ **VÁZLAT** fejléc + nyitott kérdések listája |
+| Memória archiválás | Igen (Q-XXX) | Nem (a végleges futásig nem archivál) |
+
+A vázlat dokumentumok **nem számítanak befejezettnek** — a `/ba` (vázlat nélkül) figyelmen kívül hagyja a `_draft/` mappa tartalmát, és szükség esetén lefuttatja a teljes Analysis generálást.
+
+**Tipikus vázlat workflow:**
+
+1. `/ba --draft` → előzetes dokumentumok a `_draft/` mappában
+2. Megbeszélés az ügyféllel → válaszok beírása → `workflow/03_answers/`
+3. `/ba` → teljes dokumentumcsomag a `workflow/05_ba_docs/`-ban
+
+---
+
 ## 6.4b FORCED döntések (`04_decisions/`)
 
 FORCED döntések segítségével a stakeholderek felülírhatnak specifikációs elemeket. Hozz létre egy `SDEC-XXX_nev.md` fájlt a `workflow/04_decisions/` mappában YAML frontmatter-rel, majd futtasd: `/ba`.
