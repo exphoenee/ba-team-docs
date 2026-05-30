@@ -22,7 +22,11 @@ Ez az útmutató leírja, hogyan konvertálhatsz alkalmilag egyetlen fájlt Mark
 | `.xlsx`, `.xls` | `pip install openpyxl` |
 | `.msg` | `pip install extract-msg` |
 | `.eml` | beépített (nincs külön telepítés) |
-| `.png`, `.jpg`, `.jpeg`, `.bmp`, `.webp` | `pip install anthropic Pillow` + `ANTHROPIC_API_KEY` |
+| `.csv`, `.html`, `.htm` | beépített markitdown (nincs külön telepítés) |
+| `.json`, `.xml` | beépített Python stdlib — Markdown táblázattá alakítja |
+| `.png`, `.jpg`, `.jpeg`, `.bmp`, `.webp` | markitdown (1. próba) → `pip install anthropic Pillow` + `ANTHROPIC_API_KEY` (2. próba) |
+| `.mp3`, `.m4a`, `.wav`, `.ogg`, `.flac`, `.aac`, `.wma`, `.opus` | faster-whisper + FFmpeg |
+| `.mp4`, `.mkv`, `.mov`, `.webm`, `.avi` | faster-whisper + FFmpeg |
 
 ---
 
@@ -76,7 +80,12 @@ Minden konvertált fájl elején metadata header jelenik meg:
 
 ### Képek konvertálása
 
-A képfájlokhoz Claude vision API szükséges — az `ANTHROPIC_API_KEY` környezeti változót be kell állítani:
+A képkonverzió kétlépéses fallback stratégiával működik:
+
+1. **MarkItDown OCR** — beágyazott szöveg és struktúra kinyerése (API kulcs nélkül is)
+2. **Claude Vision API** — részletes BA-leírás, ha a markitdown nem ad elég tartalmat
+
+A Claude Vision API-hoz be kell állítani az `ANTHROPIC_API_KEY` változót:
 
 ```powershell
 $env:ANTHROPIC_API_KEY = "sk-ant-..."

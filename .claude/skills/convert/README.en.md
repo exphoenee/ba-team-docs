@@ -22,6 +22,10 @@ If you have copied files into the `workflow/01_project_info/` or `workflow/03_an
 | `.eml` (email file) | Yes – Python stdlib (no extra package needed) |
 | `.pdf` | Yes – Python + markitdown[pdf] required |
 | `.pptx` / `.ppt` (PowerPoint) | Yes – Python + markitdown + python-pptx |
+| `.csv` | Yes – markitdown (built-in, no extra package needed) |
+| `.json` | Yes – Python stdlib, converted to Markdown table |
+| `.xml` | Yes – Python stdlib, converted to Markdown table |
+| `.html` / `.htm` | Yes – markitdown (built-in, no extra package needed) |
 | `.png` / `.jpg` / `.jpeg` / `.bmp` / `.webp` (images) | Yes – AI-based processing (works without API key too) |
 | `.mp3` / `.m4a` / `.wav` / `.ogg` / `.flac` / `.aac` / `.wma` / `.opus` (audio) | Yes – faster-whisper transcription (FFmpeg + faster-whisper required) |
 | `.mp4` / `.mkv` / `.mov` / `.webm` / `.avi` (video) | Yes – ffmpeg audio extraction + faster-whisper transcription |
@@ -87,12 +91,13 @@ pip install nvidia-cublas-cu12 nvidia-cuda-nvrtc-cu12
 
 ### Image Processing (PNG, JPG, JPEG, BMP, WEBP)
 
-Images are converted using **AI** — the system interprets the image content and produces a Markdown description:
+Images are converted using a **two-step fallback strategy**:
 
-| Condition | Method |
-|---|---|
-| `ANTHROPIC_API_KEY` is set | Python ImageConverter via Claude API (fast, automatically logged) |
-| No API key | `/convert` skill processes images in agent mode using the Claude Read tool |
+| Step | Condition | Method |
+|---|---|---|
+| 1. | markitdown available | MarkItDown OCR — extracts embedded text and structure |
+| 2. | `ANTHROPIC_API_KEY` is set | Claude Vision API — detailed, structured BA description |
+| 3. | No API key | `/convert` skill processes images in agent mode using the Claude Read tool |
 
 The generated description includes:
 - Visual content summary of the image

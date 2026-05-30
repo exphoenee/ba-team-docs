@@ -22,6 +22,10 @@ Ha olyan fájlokat másoltál a `workflow/01_project_info/` vagy a `workflow/03_
 | `.eml` (e-mail fájl) | Igen – Python stdlib (külön csomag nem kell) |
 | `.pdf` | Igen – Python + markitdown[pdf] szükséges |
 | `.pptx` / `.ppt` (PowerPoint) | Igen – Python + markitdown + python-pptx |
+| `.csv` | Igen – markitdown (beépített, külön csomag nem kell) |
+| `.json` | Igen – Python stdlib, Markdown táblázattá alakítja |
+| `.xml` | Igen – Python stdlib, Markdown táblázattá alakítja |
+| `.html` / `.htm` | Igen – markitdown (beépített, külön csomag nem kell) |
 | `.png` / `.jpg` / `.jpeg` / `.bmp` / `.webp` (képek) | Igen – AI alapú feldolgozás (API kulcs nélkül is működik) |
 | `.mp3` / `.m4a` / `.wav` / `.ogg` / `.flac` / `.aac` / `.wma` / `.opus` (hang) | Igen – faster-whisper hangátirat (FFmpeg + faster-whisper szükséges) |
 | `.mp4` / `.mkv` / `.mov` / `.webm` / `.avi` (videó) | Igen – ffmpeg hangkinyerés + faster-whisper átirat |
@@ -87,12 +91,13 @@ pip install nvidia-cublas-cu12 nvidia-cuda-nvrtc-cu12
 
 ### Képfeldolgozás (PNG, JPG, JPEG, BMP, WEBP)
 
-A képek konverziója **AI-alapú** — a rendszer értelmezi a kép tartalmát és Markdown leírást készít belőle:
+A képek konverziója **kétlépéses fallback stratégiával** történik:
 
-| Feltétel | Módszer |
-|---|---|
-| `ANTHROPIC_API_KEY` be van állítva | Python ImageConverter a Claude API-n keresztül (gyors, automatikusan naplózott) |
-| Nincs API kulcs | `/convert` skill agent-módban dolgozza fel a Claude Read eszközével |
+| Lépés | Feltétel | Módszer |
+|---|---|---|
+| 1. | markitdown elérhető | MarkItDown OCR — beágyazott szöveg és struktúra kinyerése |
+| 2. | `ANTHROPIC_API_KEY` be van állítva | Claude Vision API — részletes, struktúrált BA-leírás |
+| 3. | Nincs API kulcs | `/convert` skill agent-módban dolgozza fel a Claude Read eszközével |
 
 A generált leírás tartalmaz:
 - A kép vizuális tartalmának összefoglalása
