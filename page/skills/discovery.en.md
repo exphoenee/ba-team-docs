@@ -15,13 +15,30 @@ question list is as valuable an output in the Discovery phase as the answers the
 
 ## How to use it?
 
-Copy materials into the `workflow/01_project_info/` folder, then in the Claude panel type:
+### Direct path (simple)
 
 ```
 /discovery
 ```
 
-That's it. The discovery-agent processes the materials and produces the full Discovery package.
+Copy materials into the `workflow/01_project_info/` folder, then type the command above. The discovery-agent processes the materials and produces the full Discovery package.
+
+> ⚠️ **Important:** `/discovery` does **not** auto-convert files. If you have Office files (Word, Excel, PowerPoint, PDF) among your materials, run `/convert` first.
+
+### Orchestrator path (convenience)
+
+```
+/ba --discovery
+```
+
+This alternative path launches the discovery-agent through `ba-orchestrator` and **automatically handles file conversion** — no need to run `/convert` separately.
+
+| Path | Command | Auto-conversion |
+|---|---|---|
+| **Direct** (simple) | `/discovery` | ❌ Run `/convert` first |
+| **Orchestrator** (full setup) | `/ba --discovery` | ✅ Yes — converts automatically |
+
+Both paths produce identical Discovery documents. The direct path is faster and more predictable; the orchestrator path adds file conversion as a convenience.
 
 ---
 
@@ -147,6 +164,6 @@ If you submit 4+ FIGMA images at once, processing time increases significantly:
 | Skill | Relationship |
 |---|---|
 | `/ba` | Analysis phase entry point — run this after Discovery is complete |
-| `/convert` | Converts Office/PDF files — `/discovery` runs it automatically |
+| `/convert` | Converts Office/PDF files — run separately before `/discovery` (unless using `/ba --discovery`) |
 | `/session-loader` | Check project state — which phase are you in? |
 | `/memory-handler` | View stakeholders and risks captured during Discovery |

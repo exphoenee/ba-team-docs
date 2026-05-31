@@ -15,13 +15,30 @@ a jól strukturált kérdéslista épp annyira értékes output a Discovery fáz
 
 ## Hogyan használd?
 
-Másold be az anyagokat a `workflow/01_project_info/` mappába, majd a Claude panelen írd be:
+### Direkt útvonal (egyszerű)
 
 ```
 /discovery
 ```
 
-Ennyi. A discovery-agent feldolgozza az anyagokat és előállítja a teljes Discovery csomagot.
+Másold be az anyagokat a `workflow/01_project_info/` mappába, majd írd be a fenti parancsot. A discovery-agent feldolgozza az anyagokat és előállítja a teljes Discovery csomagot.
+
+> ⚠️ **Fontos:** A `/discovery` **nem** konvertál automatikusan. Ha Office fájlok (Word, Excel, PowerPoint, PDF) is vannak az anyagaid között, előtte futtasd: `/convert`
+
+### Orchestrator útvonal (kényelmi)
+
+```
+/ba --discovery
+```
+
+Ez az alternatív útvonal a `ba-orchestrator`-on keresztül indítja a discovery-agent-et, és **automatikusan elvégzi a fájlkonverziót** — nem kell előtte külön `/convert`-et futtatnod.
+
+| Útvonal | Parancs | Auto-konverzió |
+|---|---|---|
+| **Direkt** (egyszerű) | `/discovery` | ❌ Előtte futtasd: `/convert` |
+| **Orchestrator** (teljes setup) | `/ba --discovery` | ✅ Igen — automatikusan konvertál |
+
+Mindkét útvonal azonos Discovery dokumentumokat állít elő. A direkt útvonal gyorsabb és kiszámíthatóbb; az orchestrator útvonal kényelmi funkcióként tartalmazza a fájlkonverziót.
 
 ---
 
@@ -147,6 +164,6 @@ Ha egyszerre 4+ FIGMA képet adsz be, a futásidő jelentősen megnő:
 | Skill | Kapcsolat |
 |---|---|
 | `/ba` | Az Analysis fázis belépési pontja — Discovery lezárása után ezt futtatd |
-| `/convert` | Office/PDF fájlok konvertálása — `/discovery` automatikusan futtatja |
+| `/convert` | Office/PDF fájlok konvertálása — `/discovery` előtt külön futtatandó (hacsak nem `/ba --discovery`-t használsz) |
 | `/session-loader` | Projekt állapot ellenőrzése — melyik fázisban vagy? |
 | `/memory-handler` | Discovery során kinyert stakeholderek és kockázatok megtekintése |
