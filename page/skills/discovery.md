@@ -56,14 +56,19 @@ Ez előzetes becslés — teljes elemzéshez futtasd: `/rca`
 ### Business Concept (BC.md) struktúra
 
 ```
+0. Megrendelői eredeti kérés       [Opcionális — ha verbatim ügyfélnyilatkozat van]
 1. Üzleti probléma és gyökérok     [Mermaid diagram kötelező]
+1b. Forrás terminológia            [Opcionális — ha a forrás fogalomtárat tartalmaz]
 2. Üzleti célok                    [Mérhető eredménnyel]
 3. Megoldási scope                 [In scope / Out of scope, Mermaid diagram]
+3b. Folyamatkatalógus összefoglaló [Opcionális — ha folyamatkatalógus van a forrásban]
 4. MVP definíció                   [Must-have elemek]
 5. Feltételezések és kockázatok    [Korai RAID összefoglaló]
 6. Nyitott kérdések                [Q-XXX lista kategória szerint]
 7. Következő lépések
 ```
+
+> ℹ️ Az opcionális szekciók csak akkor kerülnek a BC.md-be, ha a forrásanyag tartalmaz ilyen adatot. Ha nincs verbatim ügyfélnyilatkozat, fogalomtár vagy folyamatkatalógus, a szekció teljesen kimarad.
 
 Ha megválaszolatlan kérdések vannak, a BC.md tetején megjelenik:
 ```
@@ -121,6 +126,19 @@ A sablonokat kimásolhatod a fenti helyekről, kitöltöd, majd bemásolod a `wo
 4. /discovery → BC.md V2 (frissített, kevesebb nyitott kérdés)
 5. Discovery lezárva → /ba → BRD + User Stories + ...
 ```
+
+---
+
+## Teljesítménytipp — FIGMA képek
+
+Ha egyszerre 4+ FIGMA képet adsz be, a futásidő jelentősen megnő:
+
+| Képek száma | Várható futásidő |
+|---|---|
+| 5 FIGMA kép | ~20 perc |
+| ≤3 FIGMA kép | ~12 perc |
+
+**Ajánlás:** Adj be legfeljebb 3 FIGMA képet futásonként. A `/discovery` inkrementálisan kezeli a bővítést — a következő futás az új képeket veszi fel, a korábbi eredményt megtartja.
 
 ---
 

@@ -56,14 +56,19 @@ This is a preliminary estimate — for full analysis run: `/rca`
 ### Business Concept (BC.md) structure
 
 ```
+0. Verbatim client request           [Optional — if an explicit client statement exists]
 1. Business problem and root causes  [Mandatory Mermaid diagram]
+1b. Source terminology               [Optional — if the source contains a glossary/definitional section]
 2. Business goals                    [With measurable outcomes]
 3. Solution scope                    [In scope / Out of scope, Mermaid diagram]
+3b. Process catalog summary          [Optional — if the source contains a process catalog]
 4. MVP definition                    [Must-have elements]
 5. Assumptions and risks             [Early RAID summary]
 6. Open questions                    [Q-XXX list by category]
 7. Next steps
 ```
+
+> ℹ️ Optional sections only appear in BC.md when the source material contains that type of data. If there is no verbatim client statement, no glossary, or no process catalog in the source, the section is omitted entirely.
 
 If there are unanswered questions, BC.md is prepended with:
 ```
@@ -121,6 +126,19 @@ Copy the templates from the above locations, fill them in, and place them in `wo
 4. /discovery → BC.md V2 (updated, fewer open questions)
 5. Discovery complete → /ba → BRD + User Stories + ...
 ```
+
+---
+
+## Performance tip — FIGMA images
+
+If you submit 4+ FIGMA images at once, processing time increases significantly:
+
+| Images submitted | Expected runtime |
+|---|---|
+| 5 FIGMA images | ~20 minutes |
+| ≤3 FIGMA images | ~12 minutes |
+
+**Recommendation:** Submit at most 3 FIGMA images per run. `/discovery` handles incremental processing — the next run picks up the new images while keeping previous results.
 
 ---
 

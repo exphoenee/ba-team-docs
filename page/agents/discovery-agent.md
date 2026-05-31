@@ -19,6 +19,10 @@ A `discovery-agent` az értékesítési handover és az első stakeholder meetin
 
 A `discovery-agent` **mindig** draft módban működik. Q-XXX kérdések soha nem blokkolják a dokumentumgenerálást — ha vannak nyitott kérdések, a `BC.md` VÁZLAT fejlécet kap.
 
+## Tónus-kalibrációs szabály
+
+A discovery-agent tükrözi a forrásanyag hangvételét és regiszterét. Ha a forrás megoldásorientált, professzionális nyelvezetet használ, a kimenet is azt tükrözi — nem eszkalál "válságnyelvezetre". Ha a BC.md negatív tartalmának aránya 15%-kal meghaladja a forrás negatív tartalmát, a szöveg átírása szükséges.
+
 ## Mit állít elő?
 
 | Fájl | Tartalom |
@@ -28,12 +32,23 @@ A `discovery-agent` **mindig** draft módban működik. Q-XXX kérdések soha ne
 | `workflow/02_discovery/Discovery_RAID.md` | Korai RAID: kockázatok, feltételezések, nyitott problémák |
 | `workflow/02_discovery/Discovery_Questions.md` | Meeting-ready kérdéslista kategóriák szerint |
 
+## Kinyert elemek bővítése
+
+Az alap extraction targetek (probléma, célok, scope, MVP, kockázatok, érintettek, kérdések) mellett az agent az alábbi elemeket is kinyeri:
+
+| Elem | Feltétel | Hol jelenik meg |
+|---|---|---|
+| Megrendelői eredeti kérés | Ha verbatim ügyfélnyilatkozat van a forrásban | DISCOVERY_OUTPUT.md + BC.md 0. szakasz |
+| Forrás terminológia | Ha a forrás explicit fogalomtárat tartalmaz | BC.md 1b. szakasz |
+| Folyamatkatalógus összefoglaló | Ha folyamatkatalógus van a forrásban | DISCOVERY_OUTPUT.md + BC.md 3b. szakasz |
+| Discovery-szintű NFR-ek | Platform/UI/hozzáférési alapfeltételek (NFR-XXX [Discovery forrás]) | DISCOVERY_OUTPUT.md NFR szekció |
+
 ## Lépések
 
 1. **Memóriabetöltés** — `memory-agent` QUERY: PROJECT_CONTEXT, STAKEHOLDERS, RISKS
 2. **Input beolvasás** — `workflow/01_project_info/` fájljai
 3. **Válaszok beolvasása** — `workflow/03_answers/` (ha vannak — Discovery és Analysis válaszok is)
-4. **DISCOVERY_OUTPUT.md generálás** — strukturált közbenső spec → `workflow/02_discovery/_system/`
+4. **DISCOVERY_OUTPUT.md generálás** — strukturált közbenső spec (+ opcionális szekciók: megrendelői kérés, folyamatkatalógus, Discovery-szintű NFR-ek) → `workflow/02_discovery/_system/`
 5. **Három Discovery dokumentum generálása** — BC.md, Discovery_RAID.md, Discovery_Questions.md
 6. **Memória mentés** — PROJECT_CONTEXT, STAKEHOLDERS, RISKS (`memory-agent` STORE)
 7. **Visszajelzés** — `ba-orchestrator`-nak
