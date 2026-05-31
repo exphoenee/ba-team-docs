@@ -30,13 +30,25 @@ Defines which files and directories the AI can read. Before every read operation
 
 ### Write
 
-Defines where the AI can create or modify files. This should be configured more restrictively than Read – only grant write access to locations where the workflow actually produces files.
+Defines where the AI can create or overwrite files in full. This should be configured more restrictively than Read – only grant write access to locations where the workflow actually produces files.
 
 **Examples:**
 ```json
 "Write(workflow/01_project_info/_system/**)",
 "Write(workflow/05_ba_docs/**)",
 "Write(workflow/03_answers/**)"
+```
+
+### Edit (targeted modification)
+
+Defines which existing files the AI may modify using **targeted, partial replacement**. The `Edit` permission is **handled separately from `Write`** – if only `Write(...)` is allowed for a path, Edit-based modifications will still trigger a permission prompt.
+
+> **Note:** Memory file updates typically use the Edit tool (the memory-agent writes targeted updates into existing files). This is why both `Write` and `Edit` permissions are needed for the `.claude/memory/` folder.
+
+**Examples:**
+```json
+"Edit(.claude/memory/**)",
+"Edit(workflow/05_ba_docs/**)"
 ```
 
 ### Bash (terminal commands)
@@ -66,7 +78,9 @@ The permission system uses **glob patterns**:
 - Bash patterns match the **entire command string**, not just the program name
 - Read/Write patterns match the **file path** relative to the project root
 - Pattern order does not matter – if any pattern matches, the operation is permitted
-- If an operation does not match any allowed pattern, Codebuff asks the user for permission
+- If an operation does not match any allowed pattern, Claude Code asks the user for permission
+
+> **Important:** `settings.json` is loaded at **session startup**. Changes made during an active session only take effect when the next session starts – they have no impact on the currently running workflow.
 
 ---
 
@@ -99,7 +113,12 @@ The permission system uses **glob patterns**:
 | `Write(workflow/03_answers/**)` | Converted answer files |
 | `Write(workflow/04_decisions/_system/**)` | Decision log (_system folder) |
 | `Write(workflow/05_ba_docs/**)` | BA documents |
-| `Write(.claude/memory/**)` | Project memory updates |
+| `Write(.claude/memory/**)` | Create new project memory files |
+
+**Edit permissions:**
+| Pattern | Purpose |
+|---|---|
+| `Edit(.claude/memory/**)` | Targeted updates to existing memory file entries |
 
 **Bash permissions:**
 | Pattern | Purpose |
@@ -109,6 +128,7 @@ The permission system uses **glob patterns**:
 | `Bash(python .claude/scripts/run_convert.py *)` | File conversion |
 | `Bash(python .claude/scripts/reset_project.py *)` | Project reset |
 | `Bash(python -m convert_all *)` | Alternative conversion |
+| `Bash(cd * && python -c *)` | Inline Python hash computation with directory change (source annotations) |
 
 ### Local override (`.claude/settings.local.json`)
 
@@ -199,8 +219,10 @@ If an operation requests permission, take note of which command or file triggere
 ## 20.8 Summary
 
 - BA Tool uses a two-tier permission system: project-wide (`settings.json`) and local (`settings.local.json`)
-- Three permission types exist: **Read**, **Write**, and **Bash** (terminal commands)
+- Four permission types exist: **Read**, **Write** (full file create/overwrite), **Edit** (targeted modification), and **Bash** (terminal commands)
+- `Edit` and `Write` are handled separately – both must be configured for folders where the workflow both creates and modifies files (e.g. `.claude/memory/`)
 - Patterns use glob matching – `*` matches any characters, `**` matches any path depth
+- `settings.json` is loaded at session startup – changes during a run only take effect in the next session
 - Bash permissions are the most dangerous – always use the narrowest possible pattern
 - The local override file (`settings.local.json`) should never be committed to git
 - Follow the Least Privilege principle: only allow what is actually needed
