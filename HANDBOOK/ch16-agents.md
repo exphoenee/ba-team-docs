@@ -23,11 +23,15 @@ A Discovery fázis specialistája. Korai anyagokból Business Concept dokumentum
 **Lépései:**
 1. Beolvassa az anyagokat a `workflow/01_project_info/` mappából
 2. Beolvassa a válaszokat a `workflow/03_answers/` mappából
-3. Generálja a `DISCOVERY_OUTPUT.md` közbenső specet
+3. Generálja a `DISCOVERY_OUTPUT.md` közbenső specet (+ opcionális szekciók: megrendelői kérés, folyamatkatalógus, Discovery-szintű NFR-ek)
 4. Generálja a három Discovery dokumentumot: `BC.md`, `Discovery_RAID.md`, `Discovery_Questions.md`
 5. Frissíti a memóriát
 
 **Fontos:** A discovery-agent **mindig** draft módban működik – Q-XXX soha nem blokkolja.
+
+**Tónus-kalibráció:** A kimenet tükrözi a forrás hangvételét — nem eszkalál válságnyelvezetre, ha a forrás megoldásorientált.
+
+**Kinyert elemek (opcionális):** Megrendelői eredeti kérés (verbatim) · Forrás terminológia (forrásból átvett) · Folyamatkatalógus összefoglaló · Discovery-szintű NFR-ek (platform/UI/hozzáférés)
 
 ## extraction-agent
 
