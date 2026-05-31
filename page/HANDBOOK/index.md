@@ -27,6 +27,7 @@
 17. [Szabályozói megfelelőség](ch17-compliance.md) — GDPR, PCI-DSS, AML/KYC
 18. [Gyakori kérdések (GYIK)](ch18-faq.md) — Gyakori problémák és válaszok
 19. [Hibaelhárítás](ch19-troubleshooting.md) — Döntési fák a leggyakoribb hibákhoz
+20. [AI-jogosultságok és biztonsági kockázatok](ch20-permissions.md) — settings.json, settings.local.json, kockázatok
 
 ---
 

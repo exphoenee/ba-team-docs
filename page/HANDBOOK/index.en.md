@@ -27,6 +27,7 @@
 17. [Regulatory Compliance](ch17-compliance.en.md) — GDPR, PCI-DSS, AML/KYC
 18. [FAQ](ch18-faq.en.md) — Frequently asked questions
 19. [Troubleshooting](ch19-troubleshooting.en.md) — Decision trees for the most common issues
+20. [AI Permissions and Security Risks](ch20-permissions.en.md) — settings.json, settings.local.json, risks
 
 ---
 

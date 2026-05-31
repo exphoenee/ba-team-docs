@@ -93,6 +93,8 @@ document.addEventListener('DOMContentLoaded', () => {
         "handbook-ch18-en": "./page/HANDBOOK/ch18-faq.en.md",
         "handbook-ch19": "./page/HANDBOOK/ch19-troubleshooting.md",
         "handbook-ch19-en": "./page/HANDBOOK/ch19-troubleshooting.en.md",
+        "handbook-ch20": "./page/HANDBOOK/ch20-permissions.md",
+        "handbook-ch20-en": "./page/HANDBOOK/ch20-permissions.en.md",
         "skill-ba": "./page/skills/ba.md",
         "skill-ba-en": "./page/skills/ba.en.md",
         "skill-business-analyst": "./page/skills/business-analyst.md",
