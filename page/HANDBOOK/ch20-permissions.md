@@ -30,13 +30,25 @@ Meghatározza, hogy az AI milyen fájlokat és mappákat olvashat. Minden olvas�
 
 ### Write (írás)
 
-Meghatározza, hogy az AI hova hozhat létre vagy módosíthat fájlokat. Szigorúbban kell konfigurálni, mint a Read-et – csak azokra a helyekre adj írási jogot, ahol a workflow ténylegesen létrehoz fájlokat.
+Meghatározza, hogy az AI hova hozhat létre vagy írhat felül fájlokat. Szigorúbban kell konfigurálni, mint a Read-et – csak azokra a helyekre adj írási jogot, ahol a workflow ténylegesen létrehoz fájlokat.
 
 **Példák:**
 ```json
 "Write(workflow/01_project_info/_system/**)",
 "Write(workflow/05_ba_docs/**)",
 "Write(workflow/03_answers/**)"
+```
+
+### Edit (célzott módosítás)
+
+Meghatározza, hogy az AI milyen meglévő fájlokat módosíthat **célzott, részleges cserével**. Az `Edit` jogosultság a `Write`-tól **külön kezelt** – ha egy fájlhoz csak `Write(...)` van engedélyezve, az Edit-alapú módosításnál a rendszer külön engedélyt kér.
+
+> **Megjegyzés:** A memóriafájlok frissítése tipikusan Edit műveleten alapul (a memory-agent meglévő bejegyzéseket ír felül célzottan). Ezért mind a `Write`, mind az `Edit` jogosultság szükséges a `.claude/memory/` mappára.
+
+**Példák:**
+```json
+"Edit(.claude/memory/**)",
+"Edit(workflow/05_ba_docs/**)"
 ```
 
 ### Bash (terminál parancsok)
@@ -66,7 +78,9 @@ A jogosultsági rendszer **glob pattern**-eket használ:
 - A Bash minták a **teljes parancssort** illesztik, nem csak a program nevét
 - A Read/Write minták a **fájl elérési útját** illesztik a projekt gyökeréhez képest
 - A minták sorrendje nem számít – ha bármelyik minta illeszkedik, a művelet engedélyezett
-- Ha egy művelet nem illeszkedik egyetlen engedélyezett mintára sem, Codebuff engedélyt kér a felhasználótól
+- Ha egy művelet nem illeszkedik egyetlen engedélyezett mintára sem, Claude Code engedélyt kér a felhasználótól
+
+> **Fontos:** A `settings.json`-t a rendszer **session indulásakor** olvassa be. Az aktív session közben végzett módosítások csak a következő session indításakor lépnek életbe – az éppen futó workflow-n nem lesz hatásuk.
 
 ---
 
@@ -99,7 +113,12 @@ A jogosultsági rendszer **glob pattern**-eket használ:
 | `Write(workflow/03_answers/**)` | Konvertált válasz fájlok |
 | `Write(workflow/04_decisions/_system/**)` | Döntés log (_system mappa) |
 | `Write(workflow/05_ba_docs/**)` | BA dokumentumok |
-| `Write(.claude/memory/**)` | Projekt memória frissítése |
+| `Write(.claude/memory/**)` | Projekt memória új fájljainak létrehozása |
+
+**Edit jogosultságok:**
+| Minta | Cél |
+|---|---|
+| `Edit(.claude/memory/**)` | Memóriafájlok meglévő bejegyzéseinek célzott módosítása |
 
 **Bash jogosultságok:**
 | Minta | Cél |
@@ -109,6 +128,7 @@ A jogosultsági rendszer **glob pattern**-eket használ:
 | `Bash(python .claude/scripts/run_convert.py *)` | Fájlkonverzió |
 | `Bash(python .claude/scripts/reset_project.py *)` | Projekt reset |
 | `Bash(python -m convert_all *)` | Alternatív konverzió |
+| `Bash(cd * && python -c *)` | Inline Python hash-számítás könyvtárváltással (forrásannotációk) |
 
 ### Helyi override (`.claude/settings.local.json`)
 
@@ -199,8 +219,10 @@ Ha egy művelet engedélyt kér, vedd észre, melyik parancs/fájl blokkolta, é
 ## 20.8 Összefoglalás
 
 - A BA Tool kétszintű jogosultság-kezelést használ: projekt-szintű (`settings.json`) és helyi (`settings.local.json`)
-- Három jogosultság típus van: **Read** (olvasás), **Write** (írás), **Bash** (terminál parancsok)
+- Négy jogosultság típus van: **Read** (olvasás), **Write** (teljes fájl írás/létrehozás), **Edit** (célzott módosítás), **Bash** (terminál parancsok)
+- Az `Edit` és a `Write` külön kezelt – mindkettőt be kell állítani azokra a mappákra, ahol a workflow módosít is és létrehoz is fájlokat (pl. `.claude/memory/`)
 - A minták glob pattern alapúak – a `*` bármilyen karaktert, a `**` bármilyen elérési útvonalat illeszt
+- A `settings.json` session indulásakor töltődik be – a futás közbeni módosítások csak a következő session-ben lépnek életbe
 - A Bash jogosultságok a legveszélyesebbek – mindig a lehető legszűkebb mintát használd
 - A helyi override fájlt (`settings.local.json`) soha ne commitold git-be
 - Tartsd be a Least Privilege elvet: csak azt engedélyezd, amire ténylegesen szükség van
