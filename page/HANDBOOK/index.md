@@ -1,7 +1,7 @@
 # BA Team – Felhasználói Kézikönyv
 
 **Verzió:** 1.2.0
-**Dátum:** 2026. május
+**Dátum:** 2026. június
 **Termék:** BA Team – AI-alapú Business Analyst Munkafolyamat
 
 ---
@@ -31,4 +31,4 @@
 
 ---
 
-*BA Team Felhasználói Kézikönyv – v1.2.0 – 2026. május*
+*BA Team Felhasználói Kézikönyv – v1.2.0 – 2026. június*

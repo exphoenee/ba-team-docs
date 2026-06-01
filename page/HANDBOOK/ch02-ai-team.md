@@ -1,10 +1,10 @@
 # 2. Az AI csapat bemutatása
 
-A BA Team hét specializált AI ügynökből és egy Python konverziós csomagból áll. Az ügynököket nem közvetlenül te hívod – automatikusan aktiválódnak a megfelelő pillanatban.
+A BA Team nyolc specializált AI ügynökből és egy Python konverziós csomagból áll. Az ügynököket nem közvetlenül te hívod – automatikusan aktiválódnak a megfelelő pillanatban.
 
 ```mermaid
 flowchart TD
-    User["TE (Vezető)\n/ba · /discovery · /rca · /validate"]
+    User["TE (Vezető)\n/ba · /discovery · /rca · /validate\n/self-dev · /self-improve"]
     Orchestrator["1. ba-orchestrator\nkoordinátor"]
     Discovery["2. discovery-agent\nDiscovery fázis"]
     SpecBuilder["3. extraction-agent\nspecifikáció-kinyerő\n(/extractor skill)"]
@@ -13,10 +13,13 @@ flowchart TD
     BADoc["6. ba-document-agent\ndokumentum-generáló"]
     ConvertPkg["convert_all\nPython csomag\n(0 AI token)"]
     MemoryAgent["7. memory-agent\n.claude/memory/ mappa"]
+    SelfCare["8. self-care-agent\nönfejlesztés"]
 
     User --> Orchestrator
     User -->|"/rca"| RCA
     User -->|"/validate"| Validation
+    User -->|"/self-dev"| SelfCare
+    User -->|"/self-improve"| SelfCare
     Orchestrator --> Discovery
     Orchestrator --> SpecBuilder
     Orchestrator --> RCA
