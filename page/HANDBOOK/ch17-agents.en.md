@@ -35,6 +35,16 @@ Handles extraction only — no quality checking.
 
 **Purpose:** Checks `SPEC_OUTPUT.md` quality — does not generate documents.
 
+**What it checks (8 dimensions):**
+- BR metric coverage (KPI)
+- NFR taxonomy (5 mandatory categories)
+- FR domain coverage
+- Configurable compliance domain trigger (`workflow/REGULATION/`) — **BLOCK** or WARN per domain
+- SCOPE CONFLICT open questions
+- INFERRED:HIGH assumptions with missing risk entries
+- High ratio of unanswered Q-XXX questions
+- Duplicate IDs (**BLOCK**)
+
 **Statuses:** ✅ PASS (continue) | ⚠️ WARN (continue with warnings) | ❌ BLOCK (stop)
 
 ## ba-document-agent
@@ -53,4 +63,13 @@ File conversion is done by the `.claude/scripts/convert_all` Python package. **U
 
 ## memory-agent
 
-The only agent that manages the `.claude/memory/` folder. Provides: `LOAD`, `LOAD_ALL`, `STORE`, `QUERY`, `BATCH`, `MEMORY_UPSERT` operations.
+The only agent that manages the `.claude/memory/` folder. Provides: `LOAD`, `LOAD_ALL`, `LOAD_CONVERSION_LOG`, `LOAD_SPEC_LOG`, `STORE`, `QUERY`, `BATCH`, `MEMORY_UPSERT` operations.
+
+## self-care-agent
+
+Orchestrator agent for the BA Tool self-development lifecycle. Operates in two modes:
+- **analyze**: captures a feature request, performs architectural analysis, saves to `app/featureRequests/`, and sends via Formspree to the developer
+- **implement**: reads an approved feature request, executes its TODO checklist, creates/modifies files, updates checkboxes
+
+**Triggered by:** `/self-dev` (analyze mode), `/self-improve` (implement mode)
+**Outputs:** `app/featureRequests/<date>_<name>.md`, modified app files

@@ -9,13 +9,13 @@
 | `/session-loader` | Munkamenet betöltése, projekt állapot mutatása |
 | `/extractor` | Csak a specifikáció készítése (haladó használat) |
 | `/business-analyst` | Csak a BA dokumentumok generálása (haladó használat) |
-| `/convert` | Office/Outlook fájlok kézi konvertálása |
+| `/convert` | Fájlkonverzió – Office, PDF, e-mail, kép, hang- és videófájlok Markdown formátumba |
 | `/mermaid-diagrams` | Önálló diagram készítése |
 | `/memory-handler` | Projekt memória megtekintése |
 | `/self-dev` | **Fejlesztési igény rögzítése** – BA Tool módosítási/fejlesztési kérések elküldése a fejlesztőnek |
 | `/validate` | Specifikáció minőségőr – SPEC_OUTPUT.md ellenőrzése 8 dimenzión (PASS/WARN/BLOCK státusz) |
 | `/check-state` | **Projekt állapotfelmérés** – a workflow mappák vizsgálata, fázis meghatározása, hiányzó lépések listázása |
-| `/help [parancs]` | **Súgó megjelenítése** – parancslista, projekt állapot, következő lépés javaslat; `/help <parancs>` részletes segítség |
+| `/help [parancs / kérdés]` | **Súgó megjelenítése** – parancslista, projekt állapot, következő lépés javaslat; `/help <parancs>` részletes segítség; `/help <kérdés>` dokumentáció-keresés (HANDBOOK, skillek, agentek) |
 
 > **A legtöbb esetben csak a `/ba` vagy `/discovery` parancsra van szükséged.** A többi parancs haladó felhasználóknak és speciális esetekre való. A `/self-dev` parancsot akkor használd, ha magát a BA Tool rendszert szeretnéd fejleszteni (új agent, skill, szabály hozzáadása).
 

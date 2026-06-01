@@ -16,15 +16,17 @@ A `/ba` skill dispatchilja minden alkalommal, amikor a felhasználó a `/ba` par
 
 ## Működési logika
 
-Az orchestrator öt lehetséges workflow-állapotot ismer fel és kezel:
+Az orchestrator az alábbi sorrendben ellenőrzi a workflow-állapotot:
 
 | Állapot | Feltétel | Teendő |
 |---|---|---|
 | Nincs input | `01_project_info/` üres | Jelzi a felhasználónak, megáll |
-| Nincs spec | Input létezik, de nincs `SPEC_OUTPUT.md` | Futtatja a `spec-builder-agent`-et |
-| FORCED döntés újabb mint spec | `04_decisions/` fájl mtime > spec mtime | Újrafuttatja a `spec-builder-agent`-et |
+| Nincs spec | Input létezik, de nincs `SPEC_OUTPUT.md` | Futtatja az `extraction-agent`-et |
+| FORCED döntés újabb mint spec | `04_decisions/` fájl mtime > spec mtime | Újrafuttatja az `extraction-agent`-et |
 | Nyitott Q-XXX kérdések | Spec van, de kérdések megválaszolatlanok | Listázza a kérdéseket, megáll |
-| Minden kész | Spec van, minden Q-XXX megválaszolt | Futtatja a `ba-document-agent`-et |
+| RCA szükséges | ≥3 INFERRED:HIGH vagy ≥5 RISK-XXX; nincs/elavult RCA | Futtatja az `rca-agent`-et (nem blokkoló) |
+| Spec validáció | Spec frissebb, mint `SPEC_VALIDATION.md` | Futtatja a `validation-agent`-et (PASS/WARN/BLOCK) |
+| Minden kész | Spec van, minden Q-XXX megválaszolt, validáció PASS/WARN | Futtatja a `ba-document-agent`-et |
 
 ## Speciális flag-ek
 
@@ -32,7 +34,9 @@ Az orchestrator öt lehetséges workflow-állapotot ismer fel és kezel:
 |---|---|
 | `/ba --draft` | BA dokumentumok generálása VÁZLAT fejléccel, még megválaszolatlan kérdésekkel is |
 | `/ba --force` | BA dokumentum-regenerálás kényszerítése, naprakész-ellenőrzés kihagyásával |
-| `/ba --discovery` | `discovery-agent` futtatása `spec-builder`/`ba-document-agent` helyett |
+| `/ba --discovery` | `discovery-agent` futtatása `extraction-agent`/`ba-document-agent` helyett |
+| `/ba --preview` | Elemzi az állapotot és jelzi, mi következne — semmit sem módosít |
+| `/ba --validate-only` | Csak a `validation-agent`-et futtatja, dokumentumot nem generál |
 
 ## Lépések
 
@@ -44,7 +48,13 @@ Az orchestrator öt lehetséges workflow-állapotot ismer fel és kezel:
 6. **Delegálás** — dispatchilja a megfelelő agentet az állapot alapján
 7. **Visszajelzés** — eredményről tájékoztatja a felhasználót
 
-## Input prioritási sorrend (spec-builder számára)
+## BLOCK viselkedés — memóriamentés
+
+Ha a validáció BLOCK státusszal tér vissza **és** a `--force` flag nincs megadva (sem friss futásnál, sem cached `SPEC_VALIDATION.md` olvasásakor), az orchestrator **a megállás előtt** `memory-agent`-en keresztül ment egy `DEC-XXX` bejegyzést a `DECISIONS.md`-be. A bejegyzés tartalmazza a blokkolás okát (angol, max 2 mondat, a `SPEC_VALIDATION.md`-ből kinyerve), a dátumot és a `ba-orchestrator` forrásjelzést.
+
+`--force` + BLOCK esetén **nem** tárolódik memóriabejegyzés — a `--force` felülírás, nem döntés.
+
+## Input prioritási sorrend (extraction-agent számára)
 
 | Prioritás | Forrás | Hatás |
 |---|---|---|
@@ -59,7 +69,9 @@ Az orchestrator öt lehetséges workflow-állapotot ismer fel és kezel:
 | Komponens | Kapcsolat |
 |---|---|
 | `/ba` skill | Meghívja az orchestratort |
-| `spec-builder-agent` | Az orchestrator dispatchilja spec-hiány vagy FORCED döntés esetén |
+| `extraction-agent` | Az orchestrator dispatchilja spec-hiány vagy FORCED döntés esetén |
+| `rca-agent` | Az orchestrator dispatchilja, ha elegendő RISK/INFERRED:HIGH elem van |
+| `validation-agent` | Az orchestrator dispatchilja spec validálásra |
 | `ba-document-agent` | Az orchestrator dispatchilja, ha minden Q-XXX megválaszolt |
 | `discovery-agent` | Az orchestrator dispatchilja `--discovery` flag hatására |
 | `memory-agent` | Az orchestrator QUERY-vel tölti be a memóriát minden futás elején |

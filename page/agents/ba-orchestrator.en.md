@@ -16,15 +16,17 @@ The `/ba` skill dispatches it every time the user runs the `/ba` command.
 
 ## Operating logic
 
-The orchestrator recognises and handles five possible workflow states:
+The orchestrator checks workflow state in the following order:
 
 | State | Condition | Action |
 |---|---|---|
 | No input | `01_project_info/` is empty | Notifies user, stops |
-| No spec | Input exists but no `SPEC_OUTPUT.md` | Runs `spec-builder-agent` |
-| FORCED decision newer than spec | `04_decisions/` file mtime > spec mtime | Re-runs `spec-builder-agent` |
+| No spec | Input exists but no `SPEC_OUTPUT.md` | Runs `extraction-agent` |
+| FORCED decision newer than spec | `04_decisions/` file mtime > spec mtime | Re-runs `extraction-agent` |
 | Open Q-XXX questions | Spec exists but questions are unanswered | Lists questions, stops |
-| All done | Spec exists, all Q-XXX answered | Runs `ba-document-agent` |
+| RCA needed | ≥3 INFERRED:HIGH or ≥5 RISK-XXX; no/stale RCA | Runs `rca-agent` (non-blocking) |
+| Spec validation | Spec is newer than `SPEC_VALIDATION.md` | Runs `validation-agent` (PASS/WARN/BLOCK) |
+| All done | Spec exists, all Q-XXX answered, validation PASS/WARN | Runs `ba-document-agent` |
 
 ## Special flags
 
@@ -32,7 +34,9 @@ The orchestrator recognises and handles five possible workflow states:
 |---|---|
 | `/ba --draft` | Generate BA documents with VÁZLAT header even with unanswered questions |
 | `/ba --force` | Force BA document regeneration, bypasses up-to-date check |
-| `/ba --discovery` | Run `discovery-agent` instead of `spec-builder`/`ba-document-agent` |
+| `/ba --discovery` | Run `discovery-agent` instead of `extraction-agent`/`ba-document-agent` |
+| `/ba --preview` | Analyses state and reports what would happen — makes no changes |
+| `/ba --validate-only` | Runs only `validation-agent`, does not generate documents |
 
 ## Steps
 
@@ -44,7 +48,13 @@ The orchestrator recognises and handles five possible workflow states:
 6. **Delegation** — dispatches the appropriate agent based on state
 7. **Reporting** — notifies the user of the result
 
-## Input priority order (for spec-builder)
+## BLOCK behaviour — memory storage
+
+When validation returns a BLOCK status **and** the `--force` flag is not present (whether on a fresh validation-agent run or when reading a cached `SPEC_VALIDATION.md`), the orchestrator stores a `DEC-XXX` entry in `DECISIONS.md` via `memory-agent` **before halting**. The entry includes the reason for the block (English, max 2 sentences, extracted from `SPEC_VALIDATION.md`), the date, and the `ba-orchestrator` source annotation.
+
+When `--force` + BLOCK occurs, **no** memory entry is stored — `--force` is an override, not a decision.
+
+## Input priority order (for extraction-agent)
 
 | Priority | Source | Effect |
 |---|---|---|
@@ -59,7 +69,9 @@ The orchestrator recognises and handles five possible workflow states:
 | Component | Relationship |
 |---|---|
 | `/ba` skill | Dispatches the orchestrator |
-| `spec-builder-agent` | Orchestrator dispatches it when spec is missing or FORCED decision exists |
+| `extraction-agent` | Orchestrator dispatches it when spec is missing or FORCED decision exists |
+| `rca-agent` | Orchestrator dispatches it when enough RISK/INFERRED:HIGH items exist |
+| `validation-agent` | Orchestrator dispatches it for spec quality validation |
 | `ba-document-agent` | Orchestrator dispatches it when all Q-XXX are answered |
 | `discovery-agent` | Orchestrator dispatches it when `--discovery` flag is active |
 | `memory-agent` | Orchestrator loads memory via QUERY at the start of every run |

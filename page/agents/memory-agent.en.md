@@ -14,7 +14,7 @@ The `memory-agent` is the gatekeeper of the BA Team's persistent memory. No othe
 
 Every other agent calls it when a memory operation is needed:
 - `ba-orchestrator` — to load memory at the start of every run
-- `spec-builder-agent` — when saving specification results
+- `extraction-agent` — when saving specification results
 - `ba-document-agent` — when archiving answered questions
 - `discovery-agent` — when saving discovery output
 - Also directly invocable via the `/memory-handler` skill
@@ -42,7 +42,7 @@ Every other agent calls it when a memory operation is needed:
 | `DOMAIN_GLOSSARY.md` | Domain terminology |
 | `RISKS.md` | Risks and assumptions |
 | `CONVERSION_LOG.md` | Converted files registry |
-| `AGENT_DECISIONS.md` | Audit log of orchestrator and spec-builder internal decisions |
+| `AGENT_DECISIONS.md` | Audit log of orchestrator and extraction-agent internal decisions |
 
 ## Archive mechanism
 
@@ -56,7 +56,7 @@ Every memory table contains a `Status` column (`active` / `archived`).
 | Component | Relationship |
 |---|---|
 | `ba-orchestrator` | Loads memory via QUERY at the start of every run |
-| `spec-builder-agent` | Saves specification results via BATCH STORE |
+| `extraction-agent` | Saves specification results via BATCH STORE |
 | `ba-document-agent` | Archives answered questions via BATCH STORE |
 | `discovery-agent` | Saves discovery output via STORE |
 | `/memory-handler` skill | Direct user-facing memory management |

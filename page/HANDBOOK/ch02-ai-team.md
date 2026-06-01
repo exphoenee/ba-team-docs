@@ -34,7 +34,7 @@ flowchart TD
 
 | # | Komponens | Típus | Szerepe |
 |---|---|---|---|
-| 1 | **ba-orchestrator** | AI ügynök | Koordinátor: felméri az állapotot, eldönti mi a következő lépés |
+| 1 | **ba-orchestrator** | AI ügynök | Koordinátor: felméri az állapotot, eldönti mi a következő lépés; BLOCK esetén DEC-XXX döntést ment a memóriába |
 | 2 | **discovery-agent** | AI ügynök | Discovery specialista: korai anyagokból BC.md + kérdéslista, soha nem blokkolja a generálást |
 | 3 | **extraction-agent** | AI ügynök | Specifikáció-kinyerő: nyers anyagokból strukturált spec-et farag — kizárólag kinyerés, minőségellenőrzés nélkül (a `/extractor` skill hívja) |
 | 4 | **rca-agent** | AI ügynök | Gyökérok-elemzés: oksági láncok, önfenntartó hurkok, driver/tünet besorolás — automatikusan fut ha elegendő RISK/INFERRED:HIGH elem van |
@@ -42,3 +42,4 @@ flowchart TD
 | 6 | **ba-document-agent** | AI ügynök | Dokumentum-generáló: BRD, User Story-k, folyamatábrák |
 | – | **convert_all** | Python csomag | Fájlkonverzió: Office/Outlook fájlok → Markdown (0 AI token) |
 | 7 | **memory-agent** | AI ügynök | Memóriakezelő: döntések, stakeholderek, szakkifejezések tárolása |
+| 8 | **self-care-agent** | AI ügynök | Önfejlesztés-orchestrátor: fejlesztési kérés rögzítése és elemzése (`/self-dev`), jóváhagyott kérés implementálása (`/self-improve`) |

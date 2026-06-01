@@ -49,5 +49,5 @@ A `ba-document-agent` az utolsó lépés a BA workflow-ban. Akkor fut, amikor mi
 |---|---|
 | `ba-orchestrator` | Dispatchilja, ha minden Q-XXX megválaszolt |
 | `/business-analyst` skill | Közvetlenül is meghívhatja |
-| `spec-builder-agent` | A ba-document-agent a spec-builder `SPEC_OUTPUT.md`-jét dolgozza fel |
+| `extraction-agent` | A ba-document-agent az extraction-agent `SPEC_OUTPUT.md`-jét dolgozza fel |
 | `memory-agent` | RESOLVED_QUESTIONS archiválás (BATCH STORE) |

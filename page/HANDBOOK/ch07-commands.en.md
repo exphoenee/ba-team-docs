@@ -8,12 +8,14 @@
 | `/session-loader` | Load session, show project state |
 | `/extractor` | Specification only (advanced use) |
 | `/business-analyst` | BA documents only (advanced use) |
-| `/convert` | Manual Office/Outlook file conversion |
+| `/self-improve` | Implement an approved feature request – executes the TODO checklist, creates/modifies files |
+| `/validate` | **Spec quality gate** – checks SPEC_OUTPUT.md across 8 quality dimensions (PASS/WARN/BLOCK status) |
+| `/convert` | File conversion – Office, PDF, email, image, audio and video files to Markdown |
 | `/mermaid-diagrams` | Standalone diagram creation |
 | `/memory-handler` | View project memory |
 | `/self-dev` | **Development request capture** – send BA Tool change requests to the developer |
 | `/check-state` | **Project state assessment** – examine workflow folders, determine phase, list missing steps |
-| `/help [command]` | **Help system** – command list, project state, next step suggestion; `/help <command>` for detailed help |
+| `/help [command / question]` | **Help system** – command list, project state, next step suggestion; `/help <command>` for detailed help; `/help <question>` searches documentation (HANDBOOK, skills, agents) |
 
 > **In most cases, only `/ba` or `/discovery` is needed.** Other commands are for advanced users and special cases.
 

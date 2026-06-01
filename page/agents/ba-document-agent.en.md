@@ -49,5 +49,5 @@ The `ba-document-agent` is the final step in the BA workflow. It runs when all Q
 |---|---|
 | `ba-orchestrator` | Dispatches it when all Q-XXX are answered |
 | `/business-analyst` skill | Can also invoke it directly |
-| `spec-builder-agent` | ba-document-agent processes spec-builder's `SPEC_OUTPUT.md` |
+| `extraction-agent` | ba-document-agent processes extraction-agent's `SPEC_OUTPUT.md` |
 | `memory-agent` | Archives RESOLVED_QUESTIONS (BATCH STORE) |

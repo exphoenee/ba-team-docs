@@ -14,7 +14,7 @@ A `memory-agent` a BA Team perzisztens memóriájának kapuőre. Egyetlen agent 
 
 Minden más agent hívja, amikor memória-műveletre van szükség:
 - `ba-orchestrator` — memóriabetöltéshez minden futás elején
-- `spec-builder-agent` — specifikáció mentésekor
+- `extraction-agent` — specifikáció mentésekor
 - `ba-document-agent` — kérdések archiválásakor
 - `discovery-agent` — discovery kimenet mentésekor
 - Közvetlenül a `/memory-handler` skill által is meghívható
@@ -42,7 +42,7 @@ Minden más agent hívja, amikor memória-műveletre van szükség:
 | `DOMAIN_GLOSSARY.md` | Domain szakkifejezések |
 | `RISKS.md` | Kockázatok és feltételezések |
 | `CONVERSION_LOG.md` | Konvertált fájlok nyilvántartása |
-| `AGENT_DECISIONS.md` | Orchestrator és spec-builder belső döntéseinek audit-logja |
+| `AGENT_DECISIONS.md` | Orchestrator és extraction-agent belső döntéseinek audit-logja |
 
 ## Archívum mechanizmus
 
@@ -56,7 +56,7 @@ Minden memóriatábla tartalmaz egy `Status` oszlopot (`active` / `archived`).
 | Komponens | Kapcsolat |
 |---|---|
 | `ba-orchestrator` | QUERY-vel tölti be a memóriát futás elején |
-| `spec-builder-agent` | BATCH STORE-ral menti a specifikáció eredményét |
+| `extraction-agent` | BATCH STORE-ral menti a specifikáció eredményét |
 | `ba-document-agent` | BATCH STORE-ral archiválja a megválaszolt kérdéseket |
 | `discovery-agent` | STORE-ral menti a discovery kimenetét |
 | `/memory-handler` skill | Közvetlen felhasználói memória-kezelés |

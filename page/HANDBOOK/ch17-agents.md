@@ -50,12 +50,14 @@ Kizárólag kinyeréssel foglalkozik – minőségellenőrzést nem végez.
 
 **Feladata:** a `SPEC_OUTPUT.md` minőségét ellenőrzi – nem generál dokumentumot.
 
-**Mit ellenőriz:**
+**Mit ellenőriz (8 dimenzió):**
 - BR metrika-lefedettség (KPI)
 - NFR taxonómia (5 kötelező kategória)
 - FR domain-lefedettség
-- GDPR trigger (**BLOCKER**)
+- Konfigurálható compliance domain trigger (`workflow/REGULATION/`) – **BLOCKER** vagy WARN domain szerint
 - SCOPE CONFLICT nyitott kérdések
+- INFERRED:HIGH elemek kockázatbejegyzés-lefedettsége
+- Magas Q-XXX megválaszolatlan arány
 - Duplikált ID (**BLOCKER**)
 
 **Státuszok:** ✅ PASS → automatikus folytatás | ⚠️ WARN → folytatódik, figyelmeztetéssel | ❌ BLOCK → megáll
@@ -99,7 +101,18 @@ Az egyetlen ügynök, amely a `.claude/memory/` mappát kezeli.
 |---|---|
 | `LOAD` | Összes aktív memória betöltése |
 | `LOAD_ALL` | Összes sor, archivált is |
+| `LOAD_CONVERSION_LOG` | Konverziós napló betöltése (fájl fingerprint-ek) |
+| `LOAD_SPEC_LOG` | Spec-napló betöltése (bemeneti fájl fingerprint-ek) |
 | `STORE` | Új bejegyzés hozzáfűzése |
 | `QUERY` | Célzott lekérdezés |
 | `BATCH` | Több művelet egy hívással |
 | `MEMORY_UPSERT` | Sor frissítése vagy hozzáadása |
+
+## self-care-agent
+
+A BA Tool önfejlesztési folyamatának orchestratora. Két módban működik:
+- **analyze**: fejlesztési igény rögzítése, elemzése, mentése `app/featureRequests/`, Formspree-n keresztüli továbbítása a fejlesztőnek
+- **implement**: jóváhagyott feature request TODO listájának végrehajtása — fájlok létrehozása/módosítása, jelölőnégyzetek frissítése
+
+**Triggerelje:** `/self-dev` (analyze mód), `/self-improve` (implement mód)
+**Kimenetek:** `app/featureRequests/<dátum>_<név>.md`, módosított app fájlok

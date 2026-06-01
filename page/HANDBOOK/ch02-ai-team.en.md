@@ -34,7 +34,7 @@ flowchart TD
 
 | # | Component | Type | Role |
 |---|---|---|---|
-| 1 | **ba-orchestrator** | AI agent | Coordinator: assesses state, decides next step |
+| 1 | **ba-orchestrator** | AI agent | Coordinator: assesses state, decides next step; stores a DEC-XXX memory entry when validation returns BLOCK |
 | 2 | **discovery-agent** | AI agent | Discovery specialist: BC.md + question list from early materials — never blocks generation |
 | 3 | **extraction-agent** | AI agent | Specification extractor: structured spec from raw materials — extraction only, no quality check (called by `/extractor` skill) |
 | 4 | **rca-agent** | AI agent | Root cause analysis: causal chains, self-sustaining loops, driver/symptom classification — runs automatically when enough RISK/INFERRED:HIGH items exist |
