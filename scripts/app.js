@@ -3,6 +3,9 @@
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     const isDark = savedTheme === 'dark' || (!savedTheme && prefersDark);
     document.documentElement.classList.toggle('dark-mode', isDark);
+
+    const savedLang = localStorage.getItem('lang') || 'hu';
+    document.documentElement.setAttribute('data-lang', savedLang);
 })();
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -11,11 +14,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const content = document.getElementById('content');
     const breadcrumb = document.getElementById('breadcrumb');
     const themeToggle = document.getElementById('themeToggle');
+    const langHU = document.getElementById('langHU');
+    const langEN = document.getElementById('langEN');
     const sidebar = document.getElementById('sidebar');
     const mobileMenu = document.getElementById('mobileMenu');
     const mobileClose = document.getElementById('mobileClose');
     const loader = document.getElementById('loader');
-    const navLinks = document.querySelectorAll('.nav-links a');
+    const navLinks = document.querySelectorAll('.nav-links > li > a, .submenu a');
+    let currentLang = localStorage.getItem('lang') || 'hu';
 
     const renderer = new marked.Renderer();
     const originalCodeRenderer = renderer.code.bind(renderer);
@@ -148,6 +154,88 @@ document.addEventListener('DOMContentLoaded', () => {
         "improvements": "./page/improvements.md"
 };
 
+    // ── Translation map – all static UI text ──
+    const translations = {
+        hu: {
+            'sidebar.home': 'Kezdőlap',
+            'sidebar.theme': 'Sötét mód',
+            'sidebar.theme-light': 'Világos mód',
+            'sidebar.pdf': 'Prezentáció',
+            'nav.handbook': 'Kézikönyv',
+            'nav.skills': 'Parancsok',
+            'nav.agents': 'Ügynökök',
+            'nav.release': 'Release Notes',
+            'nav.handbook-toc': 'Tartalomjegyzék',
+            'nav.agents-all': 'Összes ügynök',
+            'topbar.github': 'GitHub',
+            'footer.meet-creator': 'Meet the Creator',
+            'modal.title': 'Hozzáférés kérése',
+            'modal.success-title': 'Köszönöm az üzenetet!',
+            'modal.success-msg': 'Visszajelzek hamarosan.',
+            'modal.name': 'Név',
+            'modal.name-placeholder': 'Teljes név',
+            'modal.email': 'E-mail',
+            'modal.email-placeholder': 'e-mail címed',
+            'modal.message': 'Üzenet',
+            'modal.message-placeholder': 'Miért szeretnéd elérni a BA Team-et?',
+            'modal.submit': 'Küldés',
+            'error.404-title': '404',
+            'error.404-desc': 'Oldal nem található.',
+            'error.load-failed': 'Nem sikerült betölteni a dokumentációt:',
+            'error.file-protocol-file': 'Hiba',
+        },
+        en: {
+            'sidebar.home': 'Home',
+            'sidebar.theme': 'Dark mode',
+            'sidebar.theme-light': 'Light mode',
+            'sidebar.pdf': 'Presentation',
+            'nav.handbook': 'Handbook',
+            'nav.skills': 'Commands',
+            'nav.agents': 'Agents',
+            'nav.release': 'Release Notes',
+            'nav.handbook-toc': 'Table of Contents',
+            'nav.agents-all': 'All Agents',
+            'topbar.github': 'GitHub',
+            'footer.meet-creator': 'Meet the Creator',
+            'modal.title': 'Request Access',
+            'modal.success-title': 'Thank you for your message!',
+            'modal.success-msg': 'I\'ll get back to you soon.',
+            'modal.name': 'Name',
+            'modal.name-placeholder': 'Full name',
+            'modal.email': 'Email',
+            'modal.email-placeholder': 'your email address',
+            'modal.message': 'Message',
+            'modal.message-placeholder': 'Why would you like to access BA Team?',
+            'modal.submit': 'Send',
+            'error.404-title': '404',
+            'error.404-desc': 'Page not found.',
+            'error.load-failed': 'Failed to load documentation:',
+            'error.file-protocol-file': 'Error',
+        }
+    };
+
+    const pageDisplayNames = {
+        'home':        { hu: 'Kezdőlap', en: 'Home' },
+        'handbook':    { hu: 'Kézikönyv', en: 'Handbook' },
+        'agents':      { hu: 'Ügynökök', en: 'Agents' },
+        'improvements': { hu: 'Javaslatok', en: 'Improvements' },
+    };
+
+    function applyTranslations() {
+        const lang = currentLang;
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if (translations[lang] && translations[lang][key]) {
+                if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                    el.setAttribute('placeholder', translations[lang][key]);
+                } else {
+                    el.textContent = translations[lang][key];
+                }
+            }
+        });
+        document.documentElement.setAttribute('lang', lang === 'en' ? 'en' : 'hu');
+    }
+
     // Generic submenu toggle — works for any .has-submenu regardless of count or ID
     document.querySelectorAll('.has-submenu > a').forEach(toggle => {
         toggle.addEventListener('click', (e) => {
@@ -161,8 +249,36 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    async function loadPage(hash) {
-        const page = hash.replace('#', '') || 'home';
+    async function getLangRoute(page) {
+        // If current language is 'en' and an EN variant exists, use it
+        if (currentLang === 'en' && routes[page + '-en']) {
+            return page + '-en';
+        }
+        // If current language is 'hu', strip '-en' suffix if present
+        if (currentLang === 'hu' && page.endsWith('-en')) {
+            const base = page.slice(0, -3);
+            if (routes[base]) return base;
+        }
+        return page;
+    }
+
+    function updateLangUI() {
+        const isEn = currentLang === 'en';
+        langHU.classList.toggle('active', !isEn);
+        langEN.classList.toggle('active', isEn);
+        document.documentElement.setAttribute('data-lang', currentLang);
+        localStorage.setItem('lang', currentLang);
+        applyTranslations();
+    }
+
+    function loadPage(hash) {
+        let page = hash.replace('#', '') || 'home';
+        page = getLangRoute(page);
+
+        // Update URL hash to match the resolved page
+        if (window.location.hash !== '#' + page) {
+            history.replaceState(null, '', '#' + page);
+        }
 
         // Open the parent submenu for the current page
         const activeLink = document.querySelector(`.nav-links a[href="#${page}"]`);
@@ -178,7 +294,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const url = routes[page];
 
         if (!url) {
-            content.innerHTML = '<h1>404</h1><p>Oldal nem található.</p>';
+            content.innerHTML = '<h1 data-i18n="error.404-title">404</h1><p data-i18n="error.404-desc">Oldal nem található.</p>';
+            applyTranslations();
             return;
         }
 
@@ -192,7 +309,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const html = marked.parse(markdown);
             content.innerHTML = html;
-            breadcrumb.textContent = page.charAt(0).toUpperCase() + page.slice(1);
+            // Set breadcrumb from page display names or fallback
+            let displayName = page.endsWith('-en') ? page.slice(0, -3) : page;
+            if (pageDisplayNames[displayName]) {
+                breadcrumb.textContent = pageDisplayNames[displayName][currentLang] || displayName;
+            } else {
+                breadcrumb.textContent = page.charAt(0).toUpperCase() + page.slice(1);
+            }
 
             navLinks.forEach(link => {
                 link.classList.remove('active');
@@ -212,11 +335,13 @@ document.addEventListener('DOMContentLoaded', () => {
             Prism.highlightAllUnder(content);
 
         } catch (error) {
-            let errorMsg = `Nem sikerült betölteni a dokumentációt: ${url}`;
+            let errorTitle = translations[currentLang]['error.load-failed'] || 'Nem sikerült betölteni a dokumentációt:';
+            let errorMsg = `${errorTitle} ${url}`;
             if (window.location.protocol === 'file:') {
-                errorMsg += '<br><br><strong>Hiba:</strong> Helyi fájlrendszerről (file://) futtatod az oldalt. A böngészők biztonsági okokból letiltják a fájlok betöltését. <br>Kérlek használd a <code>python -m http.server</code> parancsot vagy publikáld GitHub-ra!';
+                let errFile = translations[currentLang]['error.file-protocol-file'] || 'Hiba';
+                errorMsg += '<br><br><strong>' + errFile + ':</strong> Helyi fájlrendszerről (file://) futtatod az oldalt. A böngészők biztonsági okokból letiltják a fájlok betöltését. <br>Kérlek használd a <code>python -m http.server</code> parancsot vagy publikáld GitHub-ra!';
             }
-            content.innerHTML = `<h1>Hiba</h1><p>${errorMsg}</p>`;
+            content.innerHTML = `<h1>${translations[currentLang]['error.file-protocol-file'] || 'Hiba'}</h1><p>${errorMsg}</p>`;
             console.error(error);
         } finally {
             loader.classList.remove('active');
@@ -227,9 +352,41 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    const isDark = document.body.classList.contains('dark-mode');
-    themeToggle.querySelector('i').className = isDark ? 'fas fa-moon' : 'fas fa-sun';
-    themeToggle.querySelector('span').textContent = isDark ? 'Sötét mód' : 'Világos mód';
+    // --- Language toggle ---
+    function switchLanguage(lang) {
+        if (lang === currentLang) return;
+        currentLang = lang;
+        updateLangUI();
+
+        // Reload current page in the new language
+        const currentHash = window.location.hash.replace('#', '') || 'home';
+        const newPage = getLangRoute(currentHash);
+        loadPage('#' + newPage);
+
+        // Refresh the nav link active states
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            const href = link.getAttribute('href');
+            if (href === '#' + newPage) {
+                link.classList.add('active');
+            }
+        });
+    }
+
+    langHU.addEventListener('click', () => switchLanguage('hu'));
+    langEN.addEventListener('click', () => switchLanguage('en'));
+
+    // Initialize language UI
+    updateLangUI();
+
+    function updateThemeToggle() {
+        const isDark = document.body.classList.contains('dark-mode');
+        themeToggle.querySelector('i').className = isDark ? 'fas fa-moon' : 'fas fa-sun';
+        const key = isDark ? 'sidebar.theme' : 'sidebar.theme-light';
+        themeToggle.querySelector('span').textContent = translations[currentLang][key] || (isDark ? 'Sötét mód' : 'Világos mód');
+    }
+
+    updateThemeToggle();
 
     themeToggle.addEventListener('click', () => {
         document.body.classList.toggle('dark-mode');
@@ -238,7 +395,8 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('theme', nowDark ? 'dark' : 'light');
 
         themeToggle.querySelector('i').className = nowDark ? 'fas fa-moon' : 'fas fa-sun';
-        themeToggle.querySelector('span').textContent = nowDark ? 'Sötét mód' : 'Világos mód';
+        const key = nowDark ? 'sidebar.theme' : 'sidebar.theme-light';
+        themeToggle.querySelector('span').textContent = translations[currentLang][key] || (nowDark ? 'Sötét mód' : 'Világos mód');
 
         mermaid.initialize({
             startOnLoad: false,

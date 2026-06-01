@@ -123,20 +123,13 @@ h1, h2, h3, h4 {
     flex-shrink: 0;
     padding-top: 1rem;
     border-top: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
 }
 
 .nav-links li {
     margin-bottom: 0.5rem;
-}
-
-.nav-item-with-lang {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-}
-
-.nav-item-with-lang > a:first-child {
-    flex: 1;
 }
 
 .nav-links a {
@@ -171,45 +164,11 @@ h1, h2, h3, h4 {
 
 .submenu li {
     margin-bottom: 0.25rem;
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-}
-
-.submenu li > a:first-child {
-    flex: 1;
 }
 
 .submenu a {
     font-size: 0.9rem;
     padding: 0.5rem 0.75rem;
-}
-
-.lang-tag {
-    font-size: 0.65rem;
-    color: var(--text-secondary);
-    font-weight: 600;
-}
-
-.lang-alt {
-    font-size: 0.75rem;
-    padding: 0.4rem 1rem !important;
-    border-radius: 4px;
-    background: var(--bg-secondary);
-    color: var(--accent-color);
-    text-decoration: none;
-    font-weight: 600;
-    line-height: 1;
-    display: inline !important;
-    border: none;
-    width: auto;
-    gap: 0;
-    flex: none !important;
-}
-
-.lang-alt:hover {
-    background: var(--accent-glow);
-    color: var(--accent-color);
 }
 
 .toggle-icon {
@@ -222,9 +181,43 @@ h1, h2, h3, h4 {
     transform: rotate(180deg);
 }
 
-.sidebar-footer {
-    padding-top: 1rem;
-    border-top: 1px solid var(--border-color);
+/* Language Toggle */
+.lang-toggle {
+    display: flex;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+    background: transparent;
+}
+
+.lang-btn {
+    flex: 1;
+    padding: 0.5rem;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.lang-btn:hover {
+    background: var(--accent-glow);
+    color: var(--accent-color);
+}
+
+.lang-btn.active {
+    background: var(--accent-color);
+    color: #ffffff;
+}
+
+.lang-btn.active:hover {
+    background: var(--accent-color);
+    filter: brightness(1.1);
 }
 
 .theme-btn {
