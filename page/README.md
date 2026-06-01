@@ -1,4 +1,4 @@
-# BA Team – Legyél Te a főnök egy 8 fős AI csapat felett!
+# BA Team – Legyél te a vezetője egy 8 fős AI csapatnak!
 
 [English version](README.en.md) | [Kézikönyv](HANDBOOK.md)
 

@@ -249,7 +249,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    async function getLangRoute(page) {
+    function getLangRoute(page) {
         // If current language is 'en' and an EN variant exists, use it
         if (currentLang === 'en' && routes[page + '-en']) {
             return page + '-en';
@@ -271,7 +271,7 @@ document.addEventListener('DOMContentLoaded', () => {
         applyTranslations();
     }
 
-    function loadPage(hash) {
+    async function loadPage(hash) {
         let page = hash.replace('#', '') || 'home';
         page = getLangRoute(page);
 
@@ -353,7 +353,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Language toggle ---
-    function switchLanguage(lang) {
+    async function switchLanguage(lang) {
         if (lang === currentLang) return;
         currentLang = lang;
         updateLangUI();
@@ -361,7 +361,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Reload current page in the new language
         const currentHash = window.location.hash.replace('#', '') || 'home';
         const newPage = getLangRoute(currentHash);
-        loadPage('#' + newPage);
+        await loadPage('#' + newPage);
 
         // Refresh the nav link active states
         navLinks.forEach(link => {

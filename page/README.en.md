@@ -1,4 +1,4 @@
-# BA Team – Be the Boss of an 8-member AI Team!
+# BA Team – Be the Leader of an 8-member AI Team!
 
 [Magyar változat](README.md) | [Handbook](HANDBOOK.md) *(Hungarian)*
 
