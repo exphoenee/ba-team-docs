@@ -57,9 +57,9 @@ Meghatározza, hogy az AI milyen shell parancsokat futtathat. A minták glob pat
 
 **Példák:**
 ```json
+"Bash(python .claude/scripts/get_path.py *)",
 "Bash(python .claude/scripts/run_convert.py *)",
-"Bash(sha256sum *)",
-"Bash(du *)"
+"Bash(sha256sum *)"
 ```
 
 ---
@@ -123,12 +123,18 @@ A jogosultsági rendszer **glob pattern**-eket használ:
 **Bash jogosultságok:**
 | Minta | Cél |
 |---|---|
+| `Bash(python .claude/scripts/get_path.py *)` | Konfigurációs útvonalak lekérése |
 | `Bash(python .claude/scripts/workflow_state.py *)` | Stop hook állapotellenőrzés |
 | `Bash(python .claude/scripts/session_loader.py *)` | Session betöltő |
 | `Bash(python .claude/scripts/run_convert.py *)` | Fájlkonverzió |
 | `Bash(python .claude/scripts/reset_project.py *)` | Projekt reset |
+| `Bash(python .claude/scripts/fingerprint.py *)` | SHA-256 ujjlenyomat számítás |
+| `Bash(python .claude/scripts/formspree_send.py *)` | Formspree API küldés |
+| `Bash(python .claude/scripts/check_doc_sync.py *)` | Dokumentáció szinkron ellenőrzés |
+| `Bash(python .claude/scripts/test_convert.py *)` | Konverzió teszt segéd |
+| `Bash(python .claude/skills/convert/scripts/find_pending_images.py *)` | Kép detekció konverzióhoz |
 | `Bash(python -m convert_all *)` | Alternatív konverzió |
-| `Bash(cd * && python -c *)` | Inline Python hash-számítás könyvtárváltással (forrásannotációk) |
+| `Bash(*)` | Catch-all – minden Bash parancs engedélyezve (termék döntés) |
 
 ### Helyi override (`.claude/settings.local.json`)
 
@@ -141,7 +147,7 @@ A jogosultsági rendszer **glob pattern**-eket használ:
 | `Bash(for * sha256sum *)` | SHA-256 számítás for ciklusban |
 | `Bash(ls *)` | Fájllista |
 | `Bash(echo *)` | Kimenet |
-| `Bash(python .claude/scripts/fingerprint.py compute *)` | Fingerprint számítás |
+| `Bash(python .claude/scripts/fingerprint.py *)` | Fingerprint számítás |
 | `Bash(python .claude/skills/convert/scripts/find_pending_images.py *)` | Kép detekció konverzióhoz |
 
 ---
@@ -162,17 +168,17 @@ A jogosultsági rendszer **glob pattern**-eket használ:
 
 2. **Write vs. Read:** Az írási jogosultságok legyenek mindig szűkebbek, mint az olvasásiak. A bemeneti anyagok mappájába (`01_project_info/`) csak a konvertált fájlok létrehozásához adj írási jogot, ne a teljes mappára.
 
-3. **Bash parancsok szűrése:** A Bash jogosultságok a legveszélyesebbek, mert tetszőleges shell parancsokat engedélyezhetnek. Csak konkrét, ismert parancsokat engedélyezz, soha ne használj catch-all mintát (`Bash(*)`).
+3. **Bash parancsok szűrése:** A Bash jogosultságok a legveszélyesebbek, mert tetszőleges shell parancsokat engedélyezhetnek. Csak konkrét, ismert parancsokat engedélyezz. A termékváltozatban `Bash(*)` catch-all minta van a zökkenőmentes workflow érdekében – ha ezt eltávolítod, győződj meg róla, hogy minden szükséges parancs explicit engedélyezve van.
 
 4. **Rendszeres felülvizsgálat:** Időnként ellenőrizd a `settings.json` és `settings.local.json` fájlokat, és távolítsd el azokat a jogosultságokat, amelyekre már nincs szükség.
 
 ### Mit NE tegyél
 
-| Tiltott minta | Miért veszélyes? |
+| Kerülendő minta | Miért veszélyes? |
 |---|---|
-| `Bash(*)` | Bármilyen shell parancs futtatását engedélyezi – az AI törölhet fájlokat, telepíthet csomagokat, pusholhat kódot |
 | `Write(workflow/**)` | Bármilyen workflow fájl felülírását engedi, beleértve a bemeneti anyagokat is |
 | `Read(//**/**(/)**)` | A teljes fájlrendszer olvasását engedélyezi, beleértve a jelszavakat, titkos kulcsokat |
+| `Bash(rm -rf /*)` | Katasztrofális adatvesztés – a teljes fájlrendszer törlése |
 
 ---
 
@@ -223,6 +229,6 @@ Ha egy művelet engedélyt kér, vedd észre, melyik parancs/fájl blokkolta, é
 - Az `Edit` és a `Write` külön kezelt – mindkettőt be kell állítani azokra a mappákra, ahol a workflow módosít is és létrehoz is fájlokat (pl. `.claude/memory/`)
 - A minták glob pattern alapúak – a `*` bármilyen karaktert, a `**` bármilyen elérési útvonalat illeszt
 - A `settings.json` session indulásakor töltődik be – a futás közbeni módosítások csak a következő session-ben lépnek életbe
-- A Bash jogosultságok a legveszélyesebbek – mindig a lehető legszűkebb mintát használd
+- A Bash jogosultságok a legveszélyesebbek – mindig a lehető legszűkebb mintát használd; a termékváltozat `Bash(*)` catch-all-t használ a zavartalan workflow érdekében
 - A helyi override fájlt (`settings.local.json`) soha ne commitold git-be
 - Tartsd be a Least Privilege elvet: csak azt engedélyezd, amire ténylegesen szükség van

@@ -57,9 +57,9 @@ Defines which shell commands the AI may execute. Patterns use glob matching agai
 
 **Examples:**
 ```json
+"Bash(python .claude/scripts/get_path.py *)",
 "Bash(python .claude/scripts/run_convert.py *)",
-"Bash(sha256sum *)",
-"Bash(du *)"
+"Bash(sha256sum *)"
 ```
 
 ---
@@ -123,12 +123,18 @@ The permission system uses **glob patterns**:
 **Bash permissions:**
 | Pattern | Purpose |
 |---|---|
+| `Bash(python .claude/scripts/get_path.py *)` | Config path resolution |
 | `Bash(python .claude/scripts/workflow_state.py *)` | Stop hook state check |
 | `Bash(python .claude/scripts/session_loader.py *)` | Session loader |
 | `Bash(python .claude/scripts/run_convert.py *)` | File conversion |
 | `Bash(python .claude/scripts/reset_project.py *)` | Project reset |
+| `Bash(python .claude/scripts/fingerprint.py *)` | SHA-256 fingerprint calculation |
+| `Bash(python .claude/scripts/formspree_send.py *)` | Formspree API send |
+| `Bash(python .claude/scripts/check_doc_sync.py *)` | Documentation sync check |
+| `Bash(python .claude/scripts/test_convert.py *)` | Conversion test helper |
+| `Bash(python .claude/skills/convert/scripts/find_pending_images.py *)` | Image detection for conversion |
 | `Bash(python -m convert_all *)` | Alternative conversion |
-| `Bash(cd * && python -c *)` | Inline Python hash computation with directory change (source annotations) |
+| `Bash(*)` | Catch-all – allows any Bash command (product decision) |
 
 ### Local override (`.claude/settings.local.json`)
 
@@ -141,7 +147,7 @@ The permission system uses **glob patterns**:
 | `Bash(for * sha256sum *)` | SHA-256 in for loops |
 | `Bash(ls *)` | File listing |
 | `Bash(echo *)` | Output |
-| `Bash(python .claude/scripts/fingerprint.py compute *)` | Fingerprint calculation |
+| `Bash(python .claude/scripts/fingerprint.py *)` | Fingerprint calculation |
 | `Bash(python .claude/skills/convert/scripts/find_pending_images.py *)` | Image detection for conversion |
 
 ---
@@ -162,17 +168,17 @@ The permission system uses **glob patterns**:
 
 2. **Write vs. Read:** Write permissions should always be narrower than read permissions. For input material folders (`01_project_info/`), only grant write access for creating converted files, not for the entire folder.
 
-3. **Restrict Bash commands:** Bash permissions are the most dangerous because they can allow arbitrary shell commands. Only allow specific, known commands – never use catch-all patterns like `Bash(*)`.
+3. **Restrict Bash commands:** Bash permissions are the most dangerous because they can allow arbitrary shell commands. Only allow specific, known commands. The product version uses a `Bash(*)` catch-all for seamless workflow – if you remove it, ensure all required commands are explicitly allowed.
 
 4. **Regular review:** Periodically check `settings.json` and `settings.local.json` and remove permissions that are no longer needed.
 
 ### What NOT to do
 
-| Prohibited pattern | Why it's dangerous |
+| Pattern to avoid | Why it's dangerous |
 |---|---|
-| `Bash(*)` | Allows any shell command – the AI could delete files, install packages, push code |
 | `Write(workflow/**)` | Allows overwriting any workflow file, including input materials |
 | `Read(//**/**(/)**)` | Allows reading the entire filesystem, including passwords and secret keys |
+| `Bash(rm -rf /*)` | Catastrophic data loss – deletes the entire filesystem |
 
 ---
 
@@ -223,6 +229,6 @@ If an operation requests permission, take note of which command or file triggere
 - `Edit` and `Write` are handled separately – both must be configured for folders where the workflow both creates and modifies files (e.g. `.claude/memory/`)
 - Patterns use glob matching – `*` matches any characters, `**` matches any path depth
 - `settings.json` is loaded at session startup – changes during a run only take effect in the next session
-- Bash permissions are the most dangerous – always use the narrowest possible pattern
+- Bash permissions are the most dangerous – always use the narrowest possible pattern; the product version uses `Bash(*)` catch-all for seamless workflow
 - The local override file (`settings.local.json`) should never be committed to git
 - Follow the Least Privilege principle: only allow what is actually needed
